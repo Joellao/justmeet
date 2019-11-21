@@ -10,7 +10,7 @@ public class DemoApplication {
 
 	@RequestMapping("/greeting")
 	public String greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
-		return String.format("Ciao %s", name);
+		return String.format("Bello de zio, %s", name);
 	}
 
 	public static void main(String[] args) {
