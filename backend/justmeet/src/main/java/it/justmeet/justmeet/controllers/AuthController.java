@@ -18,7 +18,7 @@ public class AuthController {
     @PostMapping("/login")
     public User login(@RequestBody User user) throws URISyntaxException, SQLException {
         Statement st = DatabaseConfig.getConnection().createStatement();
-        ResultSet set = st.executeQuery("CREATE DATABASE justmeet;");
+        ResultSet set = st.executeQuery("SELECT * FROM person;");
         while (set.next()) {
             System.out.println(set.getString(1));
         }
