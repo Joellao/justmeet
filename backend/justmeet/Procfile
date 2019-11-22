@@ -1,1 +1,0 @@
-release: java -jar target/justmeet-0.0.1-SNAPSHOT.jar --changeLogFile=src/main/resources/db/changelog/db.changelog-master.yaml --url=$JDBC_DATABASE_URL --classpath=target/dependency/postgres.jar update
