@@ -3,6 +3,7 @@ package it.justmeet.justmeet.controllers;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.ResultSet;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,10 @@ public class AuthController {
     @PostMapping("/login")
     public User login(@RequestBody User user) throws URISyntaxException, SQLException {
         Statement st = DatabaseConfig.getConnection().createStatement();
-        st.executeQuery("\\l");
+        ResultSet set = st.executeQuery("CREATE DATABASE justmeet;");
+        while (set.next()) {
+            System.out.println(set.getString(1));
+        }
         return user;
     }
 

@@ -1,5 +1,5 @@
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL}
-    username: ${JDBC_DATABASE_USERNAME}
-    password: ${JDBC_DATABASE_PASSWORD}
+    url: "jdbc:postgresql://ec2-46-137-120-243.eu-west-1.compute.amazonaws.com:5432/dctq26iqsf16r7?user=kgapespdyqobhl&password=bb765ee804bc0e6d6241e0f5f955e73376a8442426aa1a8b402ec6ad41bcb3d2&sslmode=require"
+    username: "kgapespdyqobhl"
+    password: "kgapespdyqobhl"
