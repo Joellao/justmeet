@@ -9,7 +9,7 @@ import it.justmeet.justmeet.models.User;
 @RestController
 public class UserController {
     @GetMapping("/user/{username}")
-    public User get(@PathVariable("id") String name) {
-        return new User(name, "ciao");
+    public User get(@PathVariable("username") String name) {
+        return new User(name, "ciao", "ciao", "ciao");
     }
 }
