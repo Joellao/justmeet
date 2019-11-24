@@ -1,38 +1,19 @@
 databaseChangeLog:
   - changeSet:
       id: 1
-      author: marceloverdijk
+      author: Joel
       changes:
         - createTable:
-            tableName: person
+            tableName: users
             columns:
               - column:
                   name: id
-                  type: int
-                  autoIncrement: true
+                  type: varchar(255)
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: first_name
+                  name: email
                   type: varchar(255)
                   constraints:
                     nullable: false
-              - column:
-                  name: last_name
-                  type: varchar(255)
-                  constraints:
-                    nullable: false
-  - changeSet:
-      id: 2
-      author: marceloverdijk
-      changes:
-        - insert:
-            tableName: person
-            columns:
-              - column:
-                  name: first_name
-                  value: Marcel
-              - column:
-                  name: last_name
-                  value: Overdijk

@@ -1,6 +1,13 @@
 {
     "configurations": [
         {
+            "name": "Flutter",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "program": "./frontend/justmeet/lib/main.dart"
+        },
+        {
             "type": "java",
             "name": "Spring Boot-Main<justmeet>",
             "request": "launch",
