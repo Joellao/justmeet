@@ -2,7 +2,7 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Spring Boot",
+            "name": "Spring Boot-Main<justmeet>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",

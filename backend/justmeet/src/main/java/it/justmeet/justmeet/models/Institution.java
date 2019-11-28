@@ -1,6 +1,15 @@
 package it.justmeet.justmeet.models;
 
 public class Institution implements UserInterface {
+    private final String name;
+    private final int p_iva;
+    private final String email;
+
+    public Institution(String name, int p_iva, String email) {
+        this.name = name;
+        this.p_iva = p_iva;
+        this.email = email;
+    }
 
     @Override
     public void modifyProfile() {
@@ -72,6 +81,18 @@ public class Institution implements UserInterface {
     public void reportBug() {
         // TODO Auto-generated method stub
 
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getP_iva() {
+        return p_iva;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
 }

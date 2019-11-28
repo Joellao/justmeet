@@ -5,12 +5,16 @@ public class User implements UserInterface {
     private final String lastName;
     private final String email;
     private final String birthDate;
+    private final String profileImage;
+    private final String bio;
 
-    public User(String name, String lastName, String email, String birthDate) {
+    public User(String name, String lastName, String email, String birthDate, String profileImage, String bio) {
         this.firstName = name;
         this.lastName = lastName;
         this.email = email;
         this.birthDate = birthDate;
+        this.profileImage = profileImage;
+        this.bio = bio;
     }
 
     public String getFirstName() {
@@ -99,6 +103,14 @@ public class User implements UserInterface {
     public void reportBug() {
         // TODO Auto-generated method stub
 
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public String getBio() {
+        return bio;
     }
 
 }

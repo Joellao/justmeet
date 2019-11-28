@@ -10,6 +10,6 @@ import it.justmeet.justmeet.models.User;
 public class UserController {
     @GetMapping("/user/{username}")
     public User get(@PathVariable("username") String name) {
-        return new User(name, "ciao", "ciao", "ciao");
+        return new User(name, "ciao", "ciao", "ciao", "ciao", "ciao");
     }
 }

@@ -15,6 +15,7 @@ import com.google.gson.JsonElement;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +24,8 @@ import org.springframework.web.client.RestTemplate;
 import it.justmeet.justmeet.DatabaseConfig;
 import it.justmeet.justmeet.exceptions.EmailAlreadyExistsException;
 import it.justmeet.justmeet.models.auth.LoginModel;
+import it.justmeet.justmeet.models.auth.SignupModelInstitution;
+import it.justmeet.justmeet.models.auth.SignupModelUser;
 
 @RestController
 public class AuthController {
@@ -39,13 +42,34 @@ public class AuthController {
         return json;
     }
 
-    @PostMapping("/signup")
-    public UserRecord signup(@RequestParam("email") String email, @RequestParam("firstName") String firstName,
-            @RequestParam("lastName") String lastName, @RequestParam("password") String password,
-            @RequestParam("birthDate") String birthDate)
+    @PostMapping("/signupInstitution")
+    public UserRecord signupInstitution(@RequestBody SignupModelInstitution institution)
             throws EmailAlreadyExistsException, SQLException, URISyntaxException {
-        CreateRequest request = new CreateRequest().setEmail(email).setEmailVerified(false).setPassword(password)
-                .setDisplayName(firstName + " " + lastName).setDisabled(false);
+        CreateRequest request = new CreateRequest().setEmail(institution.getEmail()).setEmailVerified(false)
+                .setPassword(institution.getPassword()).setDisplayName(institution.getName()).setDisabled(false);
+
+        UserRecord userRecord = null;
+
+        try {
+            userRecord = FirebaseAuth.getInstance().createUser(request);
+        } catch (FirebaseAuthException e) {
+            if (e.getErrorCode() == "email-already-exists") {
+                throw new EmailAlreadyExistsException();
+            }
+        }
+        Statement st = DatabaseConfig.getConnection().createStatement();
+        st.executeUpdate(
+                "INSERT INTO users (id,email) VALUES ('" + userRecord.getUid() + "','" + userRecord.getEmail() + "');");
+
+        return userRecord;
+    }
+
+    @PostMapping("/signupUser")
+    public UserRecord signupUser(@RequestBody SignupModelUser user)
+            throws EmailAlreadyExistsException, SQLException, URISyntaxException {
+        CreateRequest request = new CreateRequest().setEmail(user.getEmail()).setEmailVerified(false)
+                .setPassword(user.getPassword()).setDisplayName(user.getFirstName() + " " + user.getLastName())
+                .setDisabled(false);
 
         UserRecord userRecord = null;
 
