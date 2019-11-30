@@ -1,4 +1,4 @@
-package it.justmeet.justmeet.models;
+package it.justmeet.justmeet.models.creates;
 
 public class AnnouncementCreate {
     private String name;

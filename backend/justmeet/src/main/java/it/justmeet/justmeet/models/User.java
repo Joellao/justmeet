@@ -1,20 +1,49 @@
 package it.justmeet.justmeet.models;
 
-public class User implements UserInterface {
-    private final String firstName;
-    private final String lastName;
-    private final String email;
-    private final String birthDate;
-    private final String profileImage;
-    private final String bio;
+import java.util.ArrayList;
+import java.util.List;
 
-    public User(String name, String lastName, String email, String birthDate, String profileImage, String bio) {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+@Entity
+@Table(name = "users")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "uid")
+public class User implements UserInterface {
+    @Id
+    @Column(name = "uid")
+    private String uid;
+    @Column(name = "firstName")
+    private String firstName;
+    @Column(name = "lastName")
+    private String lastName;
+    @Column(name = "email")
+    private String email;
+    @Column(name = "birthDate")
+    private String birthDate;
+    @Column(name = "profileImage")
+    private String profileImage;
+    @Column(name = "bio")
+    private String bio;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Event> events = new ArrayList<>();
+
+    protected User() {
+    }
+
+    public User(String uid, String name, String lastName, String email, String birthDate) {
+        this.uid = uid;
         this.firstName = name;
         this.lastName = lastName;
         this.email = email;
         this.birthDate = birthDate;
-        this.profileImage = profileImage;
-        this.bio = bio;
     }
 
     public String getFirstName() {
@@ -111,6 +140,50 @@ public class User implements UserInterface {
 
     public String getBio() {
         return bio;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
+    }
+
+    public void addEvent(Event e) {
+        this.events.add(e);
     }
 
 }

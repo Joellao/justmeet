@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.justmeet.justmeet.models.EventCreate;
+import it.justmeet.justmeet.models.creates.EventCreate;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.Announcement;
-import it.justmeet.justmeet.models.AnnouncementCreate;
+import it.justmeet.justmeet.models.creates.AnnouncementCreate;
 import it.justmeet.justmeet.models.Comment;
-import it.justmeet.justmeet.models.CommentCreate;
+import it.justmeet.justmeet.models.creates.CommentCreate;
 
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -29,7 +29,7 @@ public class AnnouncementController {
         FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
         String userId = check.getUid();
         // CHIAMATA AL DATABSE CON userId per avere l'utente
-        User utente = new User("Pinco", "Pallino", "pinco@gmial.com", "12/12/12", null, "Life is good, go and die!");
+        User utente = new User(userId, "Pinco", "Pallino", "pinco@gmial.com", "12/12/12");
         Announcement announce = new Announcement(annuncio.getName(), utente, annuncio.getCategory());
         return announce;
     }

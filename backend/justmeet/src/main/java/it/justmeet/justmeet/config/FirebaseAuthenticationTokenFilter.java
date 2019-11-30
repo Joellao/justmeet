@@ -50,6 +50,7 @@ public class FirebaseAuthenticationTokenFilter extends OncePerRequestFilter {
             Authentication authentication = getAndValidateAuthentication(authToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (Exception ex) {
+            System.out.println(ex);
             HttpServletResponse httpResponse = response;
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }

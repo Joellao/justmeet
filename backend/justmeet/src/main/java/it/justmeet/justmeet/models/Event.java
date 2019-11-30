@@ -3,31 +3,65 @@ package it.justmeet.justmeet.models;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Event {
-    private final String name;
-    private final User user;
-    private final String location;
-    private final String date;
-    private final boolean isFree;
-    private final boolean cancelled = false;
-    private final String categoria;
-    private final int maxNumber;
-    private List<Comment> comments;
-    private List<Review> reviews;
-    private List<String> photoUrls;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-    public Event(String name, User user, String location, String date, boolean isFree, String categoria,
-            int maxNumber) {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+@Entity
+@Table(name = "events")
+public class Event {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id")
+    private Long id;
+    @Column(name = "name")
+    private String name;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
+    @Column(name = "location")
+    private String location;
+    @Column(name = "date")
+    private String date;
+    @Column(name = "isFree")
+    private boolean isFree;
+    @Column(name = "cancelled")
+    private boolean cancelled = false;
+    @Column(name = "categoria")
+    private String categoria;
+    @Column(name = "maxNumber")
+    private int maxNumber;
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<Comment>();
+    // private List<Review> reviews;
+    // private List<String> photoUrls;
+
+    protected Event() {
+    }
+
+    public Event(String name, String location, String date, boolean isFree, String categoria, int maxNumber) {
         this.name = name;
-        this.user = user;
         this.location = location;
         this.date = date;
         this.isFree = isFree;
         this.categoria = categoria;
         this.maxNumber = maxNumber;
-        this.comments = new ArrayList<Comment>();
-        this.reviews = new ArrayList<Review>();
-        this.photoUrls = new ArrayList<String>();
+        // this.comments = new ArrayList<Comment>();
+        // this.reviews = new ArrayList<Review>();
+        // this.photoUrls = new ArrayList<String>();
     }
 
     public String getName() {
@@ -58,6 +92,66 @@ public class Event {
         return maxNumber;
     }
 
+    // public List<Review> getReviews() {
+    // return reviews;
+    // }
+
+    // public void setReviews(List<Review> reviews) {
+    // this.reviews = reviews;
+    // }
+
+    // public List<String> getPhotoUrls() {
+    // return photoUrls;
+    // }
+
+    // public void setPhotoUrls(List<String> photoUrls) {
+    // this.photoUrls = photoUrls;
+    // }
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setFree(boolean isFree) {
+        this.isFree = isFree;
+    }
+
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public void setMaxNumber(int maxNumber) {
+        this.maxNumber = maxNumber;
+    }
+
     public List<Comment> getComments() {
         return comments;
     }
@@ -66,23 +160,7 @@ public class Event {
         this.comments = comments;
     }
 
-    public List<Review> getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
-    }
-
-    public List<String> getPhotoUrls() {
-        return photoUrls;
-    }
-
-    public void setPhotoUrls(List<String> photoUrls) {
-        this.photoUrls = photoUrls;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
     }
 }

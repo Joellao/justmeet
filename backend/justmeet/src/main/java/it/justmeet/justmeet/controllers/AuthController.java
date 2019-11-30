@@ -12,6 +12,7 @@ import com.google.firebase.auth.UserRecord;
 import com.google.firebase.auth.UserRecord.CreateRequest;
 import com.google.gson.JsonElement;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,12 +24,17 @@ import org.springframework.web.client.RestTemplate;
 
 import it.justmeet.justmeet.DatabaseConfig;
 import it.justmeet.justmeet.exceptions.EmailAlreadyExistsException;
+import it.justmeet.justmeet.models.User;
+import it.justmeet.justmeet.models.repositories.UserRepository;
 import it.justmeet.justmeet.models.auth.LoginModel;
 import it.justmeet.justmeet.models.auth.SignupModelInstitution;
 import it.justmeet.justmeet.models.auth.SignupModelUser;
 
 @RestController
 public class AuthController {
+    @Autowired
+    UserRepository userRepo;
+
     @PostMapping("/login")
     public Object login(@RequestParam("email") String email, @RequestParam("password") String password)
             throws IOException, SQLException, URISyntaxException {
@@ -80,9 +86,8 @@ public class AuthController {
                 throw new EmailAlreadyExistsException();
             }
         }
-        Statement st = DatabaseConfig.getConnection().createStatement();
-        st.executeUpdate(
-                "INSERT INTO users (id,email) VALUES ('" + userRecord.getUid() + "','" + userRecord.getEmail() + "');");
+        userRepo.save(new User(userRecord.getUid(), user.getFirstName(), user.getLastName(), user.getEmail(),
+                user.getBirthDate()));
 
         return userRecord;
     }
