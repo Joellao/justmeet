@@ -13,7 +13,9 @@ import org.springframework.core.io.ClassPathResource;
 @SpringBootApplication
 public class Main {
     public static void main(String[] args) {
+    	System.out.println(System.getProperty("java.runtime.version"));
         SpringApplication.run(Main.class, args);
+        
         try {
             FirebaseOptions options = new FirebaseOptions.Builder().setCredentials(GoogleCredentials.fromStream(
                     new ClassPathResource("/justmeet-ea052-firebase-adminsdk-hqpog-acfd828f0b.json").getInputStream()))
@@ -23,5 +25,4 @@ public class Main {
             e.printStackTrace();
         }
     }
-
 }

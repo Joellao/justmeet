@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 public class AnnouncementController {
     @PostMapping("/announcement")
-    public Announcement createEvent(@RequestBody AnnouncementCreate annuncio,
+    public Announcement createAnnouncement(@RequestBody AnnouncementCreate annuncio,
             @RequestHeader("Authorization") String token) throws FirebaseAuthException {
         FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
         String userId = check.getUid();
@@ -52,8 +52,8 @@ public class AnnouncementController {
         // Cancella dal databse eventId
     }
 
-    @PostMapping("/announcement/comment")
-    public Comment addComment(@RequestBody CommentCreate comment, @RequestHeader("Authorization") String token)
+    @PostMapping("/announcement/{announcementId}/comment")
+    public Comment addComment(@RequestBody CommentCreate comment, @RequestHeader("Authorization") String token, @PathVariable("announcementId") String announcementId)
             throws FirebaseAuthException {
         FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
         String userId = check.getUid();

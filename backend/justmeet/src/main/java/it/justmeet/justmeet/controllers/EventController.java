@@ -27,11 +27,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 public class EventController {
     @Autowired
-    UserRepository userRepo;
+    UserRepository userRepo; //jpa è una libreria
     @Autowired
-    EventRepository eventRepo;
+    EventRepository eventRepo; //per collegare il database con il codice
     @Autowired
-    CommentRepository commentRepo;
+    CommentRepository commentRepo; //
 
     @PostMapping("/event")
     public Event createEvent(@RequestBody EventCreate event, @RequestHeader("Authorization") String token)
@@ -42,7 +42,11 @@ public class EventController {
         // CHIAMATA AL DATABSE CON userId per avere l'utente
         Event evento = new Event(event.getName(), event.getLocation(), event.getDate(), event.isFree(),
                 event.getCategory(), event.getMaxPersons());
+        evento.setUser(user);
         eventRepo.save(evento);
+        user.addEvent(evento);
+        userRepo.save(user);
+        
         return evento;
     }
 
