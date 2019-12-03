@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,34 +15,58 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.Review;
+import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.creates.ReviewCreate;
+import it.justmeet.justmeet.models.repositories.EventRepository;
+import it.justmeet.justmeet.models.repositories.ReviewRepository;
+import it.justmeet.justmeet.models.repositories.UserRepository;
 
 @RestController
 public class ReviewController {
-    @PostMapping("/review")
-    public Review addReview(@RequestBody ReviewCreate review, @RequestHeader("Authorization") String token)
-            throws FirebaseAuthException {
-        FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-        String userId = check.getUid();
-        // CHIAMATA AL DATABSE CON userId per avere l'utente
-        return new Review(null, null, null, 0, null);
-    }
 
-    @GetMapping("/review/{reviewId}")
-    public Review getReview(@PathVariable("reviewId") String reviewId) {
-        // Select dal databse e ritorni
-        return new Review(null, null, reviewId, 0, reviewId);
-    }
+	@Autowired
+	UserRepository userRepo; // jpa è una libreria
+	@Autowired
+	EventRepository eventRepo;
+	@Autowired
+	ReviewRepository reviewRepo; // jpa è una libreria
 
-    @PutMapping("/review/{reviewId}")
-    public Review modifyReview(@PathVariable("reviewId") String reviewId, @RequestBody ReviewCreate review) {
-        // Modifica al database con le nuove cose
-        return new Review(null, null, reviewId, 0, reviewId);
-    }
+	@PostMapping("/review/{eventId}")
+	public Review addReview(@RequestBody ReviewCreate review, @RequestHeader("Authorization") String token,
+			@PathVariable("eventId") Long eventId) throws FirebaseAuthException {
+		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+		String userId = check.getUid();
+		User user = userRepo.findByUid(userId);
+		Event event = eventRepo.findById(eventId).get();
+		// CHIAMATA AL DATABSE CON userId per avere la recensione
+		Review r = new Review(user, event, review.getBody(), review.getStars(), review.getDate());
+		reviewRepo.save(r);
+		return r;
+	}
 
-    @DeleteMapping("/review/{reviewId}")
-    public void deleteReview(@PathVariable("reviewId") String reviewId) {
-        // Cancella dal database
-    }
+	@GetMapping("/review/{reviewId}")
+	public Review getReview(@PathVariable("reviewId") Long reviewId) {
+		// Select dal databse e ritorni
+		return reviewRepo.findById(reviewId).get();
+	}
+
+	@PutMapping("/review/{reviewId}")
+	public Review modifyReview(@PathVariable("reviewId") Long reviewId, @RequestBody ReviewCreate review) {
+		// Modifica al database con le nuove cose
+		Review r=reviewRepo.findById(reviewId).get();
+    	r.setBody(review.getBody());
+    	r.setDate(review.getDate());
+    	r.setStars(review.getStars());
+    	reviewRepo.save(r);
+		return r;
+	}
+
+	@DeleteMapping("/review/{reviewId}")
+	public void deleteReview(@PathVariable("reviewId") Long reviewId) {
+		// Cancella dal database
+		Review r=reviewRepo.findById(reviewId).get();
+    	reviewRepo.delete(r);
+	}
 }

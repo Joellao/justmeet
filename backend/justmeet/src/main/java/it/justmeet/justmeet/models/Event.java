@@ -33,7 +33,21 @@ public class Event {
     @JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
-    @Column(name = "location")
+    
+    @JsonIgnoreProperties({ "event" })
+    public List<Review> getReviews() {
+		return reviews;
+	}
+
+	public void setReviews(List<Review> reviews) {
+		this.reviews = reviews;
+	}
+
+	public void setCategoria(String categoria) {
+		this.categoria = categoria;
+	}
+
+	@Column(name = "location")
     private String location;
     @Column(name = "date")
     private String date;
@@ -47,7 +61,8 @@ public class Event {
     private int maxNumber;
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<Comment>();
-    // private List<Review> reviews;
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<Review>();
     // private List<String> photoUrls;
 
     protected Event() {
@@ -146,7 +161,7 @@ public class Event {
         this.cancelled = cancelled;
     }
 
-    public void setCategoria(String categoria) {
+    public void setCategory(String categoria) {
         this.categoria = categoria;
     }
 
@@ -164,5 +179,9 @@ public class Event {
 
     public void addComment(Comment comment) {
         this.comments.add(comment);
+    }
+    
+    public void addReview(Review review) {
+        this.reviews.add(review);
     }
 }

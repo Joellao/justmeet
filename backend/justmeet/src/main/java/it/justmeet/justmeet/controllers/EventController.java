@@ -15,13 +15,17 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.justmeet.justmeet.models.creates.EventCreate;
+import it.justmeet.justmeet.models.creates.ReviewCreate;
 import it.justmeet.justmeet.models.repositories.EventRepository;
+import it.justmeet.justmeet.models.repositories.ReviewRepository;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 import it.justmeet.justmeet.models.Comment;
 import it.justmeet.justmeet.models.creates.CommentCreate;
 import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.Event;
+import it.justmeet.justmeet.models.Review;
+
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
@@ -32,7 +36,9 @@ public class EventController {
     EventRepository eventRepo; //per collegare il database con il codice
     @Autowired
     CommentRepository commentRepo; //
-
+    @Autowired
+    ReviewRepository reviewRepo;
+    
     @PostMapping("/event")
     public Event createEvent(@RequestBody EventCreate event, @RequestHeader("Authorization") String token)
             throws FirebaseAuthException {
@@ -61,13 +67,23 @@ public class EventController {
     public Event modifyEvent(@PathVariable("eventId") Long eventId, @RequestBody EventCreate event) {
         // Chiamata al database per aggiornare l'evento con i nuovi dati
         // return new Event(eventId, null, eventId, eventId, false, eventId, 0);
-        return null;
+    	Event evento=eventRepo.findById(eventId).get();
+    	evento.setName(event.getName());
+    	evento.setDate(event.getDate());
+    	evento.setLocation(event.getLocation());
+    	evento.setFree(event.isFree());
+    	evento.setCategory(event.getCategory());
+    	evento.setMaxNumber(event.getMaxPersons());
+    	eventRepo.save(evento);
+        return evento;
 
     }
 
     @DeleteMapping("/event/{eventId}")
     public void deleteEvent(@PathVariable("eventId") Long eventId) {
         // Cancella dal databse eventId
+    	Event evento=eventRepo.findById(eventId).get();
+    	eventRepo.delete(evento);
     }
 
     @PatchMapping("/event/{eventId}")
@@ -90,6 +106,22 @@ public class EventController {
         // Chiamata al databse per aggiungere un commento legato a questo evento
         return c;
     }
+    
+    @PostMapping("/event/{eventId}/review")
+    public Review addReview(@RequestBody ReviewCreate review, @PathVariable("eventId") Long eventId,
+            @RequestHeader("Authorization") String token) throws FirebaseAuthException {
+        FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+        String userId = check.getUid();
+        User user = userRepo.findByUid(userId);
+        Event event = eventRepo.findById(eventId).get();
+        Review r = new Review(user, event, review.getBody(), review.getStars(), review.getDate());
+        event.addReview(r);
+
+        eventRepo.save(event);
+        reviewRepo.save(r);
+        // Chiamata al databse per aggiungere un commento legato a questo evento
+        return r;
+    }
 
     @PostMapping("/event/photo")
     public Comment addPhoto(@RequestBody String url, @RequestHeader("Authorization") String token)
@@ -97,4 +129,6 @@ public class EventController {
         // Chiamata al databse per aggiungere una foto all'evento
         return new Comment(null, null, null, null, false);
     }
+    
+    
 }

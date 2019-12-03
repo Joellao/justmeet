@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,51 +14,77 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.justmeet.justmeet.models.creates.EventCreate;
+import it.justmeet.justmeet.models.repositories.AnnouncementRepository;
+import it.justmeet.justmeet.models.repositories.CommentRepository;
+import it.justmeet.justmeet.models.repositories.EventRepository;
+import it.justmeet.justmeet.models.repositories.UserRepository;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.Announcement;
 import it.justmeet.justmeet.models.creates.AnnouncementCreate;
 import it.justmeet.justmeet.models.Comment;
+import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.creates.CommentCreate;
 
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 public class AnnouncementController {
-    @PostMapping("/announcement")
-    public Announcement createAnnouncement(@RequestBody AnnouncementCreate annuncio,
-            @RequestHeader("Authorization") String token) throws FirebaseAuthException {
-        FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+	@Autowired
+	UserRepository userRepo; // jpa è una libreria
+	@Autowired
+	AnnouncementRepository announcementRepo; // per collegare il database con il codice
+	@Autowired
+	CommentRepository commentRepo;
+
+	@PostMapping("/announcement")
+	public Announcement createAnnouncement(@RequestBody AnnouncementCreate annuncio,
+			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+		String userId = check.getUid();
+		// CHIAMATA AL DATABSE CON userId per avere l'utente
+		User user = userRepo.findByUid(userId);
+		Announcement announce = new Announcement(annuncio.getName(), user, annuncio.getCategory());
+		announcementRepo.save(announce);
+		return announce;
+	}
+
+	@GetMapping("/announcement/{announcementId}")
+	public Announcement getAnnouncement(@PathVariable("announcementId") Long announceId) {
+		// Chiamata al databse con eventId per avere le info dell'annuncio
+		return announcementRepo.findById(announceId).get();
+	}
+
+	@PutMapping(value = "/announcement/{announcementId}")
+	public Announcement modifyAnnouncement(@PathVariable("announcementId") Long announcementId,
+			@RequestBody AnnouncementCreate announce) {
+		// Chiamata al database per aggiornare l'evento con i nuovi dati
+		Announcement announcement=announcementRepo.findById(announcementId).get();
+		announcement.setName(announce.getName());
+		announcement.setCategory(announce.getCategory());
+		announcementRepo.save(announcement);
+		return announcement;
+	}
+
+	@DeleteMapping("/announcement/{announcementId}")
+	public void deleteEvent(@PathVariable("announcementId") Long announcementId) {
+		// Cancella dal databse eventId
+		Announcement announce=announcementRepo.findById(announcementId).get();
+		announcementRepo.delete(announce);
+	}
+
+	@PostMapping("/announcement/{announcementId}/comment")
+	public Comment addComment(@RequestBody CommentCreate comment, @RequestHeader("Authorization") String token,
+			@PathVariable("announcementId") Long announcementId) throws FirebaseAuthException {
+		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
         String userId = check.getUid();
-        // CHIAMATA AL DATABSE CON userId per avere l'utente
-        User utente = new User(userId, "Pinco", "Pallino", "pinco@gmial.com", "12/12/12");
-        Announcement announce = new Announcement(annuncio.getName(), utente, annuncio.getCategory());
-        return announce;
-    }
+        User user = userRepo.findByUid(userId);
+        Announcement announcement = announcementRepo.findById(announcementId).get();
+        //Comment c = new Comment(comment.getBody(), user, announcement, comment.getDate(), false);
+        //announcement.addComment(c);
 
-    @GetMapping("/announcement/{announcementId}")
-    public Announcement getAnnouncement(@PathVariable("announcementId") String eventId) {
-        // Chiamata al databse con eventId per avere le info dell'evento
-        return new Announcement(null, null, null);
-    }
-
-    @PutMapping(value = "/announcement/{announcementId}")
-    public Announcement modifyAnnouncement(@PathVariable("announcementId") String announcementId,
-            @RequestBody EventCreate event) {
-        // Chiamata al database per aggiornare l'evento con i nuovi dati
-        return new Announcement(null, null, null);
-    }
-
-    @DeleteMapping("/announcement/{announcementId}")
-    public void deleteEvent(@PathVariable("announcementId") String announcementId) {
-        // Cancella dal databse eventId
-    }
-
-    @PostMapping("/announcement/{announcementId}/comment")
-    public Comment addComment(@RequestBody CommentCreate comment, @RequestHeader("Authorization") String token, @PathVariable("announcementId") String announcementId)
-            throws FirebaseAuthException {
-        FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-        String userId = check.getUid();
-        // Chiamata al databse per aggiungere un commento legato a questo annuncio
-        return new Comment(null, null, null, null, false);
-    }
+        //announcementRepo.save(announcement);
+        //commentRepo.save(c);
+        // Chiamata al databse per aggiungere un commento legato a questo evento
+        return null;
+	}
 }
