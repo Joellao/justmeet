@@ -63,6 +63,8 @@ public class Event {
     private List<Comment> comments = new ArrayList<Comment>();
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
     private List<Review> reviews = new ArrayList<Review>();
+    @OneToMany(mappedBy = "partecipatedEvents", fetch = FetchType.LAZY)
+    private List<User> partecipants = new ArrayList<User>();
     // private List<String> photoUrls;
 
     protected Event() {
@@ -184,4 +186,17 @@ public class Event {
     public void addReview(Review review) {
         this.reviews.add(review);
     }
+    
+    public void addPartecipant(User user) {
+    	this.partecipants.add(user);
+    }
+
+	public List<User> getParticipants() {
+		return partecipants;
+	}
+
+	public void setParticipants(List<User> participants) {
+		this.partecipants = participants;
+	}
+    
 }

@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -34,6 +35,8 @@ public class User implements UserInterface {
     private String bio;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Event> events = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    private List<Event> partecipatedEvents = new ArrayList<Event>();
 
     protected User() {
     }
@@ -186,5 +189,17 @@ public class User implements UserInterface {
     public void addEvent(Event e) {
         this.events.add(e);
     }
+    
+    public void partecipateEvent(Event e) {
+    	this.partecipatedEvents.add(e);
+    }
+
+	public List<Event> getPartecipatedEvents() {
+		return partecipatedEvents;
+	}
+
+	public void setPartecipatedEvents(List<Event> partecipatedEvents) {
+		this.partecipatedEvents = partecipatedEvents;
+	}
 
 }

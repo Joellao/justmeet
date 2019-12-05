@@ -130,5 +130,19 @@ public class EventController {
         return new Comment(null, null, null, null, false);
     }
     
+    @PostMapping("/event/{eventId}/partecipate")
+    public boolean partecipateEvent(@PathVariable("eventId") Long eventId,
+            @RequestHeader("Authorization") String token) throws FirebaseAuthException {
+        FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+        String userId = check.getUid();
+        User user = userRepo.findByUid(userId);
+        Event event = eventRepo.findById(eventId).get();
+        user.partecipateEvent(event);
+        event.addPartecipant(user);
+        eventRepo.save(event);
+        userRepo.save(user);
+        return true;
+    }
+    
     
 }
