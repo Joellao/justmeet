@@ -18,181 +18,181 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @Entity
 @Table(name = "users")
 public class User implements UserInterface {
-    @Id
-    @Column(name = "uid")
-    private String uid;
-    @Column(name = "firstName")
-    private String firstName;
-    @Column(name = "lastName")
-    private String lastName;
-    @Column(name = "email")
-    private String email;
-    @Column(name = "birthDate")
-    private String birthDate;
-    @Column(name = "profileImage")
-    private String profileImage;
-    @Column(name = "bio")
-    private String bio;
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Event> events = new ArrayList<>();
-    @ManyToOne(fetch = FetchType.LAZY)
-    private List<Event> partecipatedEvents = new ArrayList<Event>();
+	@Id
+	@Column(name = "uid")
+	private String uid;
+	@Column(name = "firstName")
+	private String firstName;
+	@Column(name = "lastName")
+	private String lastName;
+	@Column(name = "email")
+	private String email;
+	@Column(name = "birthDate")
+	private String birthDate;
+	@Column(name = "profileImage")
+	private String profileImage;
+	@Column(name = "bio")
+	private String bio;
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	private List<Event> events = new ArrayList<>();
+	@ManyToOne(fetch = FetchType.LAZY)
+	private List<Event> partecipatedEvents = new ArrayList<Event>();
 
-    protected User() {
-    }
+	protected User() {
+	}
 
-    public User(String uid, String name, String lastName, String email, String birthDate) {
-        this.uid = uid;
-        this.firstName = name;
-        this.lastName = lastName;
-        this.email = email;
-        this.birthDate = birthDate;
-    }
+	public User(String uid, String name, String lastName, String email, String birthDate) {
+		this.uid = uid;
+		this.firstName = name;
+		this.lastName = lastName;
+		this.email = email;
+		this.birthDate = birthDate;
+	}
 
-    public String getFirstName() {
-        return firstName;
-    }
 
-    public String getLastName() {
-        return lastName;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public String getBirthDate() {
-        return birthDate;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    @Override
-    public void modifyProfile() {
-        // TODO Auto-generated method stub
+	public String getBirthDate() {
+		return birthDate;
+	}
 
-    }
+	@Override
+	public void modifyProfile() {
+		// TODO Auto-generated method stub
+		
+	}
 
-    @Override
-    public Event createEvent() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public Event createEvent() {
+		// TODO Auto-generated method stub
+		Event evento = new Event(event.getName(), event.getLocation(),event.getDescription(), event.getDate(), event.isFree(),
+	                event.getCategory(), event.getMaxPersons());
+	        evento.setUser(this);
+	        eventRepo.save(evento);
+	        user.addEvent(evento);
+	        userRepo.save(this);
+		return null;
+	}
 
-    @Override
-    public boolean cancelEvent() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean cancelEvent() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public Event modifyEvent() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Event modifyEvent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Comment createComment() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Comment createComment() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Comment modifyComment() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Comment modifyComment() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public boolean cancelComment() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean cancelComment() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public String addPhoto() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String addPhoto() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Review createReview() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Review createReview() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Review modifyReview() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public void reportComment() {
+		// TODO Auto-generated method stub
 
-    @Override
-    public void reportComment() {
-        // TODO Auto-generated method stub
+	}
 
-    }
+	@Override
+	public void reportBug() {
+		// TODO Auto-generated method stub
 
-    @Override
-    public void reportBug() {
-        // TODO Auto-generated method stub
+	}
 
-    }
+	public String getProfileImage() {
+		return profileImage;
+	}
 
-    public String getProfileImage() {
-        return profileImage;
-    }
+	public String getBio() {
+		return bio;
+	}
 
-    public String getBio() {
-        return bio;
-    }
+	public String getUid() {
+		return uid;
+	}
 
-    public String getUid() {
-        return uid;
-    }
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
 
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public void setBirthDate(String birthDate) {
+		this.birthDate = birthDate;
+	}
 
-    public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
-    }
+	public void setProfileImage(String profileImage) {
+		this.profileImage = profileImage;
+	}
 
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
-    }
+	public void setBio(String bio) {
+		this.bio = bio;
+	}
 
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
+	@JsonIgnoreProperties({ "user" })
+	public List<Event> getEvents() {
+		return events;
+	}
 
-    @JsonIgnoreProperties({ "user" })
-    public List<Event> getEvents() {
-        return events;
-    }
+	public void setEvents(List<Event> events) {
+		this.events = events;
+	}
 
-    public void setEvents(List<Event> events) {
-        this.events = events;
-    }
+	public void addEvent(Event e) {
+		this.events.add(e);
+	}
 
-    public void addEvent(Event e) {
-        this.events.add(e);
-    }
-    
-    public void partecipateEvent(Event e) {
-    	this.partecipatedEvents.add(e);
-    }
+	public void partecipateEvent(Event e) {
+		this.partecipatedEvents.add(e);
+	}
 
 	public List<Event> getPartecipatedEvents() {
 		return partecipatedEvents;

@@ -65,11 +65,6 @@ public class Institution implements UserInterface {
         return null;
     }
 
-    @Override
-    public Review modifyReview() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     @Override
     public void reportComment() {

@@ -32,7 +32,7 @@ public class Announcement {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	private User user;
+	private UserInterface user;
 
 	@OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
 	private List<Comment> comments = new ArrayList<Comment>();
@@ -42,7 +42,7 @@ public class Announcement {
 		
 	}
 	
-	public Announcement(String name, User user, String categoria) {
+	public Announcement(String name, UserInterface user, String categoria) {
 		this.name = name;
 		this.user = user;
 		this.category = categoria;
@@ -54,7 +54,7 @@ public class Announcement {
 		return name;
 	}
 
-	public User getUser() {
+	public UserInterface getUser() {
 		return user;
 	}
 

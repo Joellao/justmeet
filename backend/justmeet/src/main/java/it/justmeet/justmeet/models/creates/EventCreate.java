@@ -3,21 +3,31 @@ package it.justmeet.justmeet.models.creates;
 public class EventCreate {
     private String name;
     private String location;
+    private String description;
     private String date;
     private boolean isFree;
     private String category;
     private int maxPersons;
 
-    public EventCreate(String name, String location, String date, boolean isFree, String category, int maxPersons) {
+    public EventCreate(String name, String location, String description, String date, boolean isFree, String category, int maxPersons) {
         this.name = name;
         this.location = location;
+        this.description=description;
         this.date = date;
         this.isFree = isFree;
         this.category = category;
         this.maxPersons = maxPersons;
     }
 
-    public String getName() {
+    public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getName() {
         return name;
     }
 
