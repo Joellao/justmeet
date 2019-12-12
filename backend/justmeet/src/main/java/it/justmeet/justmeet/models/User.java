@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -15,184 +17,95 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-@Entity
+@Entity(name = "User")
 @Table(name = "users")
-public class User implements UserInterface {
-    @Id
-    @Column(name = "uid")
-    private String uid;
-    @Column(name = "firstName")
-    private String firstName;
-    @Column(name = "lastName")
-    private String lastName;
-    @Column(name = "email")
-    private String email;
-    @Column(name = "birthDate")
-    private String birthDate;
-    @Column(name = "profileImage")
-    private String profileImage;
-    @Column(name = "bio")
-    private String bio;
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Event> events = new ArrayList<>();
-    @ManyToOne(fetch = FetchType.LAZY)
-    private List<Event> partecipatedEvents = new ArrayList<Event>();
+@DiscriminatorValue("1")
+public class User extends AbstractUser {
 
-    protected User() {
-    }
+	@Column(name = "lastName")
+	private String lastName;
+	@Column(name = "birthDate")
+	private String birthDate;
+	@OneToMany(fetch = FetchType.LAZY)
+	private List<Event> partecipatedEvents = new ArrayList<Event>();
 
-    public User(String uid, String name, String lastName, String email, String birthDate) {
-        this.uid = uid;
-        this.firstName = name;
-        this.lastName = lastName;
-        this.email = email;
-        this.birthDate = birthDate;
-    }
+	protected User() {
+	}
 
-    public String getFirstName() {
-        return firstName;
-    }
+	public User(String uid, String name, String lastName, String email, String birthDate) {
+		super(uid, name, email);
+		this.lastName = lastName;
+		this.birthDate = birthDate;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public String getBirthDate() {
-        return birthDate;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    @Override
-    public void modifyProfile() {
-        // TODO Auto-generated method stub
+	public String getBirthDate() {
+		return birthDate;
+	}
 
-    }
+	public String getProfileImage() {
+		return profileImage;
+	}
 
-    @Override
-    public Event createEvent() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public String getBio() {
+		return bio;
+	}
 
-    @Override
-    public boolean cancelEvent() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	public String getUid() {
+		return uid;
+	}
 
-    @Override
-    public Event modifyEvent() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
 
-    @Override
-    public Comment createComment() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    @Override
-    public Comment modifyComment() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    @Override
-    public boolean cancelComment() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    @Override
-    public String addPhoto() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public void setBirthDate(String birthDate) {
+		this.birthDate = birthDate;
+	}
 
-    @Override
-    public Review createReview() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public void setProfileImage(String profileImage) {
+		this.profileImage = profileImage;
+	}
 
-    @Override
-    public Review modifyReview() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public void setBio(String bio) {
+		this.bio = bio;
+	}
 
-    @Override
-    public void reportComment() {
-        // TODO Auto-generated method stub
+	@JsonIgnoreProperties({ "user" })
+	public List<Event> getEvents() {
+		return events;
+	}
 
-    }
+	public void setEvents(List<Event> events) {
+		this.events = events;
+	}
 
-    @Override
-    public void reportBug() {
-        // TODO Auto-generated method stub
-
-    }
-
-    public String getProfileImage() {
-        return profileImage;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    @JsonIgnoreProperties({ "user" })
-    public List<Event> getEvents() {
-        return events;
-    }
-
-    public void setEvents(List<Event> events) {
-        this.events = events;
-    }
-
-    public void addEvent(Event e) {
-        this.events.add(e);
-    }
-    
-    public void partecipateEvent(Event e) {
-    	this.partecipatedEvents.add(e);
-    }
+	public void partecipateEvent(Event e) {
+		this.partecipatedEvents.add(e);
+	}
 
 	public List<Event> getPartecipatedEvents() {
 		return partecipatedEvents;

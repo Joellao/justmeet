@@ -29,7 +29,7 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    public User user;
+    public AbstractUser user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
@@ -46,7 +46,7 @@ public class Comment {
     protected Comment() {
     }
 
-    public Comment(String body, User user, Event event, String date, boolean state) {
+    public Comment(String body, AbstractUser user, Event event, String date, boolean state) {
         this.body = body;
         this.user = user;
         this.event = event;
@@ -59,7 +59,7 @@ public class Comment {
     }
 
     @JsonIgnoreProperties({ "events" })
-    public User getUser() {
+    public AbstractUser getUser() {
         return user;
     }
 
@@ -87,7 +87,7 @@ public class Comment {
         this.body = body;
     }
 
-    public void setUser(User user) {
+    public void setUser(AbstractUser user) {
         this.user = user;
     }
 

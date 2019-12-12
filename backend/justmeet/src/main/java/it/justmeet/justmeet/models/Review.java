@@ -18,43 +18,44 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "reviews")
 public class Review {
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
     private Long id;
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-	public User user;
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+    public User user;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public Event event;
+
     public void setUser(User user) {
-		this.user = user;
-	}
-    
-    protected Review() {
-    	
+        this.user = user;
     }
 
-	public void setEvent(Event event) {
-		this.event = event;
-	}
+    protected Review() {
 
-	public void setBody(String body) {
-		this.body = body;
-	}
+    }
 
-	public void setStars(int stars) {
-		this.stars = stars;
-	}
+    public void setEvent(Event event) {
+        this.event = event;
+    }
 
-	public void setDate(String date) {
-		this.date = date;
-	}
+    public void setBody(String body) {
+        this.body = body;
+    }
 
-	@Column(name = "body")
+    public void setStars(int stars) {
+        this.stars = stars;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    @Column(name = "body")
     public String body;
     @Column(name = "stars")
     public int stars;
@@ -69,11 +70,11 @@ public class Review {
         this.date = date;
     }
 
-    @JsonIgnoreProperties({ "reviews","events" })
+    @JsonIgnoreProperties({ "reviews", "events" })
     public User getUser() {
         return user;
     }
-    @JsonIgnoreProperties({ "reviews" })
+
     public Event getEvent() {
         return event;
     }

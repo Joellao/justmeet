@@ -20,6 +20,7 @@ import it.justmeet.justmeet.models.repositories.EventRepository;
 import it.justmeet.justmeet.models.repositories.ReviewRepository;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.repositories.UserRepository;
+import it.justmeet.justmeet.models.AbstractUser;
 import it.justmeet.justmeet.models.Comment;
 import it.justmeet.justmeet.models.creates.CommentCreate;
 import it.justmeet.justmeet.models.repositories.CommentRepository;
@@ -31,20 +32,20 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 public class EventController {
     @Autowired
-    UserRepository userRepo; //jpa è una libreria
+    UserRepository userRepo; // jpa è una libreria
     @Autowired
-    EventRepository eventRepo; //per collegare il database con il codice
+    EventRepository eventRepo; // per collegare il database con il codice
     @Autowired
     CommentRepository commentRepo; //
     @Autowired
     ReviewRepository reviewRepo;
-    
+
     @PostMapping("/event")
     public Event createEvent(@RequestBody EventCreate event, @RequestHeader("Authorization") String token)
             throws FirebaseAuthException {
         FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
         String userId = check.getUid();
-        User user = userRepo.findByUid(userId);
+        AbstractUser user = userRepo.findByUid(userId);
         // CHIAMATA AL DATABSE CON userId per avere l'utente
         Event evento = new Event(event.getName(), event.getLocation(), event.getDate(), event.isFree(),
                 event.getCategory(), event.getMaxPersons());
@@ -52,7 +53,7 @@ public class EventController {
         eventRepo.save(evento);
         user.addEvent(evento);
         userRepo.save(user);
-        
+
         return evento;
     }
 
@@ -60,21 +61,22 @@ public class EventController {
     public Event getEvent(@PathVariable("eventId") Long eventId) {
         // Chiamata al databse con eventId per avere le info dell'evento
         // return new Event(eventId, null, eventId, eventId, false, eventId, 0);
-        return eventRepo.findById(eventId).get();
+        Event event = eventRepo.findById(eventId).get();
+        return event;
     }
 
     @PutMapping(value = "/event/{eventId}")
     public Event modifyEvent(@PathVariable("eventId") Long eventId, @RequestBody EventCreate event) {
         // Chiamata al database per aggiornare l'evento con i nuovi dati
         // return new Event(eventId, null, eventId, eventId, false, eventId, 0);
-    	Event evento=eventRepo.findById(eventId).get();
-    	evento.setName(event.getName());
-    	evento.setDate(event.getDate());
-    	evento.setLocation(event.getLocation());
-    	evento.setFree(event.isFree());
-    	evento.setCategory(event.getCategory());
-    	evento.setMaxNumber(event.getMaxPersons());
-    	eventRepo.save(evento);
+        Event evento = eventRepo.findById(eventId).get();
+        evento.setName(event.getName());
+        evento.setDate(event.getDate());
+        evento.setLocation(event.getLocation());
+        evento.setFree(event.isFree());
+        evento.setCategory(event.getCategory());
+        evento.setMaxNumber(event.getMaxPersons());
+        eventRepo.save(evento);
         return evento;
 
     }
@@ -82,8 +84,8 @@ public class EventController {
     @DeleteMapping("/event/{eventId}")
     public void deleteEvent(@PathVariable("eventId") Long eventId) {
         // Cancella dal databse eventId
-    	Event evento=eventRepo.findById(eventId).get();
-    	eventRepo.delete(evento);
+        Event evento = eventRepo.findById(eventId).get();
+        eventRepo.delete(evento);
     }
 
     @PatchMapping("/event/{eventId}")
@@ -96,7 +98,7 @@ public class EventController {
             @RequestHeader("Authorization") String token) throws FirebaseAuthException {
         FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
         String userId = check.getUid();
-        User user = userRepo.findByUid(userId);
+        AbstractUser user = userRepo.findByUid(userId);
         Event event = eventRepo.findById(eventId).get();
         Comment c = new Comment(comment.getBody(), user, event, comment.getDate(), false);
         event.addComment(c);
@@ -106,13 +108,13 @@ public class EventController {
         // Chiamata al databse per aggiungere un commento legato a questo evento
         return c;
     }
-    
+
     @PostMapping("/event/{eventId}/review")
     public Review addReview(@RequestBody ReviewCreate review, @PathVariable("eventId") Long eventId,
             @RequestHeader("Authorization") String token) throws FirebaseAuthException {
         FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
         String userId = check.getUid();
-        User user = userRepo.findByUid(userId);
+        User user = (User) userRepo.findByUid(userId);
         Event event = eventRepo.findById(eventId).get();
         Review r = new Review(user, event, review.getBody(), review.getStars(), review.getDate());
         event.addReview(r);
@@ -129,20 +131,20 @@ public class EventController {
         // Chiamata al databse per aggiungere una foto all'evento
         return new Comment(null, null, null, null, false);
     }
-    
-    @PostMapping("/event/{eventId}/partecipate")
-    public boolean partecipateEvent(@PathVariable("eventId") Long eventId,
-            @RequestHeader("Authorization") String token) throws FirebaseAuthException {
-        FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-        String userId = check.getUid();
-        User user = userRepo.findByUid(userId);
-        Event event = eventRepo.findById(eventId).get();
-        user.partecipateEvent(event);
-        event.addPartecipant(user);
-        eventRepo.save(event);
-        userRepo.save(user);
-        return true;
-    }
-    
-    
+
+    // @PostMapping("/event/{eventId}/partecipate")
+    // public boolean partecipateEvent(@PathVariable("eventId") Long eventId,
+    // @RequestHeader("Authorization") String token)
+    // throws FirebaseAuthException {
+    // FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+    // String userId = check.getUid();
+    // User user = userRepo.findByUid(userId);
+    // Event event = eventRepo.findById(eventId).get();
+    // user.partecipateEvent(event);
+    // event.addPartecipant(user);
+    // eventRepo.save(event);
+    // userRepo.save(user);
+    // return true;
+    // }
+
 }

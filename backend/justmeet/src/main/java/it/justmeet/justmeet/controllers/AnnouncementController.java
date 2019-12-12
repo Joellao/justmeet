@@ -42,7 +42,7 @@ public class AnnouncementController {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
 		// CHIAMATA AL DATABSE CON userId per avere l'utente
-		User user = userRepo.findByUid(userId);
+		User user = (User) userRepo.findByUid(userId);
 		Announcement announce = new Announcement(annuncio.getName(), user, annuncio.getCategory());
 		announcementRepo.save(announce);
 		return announce;
@@ -58,7 +58,7 @@ public class AnnouncementController {
 	public Announcement modifyAnnouncement(@PathVariable("announcementId") Long announcementId,
 			@RequestBody AnnouncementCreate announce) {
 		// Chiamata al database per aggiornare l'evento con i nuovi dati
-		Announcement announcement=announcementRepo.findById(announcementId).get();
+		Announcement announcement = announcementRepo.findById(announcementId).get();
 		announcement.setName(announce.getName());
 		announcement.setCategory(announce.getCategory());
 		announcementRepo.save(announcement);
@@ -68,7 +68,7 @@ public class AnnouncementController {
 	@DeleteMapping("/announcement/{announcementId}")
 	public void deleteEvent(@PathVariable("announcementId") Long announcementId) {
 		// Cancella dal databse eventId
-		Announcement announce=announcementRepo.findById(announcementId).get();
+		Announcement announce = announcementRepo.findById(announcementId).get();
 		announcementRepo.delete(announce);
 	}
 
@@ -76,15 +76,16 @@ public class AnnouncementController {
 	public Comment addComment(@RequestBody CommentCreate comment, @RequestHeader("Authorization") String token,
 			@PathVariable("announcementId") Long announcementId) throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-        String userId = check.getUid();
-        User user = userRepo.findByUid(userId);
-        Announcement announcement = announcementRepo.findById(announcementId).get();
-        //Comment c = new Comment(comment.getBody(), user, announcement, comment.getDate(), false);
-        //announcement.addComment(c);
+		String userId = check.getUid();
+		User user = (User) userRepo.findByUid(userId);
+		Announcement announcement = announcementRepo.findById(announcementId).get();
+		// Comment c = new Comment(comment.getBody(), user, announcement,
+		// comment.getDate(), false);
+		// announcement.addComment(c);
 
-        //announcementRepo.save(announcement);
-        //commentRepo.save(c);
-        // Chiamata al databse per aggiungere un commento legato a questo evento
-        return null;
+		// announcementRepo.save(announcement);
+		// commentRepo.save(c);
+		// Chiamata al databse per aggiungere un commento legato a questo evento
+		return null;
 	}
 }
