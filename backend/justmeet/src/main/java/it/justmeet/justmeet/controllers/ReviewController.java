@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.Review;
 import it.justmeet.justmeet.models.User;
-import it.justmeet.justmeet.models.UserInterface;
 import it.justmeet.justmeet.models.creates.ReviewCreate;
 import it.justmeet.justmeet.models.repositories.EventRepository;
 import it.justmeet.justmeet.models.repositories.ReviewRepository;
@@ -39,7 +38,7 @@ public class ReviewController {
 			@PathVariable("eventId") Long eventId) throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
-		UserInterface user = userRepo.findByUid(userId);
+		User user = (User) userRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
 		// CHIAMATA AL DATABSE CON userId per avere la recensione
 		Review r = new Review(user, event, review.getBody(), review.getStars(), review.getDate());
@@ -56,18 +55,18 @@ public class ReviewController {
 	@PutMapping("/review/{reviewId}")
 	public Review modifyReview(@PathVariable("reviewId") Long reviewId, @RequestBody ReviewCreate review) {
 		// Modifica al database con le nuove cose
-		Review r=reviewRepo.findById(reviewId).get();
-    	r.setBody(review.getBody());
-    	r.setDate(review.getDate());
-    	r.setStars(review.getStars());
-    	reviewRepo.save(r);
+		Review r = reviewRepo.findById(reviewId).get();
+		r.setBody(review.getBody());
+		r.setDate(review.getDate());
+		r.setStars(review.getStars());
+		reviewRepo.save(r);
 		return r;
 	}
 
 	@DeleteMapping("/review/{reviewId}")
 	public void deleteReview(@PathVariable("reviewId") Long reviewId) {
 		// Cancella dal database
-		Review r=reviewRepo.findById(reviewId).get();
-    	reviewRepo.delete(r);
+		Review r = reviewRepo.findById(reviewId).get();
+		reviewRepo.delete(r);
 	}
 }

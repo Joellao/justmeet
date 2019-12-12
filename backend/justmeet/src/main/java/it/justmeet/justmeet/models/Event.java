@@ -32,22 +32,22 @@ public class Event {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private User user;
-    
+    private AbstractUser user;
+
     @JsonIgnoreProperties({ "event" })
     public List<Review> getReviews() {
-		return reviews;
-	}
+        return reviews;
+    }
 
-	public void setReviews(List<Review> reviews) {
-		this.reviews = reviews;
-	}
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
 
-	public void setCategoria(String categoria) {
-		this.categoria = categoria;
-	}
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
 
-	@Column(name = "location")
+    @Column(name = "location")
     private String location;
     @Column(name = "date")
     private String date;
@@ -72,7 +72,8 @@ public class Event {
     protected Event() {
     }
 
-    public Event(String name, String location, String description, String date, boolean isFree, String categoria, int maxNumber) {
+    public Event(String name, String location, String description, String date, boolean isFree, String categoria,
+            int maxNumber) {
         this.name = name;
         this.location = location;
         this.date = date;
@@ -88,8 +89,10 @@ public class Event {
         return name;
     }
 
+    // Per evitare ricorsione, quando si richiama l'utente il campo events non viene
+    // incluso
     @JsonIgnoreProperties({ "events" })
-    public User getUser() {
+    public AbstractUser getUser() {
         return user;
     }
 
@@ -145,7 +148,7 @@ public class Event {
         this.name = name;
     }
 
-    public void setUser(User user) {
+    public void setUser(AbstractUser user) {
         this.user = user;
     }
 
@@ -184,37 +187,21 @@ public class Event {
     public void addComment(Comment comment) {
         this.comments.add(comment);
     }
-    
+
     public void addReview(Review review) {
         this.reviews.add(review);
     }
-    
+
     public void addPartecipant(User user) {
-    	this.partecipants.add(user);
+        this.partecipants.add(user);
     }
 
-	public List<User> getParticipants() {
-		return partecipants;
-	}
+    public List<User> getParticipants() {
+        return partecipants;
+    }
 
-	public void setParticipants(List<User> participants) {
-		this.partecipants = participants;
-	}
+    public void setParticipants(List<User> participants) {
+        this.partecipants = participants;
+    }
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public List<User> getPartecipants() {
-		return partecipants;
-	}
-
-	public void setPartecipants(List<User> partecipants) {
-		this.partecipants = partecipants;
-	}
-    
 }

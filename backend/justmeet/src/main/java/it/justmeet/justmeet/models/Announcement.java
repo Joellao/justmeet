@@ -32,29 +32,29 @@ public class Announcement {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	private UserInterface user;
+	private AbstractUser user;
 
 	@OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
 	private List<Comment> comments = new ArrayList<Comment>();
-	//private List<Review> reviews;
+	// private List<Review> reviews;
 
 	protected Announcement() {
-		
+
 	}
-	
-	public Announcement(String name, UserInterface user, String categoria) {
+
+	public Announcement(String name, AbstractUser user, String categoria) {
 		this.name = name;
 		this.user = user;
 		this.category = categoria;
 		this.comments = new ArrayList<Comment>();
-		//this.reviews = new ArrayList<Review>();
+		// this.reviews = new ArrayList<Review>();
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public UserInterface getUser() {
+	public AbstractUser getUser() {
 		return user;
 	}
 
@@ -69,14 +69,11 @@ public class Announcement {
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
-/*
-	public List<Review> getReviews() {
-		return reviews;
-	}
-
-	public void setReviews(List<Review> reviews) {
-		this.reviews = reviews;
-	}*/
+	/*
+	 * public List<Review> getReviews() { return reviews; }
+	 * 
+	 * public void setReviews(List<Review> reviews) { this.reviews = reviews; }
+	 */
 
 	public Long getId() {
 		return id;
