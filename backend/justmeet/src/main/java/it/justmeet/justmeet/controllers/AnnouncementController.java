@@ -19,6 +19,7 @@ import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.repositories.EventRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 import it.justmeet.justmeet.models.User;
+import it.justmeet.justmeet.models.UserInterface;
 import it.justmeet.justmeet.models.Announcement;
 import it.justmeet.justmeet.models.creates.AnnouncementCreate;
 import it.justmeet.justmeet.models.Comment;
@@ -42,7 +43,11 @@ public class AnnouncementController {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
 		// CHIAMATA AL DATABSE CON userId per avere l'utente
+<<<<<<< HEAD
 		User user = (User) userRepo.findByUid(userId);
+=======
+		UserInterface user = userRepo.findByUid(userId);
+>>>>>>> 076cf74f6bcb1f83bbb6d3bacc1b846e6ebec218
 		Announcement announce = new Announcement(annuncio.getName(), user, annuncio.getCategory());
 		announcementRepo.save(announce);
 		return announce;
@@ -76,12 +81,20 @@ public class AnnouncementController {
 	public Comment addComment(@RequestBody CommentCreate comment, @RequestHeader("Authorization") String token,
 			@PathVariable("announcementId") Long announcementId) throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+<<<<<<< HEAD
 		String userId = check.getUid();
 		User user = (User) userRepo.findByUid(userId);
 		Announcement announcement = announcementRepo.findById(announcementId).get();
 		// Comment c = new Comment(comment.getBody(), user, announcement,
 		// comment.getDate(), false);
 		// announcement.addComment(c);
+=======
+        String userId = check.getUid();
+        UserInterface user = userRepo.findByUid(userId);
+        Announcement announcement = announcementRepo.findById(announcementId).get();
+        //Comment c = new Comment(comment.getBody(), user, announcement, comment.getDate(), false);
+        //announcement.addComment(c);
+>>>>>>> 076cf74f6bcb1f83bbb6d3bacc1b846e6ebec218
 
 		// announcementRepo.save(announcement);
 		// commentRepo.save(c);

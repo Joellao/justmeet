@@ -19,6 +19,7 @@ import it.justmeet.justmeet.models.creates.ReviewCreate;
 import it.justmeet.justmeet.models.repositories.EventRepository;
 import it.justmeet.justmeet.models.repositories.ReviewRepository;
 import it.justmeet.justmeet.models.User;
+import it.justmeet.justmeet.models.UserInterface;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 import it.justmeet.justmeet.models.AbstractUser;
 import it.justmeet.justmeet.models.Comment;
@@ -45,6 +46,7 @@ public class EventController {
             throws FirebaseAuthException {
         FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
         String userId = check.getUid();
+<<<<<<< HEAD
         AbstractUser user = userRepo.findByUid(userId);
         // CHIAMATA AL DATABSE CON userId per avere l'utente
         Event evento = new Event(event.getName(), event.getLocation(), event.getDate(), event.isFree(),
@@ -54,6 +56,12 @@ public class EventController {
         user.addEvent(evento);
         userRepo.save(user);
 
+=======
+        UserInterface user = userRepo.findByUid(userId);
+        // CHIAMATA AL DATABSE CON userId per avere l'utente
+       
+        
+>>>>>>> 076cf74f6bcb1f83bbb6d3bacc1b846e6ebec218
         return evento;
     }
 
@@ -69,6 +77,7 @@ public class EventController {
     public Event modifyEvent(@PathVariable("eventId") Long eventId, @RequestBody EventCreate event) {
         // Chiamata al database per aggiornare l'evento con i nuovi dati
         // return new Event(eventId, null, eventId, eventId, false, eventId, 0);
+<<<<<<< HEAD
         Event evento = eventRepo.findById(eventId).get();
         evento.setName(event.getName());
         evento.setDate(event.getDate());
@@ -77,6 +86,17 @@ public class EventController {
         evento.setCategory(event.getCategory());
         evento.setMaxNumber(event.getMaxPersons());
         eventRepo.save(evento);
+=======
+    	Event evento=eventRepo.findById(eventId).get();
+    	evento.setName(event.getName());
+    	evento.setDate(event.getDate());
+    	evento.setLocation(event.getLocation());
+    	evento.setFree(event.isFree());
+    	evento.setDescription(event.getDescription());
+    	evento.setCategory(event.getCategory());
+    	evento.setMaxNumber(event.getMaxPersons());
+    	eventRepo.save(evento);
+>>>>>>> 076cf74f6bcb1f83bbb6d3bacc1b846e6ebec218
         return evento;
 
     }
@@ -98,7 +118,11 @@ public class EventController {
             @RequestHeader("Authorization") String token) throws FirebaseAuthException {
         FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
         String userId = check.getUid();
+<<<<<<< HEAD
         AbstractUser user = userRepo.findByUid(userId);
+=======
+        UserInterface user = userRepo.findByUid(userId);
+>>>>>>> 076cf74f6bcb1f83bbb6d3bacc1b846e6ebec218
         Event event = eventRepo.findById(eventId).get();
         Comment c = new Comment(comment.getBody(), user, event, comment.getDate(), false);
         event.addComment(c);
@@ -114,7 +138,11 @@ public class EventController {
             @RequestHeader("Authorization") String token) throws FirebaseAuthException {
         FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
         String userId = check.getUid();
+<<<<<<< HEAD
         User user = (User) userRepo.findByUid(userId);
+=======
+        UserInterface user = userRepo.findByUid(userId);
+>>>>>>> 076cf74f6bcb1f83bbb6d3bacc1b846e6ebec218
         Event event = eventRepo.findById(eventId).get();
         Review r = new Review(user, event, review.getBody(), review.getStars(), review.getDate());
         event.addReview(r);
