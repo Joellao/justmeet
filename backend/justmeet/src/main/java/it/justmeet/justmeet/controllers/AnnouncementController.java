@@ -19,6 +19,7 @@ import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.repositories.EventRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 import it.justmeet.justmeet.models.User;
+import it.justmeet.justmeet.models.UserInterface;
 import it.justmeet.justmeet.models.Announcement;
 import it.justmeet.justmeet.models.creates.AnnouncementCreate;
 import it.justmeet.justmeet.models.Comment;
@@ -42,7 +43,7 @@ public class AnnouncementController {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
 		// CHIAMATA AL DATABSE CON userId per avere l'utente
-		User user = userRepo.findByUid(userId);
+		UserInterface user = userRepo.findByUid(userId);
 		Announcement announce = new Announcement(annuncio.getName(), user, annuncio.getCategory());
 		announcementRepo.save(announce);
 		return announce;
@@ -77,7 +78,7 @@ public class AnnouncementController {
 			@PathVariable("announcementId") Long announcementId) throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
         String userId = check.getUid();
-        User user = userRepo.findByUid(userId);
+        UserInterface user = userRepo.findByUid(userId);
         Announcement announcement = announcementRepo.findById(announcementId).get();
         //Comment c = new Comment(comment.getBody(), user, announcement, comment.getDate(), false);
         //announcement.addComment(c);

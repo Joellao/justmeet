@@ -20,8 +20,6 @@ public interface UserInterface {
 
     public Review createReview();
 
-    public Review modifyReview();
-
     public void reportComment();
 
     public void reportBug();
