@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.Review;
 import it.justmeet.justmeet.models.User;
-import it.justmeet.justmeet.models.UserInterface;
 import it.justmeet.justmeet.models.creates.ReviewCreate;
 import it.justmeet.justmeet.models.repositories.EventRepository;
 import it.justmeet.justmeet.models.repositories.ReviewRepository;
@@ -39,11 +38,7 @@ public class ReviewController {
 			@PathVariable("eventId") Long eventId) throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
-<<<<<<< HEAD
 		User user = (User) userRepo.findByUid(userId);
-=======
-		UserInterface user = userRepo.findByUid(userId);
->>>>>>> 076cf74f6bcb1f83bbb6d3bacc1b846e6ebec218
 		Event event = eventRepo.findById(eventId).get();
 		// CHIAMATA AL DATABSE CON userId per avere la recensione
 		Review r = new Review(user, event, review.getBody(), review.getStars(), review.getDate());

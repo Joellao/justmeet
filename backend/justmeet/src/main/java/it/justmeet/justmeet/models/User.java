@@ -19,7 +19,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity(name = "User")
 @Table(name = "users")
-<<<<<<< HEAD
 @DiscriminatorValue("1")
 public class User extends AbstractUser {
 
@@ -28,49 +27,17 @@ public class User extends AbstractUser {
 	@Column(name = "birthDate")
 	private String birthDate;
 	@OneToMany(fetch = FetchType.LAZY)
-=======
-public class User implements UserInterface {
-	@Id
-	@Column(name = "uid")
-	private String uid;
-	@Column(name = "firstName")
-	private String firstName;
-	@Column(name = "lastName")
-	private String lastName;
-	@Column(name = "email")
-	private String email;
-	@Column(name = "birthDate")
-	private String birthDate;
-	@Column(name = "profileImage")
-	private String profileImage;
-	@Column(name = "bio")
-	private String bio;
-	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-	private List<Event> events = new ArrayList<>();
-	@ManyToOne(fetch = FetchType.LAZY)
->>>>>>> 076cf74f6bcb1f83bbb6d3bacc1b846e6ebec218
 	private List<Event> partecipatedEvents = new ArrayList<Event>();
 
 	protected User() {
 	}
 
 	public User(String uid, String name, String lastName, String email, String birthDate) {
-<<<<<<< HEAD
 		super(uid, name, email);
 		this.lastName = lastName;
 		this.birthDate = birthDate;
 	}
 
-=======
-		this.uid = uid;
-		this.firstName = name;
-		this.lastName = lastName;
-		this.email = email;
-		this.birthDate = birthDate;
-	}
-
-
->>>>>>> 076cf74f6bcb1f83bbb6d3bacc1b846e6ebec218
 	public String getFirstName() {
 		return firstName;
 	}
@@ -87,80 +54,6 @@ public class User implements UserInterface {
 		return birthDate;
 	}
 
-<<<<<<< HEAD
-=======
-	@Override
-	public void modifyProfile() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public Event createEvent() {
-		// TODO Auto-generated method stub
-		Event evento = new Event(event.getName(), event.getLocation(),event.getDescription(), event.getDate(), event.isFree(),
-	                event.getCategory(), event.getMaxPersons());
-	        evento.setUser(this);
-	        eventRepo.save(evento);
-	        user.addEvent(evento);
-	        userRepo.save(this);
-		return null;
-	}
-
-	@Override
-	public boolean cancelEvent() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Event modifyEvent() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Comment createComment() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Comment modifyComment() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean cancelComment() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public String addPhoto() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Review createReview() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void reportComment() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void reportBug() {
-		// TODO Auto-generated method stub
-
-	}
-
->>>>>>> 076cf74f6bcb1f83bbb6d3bacc1b846e6ebec218
 	public String getProfileImage() {
 		return profileImage;
 	}
@@ -210,13 +103,6 @@ public class User implements UserInterface {
 		this.events = events;
 	}
 
-<<<<<<< HEAD
-=======
-	public void addEvent(Event e) {
-		this.events.add(e);
-	}
-
->>>>>>> 076cf74f6bcb1f83bbb6d3bacc1b846e6ebec218
 	public void partecipateEvent(Event e) {
 		this.partecipatedEvents.add(e);
 	}

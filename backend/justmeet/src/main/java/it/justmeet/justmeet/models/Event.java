@@ -72,7 +72,8 @@ public class Event {
     protected Event() {
     }
 
-    public Event(String name, String location, String description, String date, boolean isFree, String categoria, int maxNumber) {
+    public Event(String name, String location, String description, String date, boolean isFree, String categoria,
+            int maxNumber) {
         this.name = name;
         this.location = location;
         this.date = date;
@@ -203,27 +204,4 @@ public class Event {
         this.partecipants = participants;
     }
 
-<<<<<<< HEAD
-=======
-	public void setParticipants(List<User> participants) {
-		this.partecipants = participants;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public List<User> getPartecipants() {
-		return partecipants;
-	}
-
-	public void setPartecipants(List<User> partecipants) {
-		this.partecipants = partecipants;
-	}
-    
->>>>>>> 076cf74f6bcb1f83bbb6d3bacc1b846e6ebec218
 }
