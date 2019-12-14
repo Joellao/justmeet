@@ -4,6 +4,15 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/**
+ * Responsabilità: definisce un utente autenticato istituzionale  
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
+
 @Entity(name = "Institution")
 @Table(name = "users")
 @DiscriminatorValue("2")

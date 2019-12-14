@@ -17,6 +17,15 @@ import javax.persistence.Table;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+/**
+ * Responsabilità: definisce un annuncio 
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
+
 @Entity
 @Table(name = "announcements")
 public class Announcement {
@@ -33,11 +42,10 @@ public class Announcement {
 	@JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private AbstractUser user;
-
 	@OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
 	private List<Comment> comments = new ArrayList<Comment>();
-	// private List<Review> reviews;
-
+	
+	
 	protected Announcement() {
 
 	}
@@ -47,8 +55,7 @@ public class Announcement {
 		this.user = user;
 		this.category = categoria;
 		this.comments = new ArrayList<Comment>();
-		// this.reviews = new ArrayList<Review>();
-	}
+		}
 
 	public String getName() {
 		return name;
@@ -69,11 +76,6 @@ public class Announcement {
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
-	/*
-	 * public List<Review> getReviews() { return reviews; }
-	 * 
-	 * public void setReviews(List<Review> reviews) { this.reviews = reviews; }
-	 */
 
 	public Long getId() {
 		return id;

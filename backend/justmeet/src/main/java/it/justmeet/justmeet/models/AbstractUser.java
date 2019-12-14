@@ -4,16 +4,23 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.OneToMany;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.FetchType;
 import java.util.List;
 import java.util.ArrayList;
+
+/**
+ * Responsabilità: definisce un qualsiasi utente auteticato  
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
 
 @Entity(name = "AbstractUser")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

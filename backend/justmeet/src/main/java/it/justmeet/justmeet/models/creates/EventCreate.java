@@ -1,5 +1,14 @@
 package it.justmeet.justmeet.models.creates;
 
+/**
+ * Responsabilità: si occupa della creazione di un evento 
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
+
 public class EventCreate {
     private String name;
     private String location;

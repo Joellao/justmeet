@@ -21,15 +21,24 @@ import it.justmeet.justmeet.models.repositories.ReviewRepository;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.AbstractUser;
 import it.justmeet.justmeet.models.repositories.UserRepository;
-import it.justmeet.justmeet.models.AbstractUser;
 import it.justmeet.justmeet.models.Comment;
 import it.justmeet.justmeet.models.creates.CommentCreate;
 import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.Event;
+import it.justmeet.justmeet.models.Photo;
 import it.justmeet.justmeet.models.Review;
 
 import org.springframework.web.bind.annotation.PutMapping;
 
+
+/**
+ * Responsabilità: coordina le azioni che si possono eseguire in un evento
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
 @RestController
 public class EventController {
     @Autowired
@@ -41,6 +50,14 @@ public class EventController {
     @Autowired
     ReviewRepository reviewRepo;
 
+    /**
+     * metodo che mi permette dic reare un nuovo evento 
+     * 
+     * @param event
+     * @param token
+     * @return l'evento creato
+     * @throws FirebaseAuthException
+     */
     @PostMapping("/event")
     public Event createEvent(@RequestBody EventCreate event, @RequestHeader("Authorization") String token)
             throws FirebaseAuthException {
@@ -58,6 +75,13 @@ public class EventController {
         return evento;
     }
 
+    /**
+     * metodo che grazie alla chiamata get mi permette di visualizzare l'evento
+	 * in base al suo id di riconoscimento
+	 * 
+     * @param eventId
+     * @return l'id dell'evento selezionato
+     */
     @GetMapping("/event/{eventId}")
     public Event getEvent(@PathVariable("eventId") Long eventId) {
         // Chiamata al databse con eventId per avere le info dell'evento
@@ -66,6 +90,13 @@ public class EventController {
         return event;
     }
 
+    /**
+     * metodo che mi permette di modificare un evento
+     * 
+     * @param eventId
+     * @param event
+     * @return l'evento modificato
+     */
     @PutMapping(value = "/event/{eventId}")
     public Event modifyEvent(@PathVariable("eventId") Long eventId, @RequestBody EventCreate event) {
         // Chiamata al database per aggiornare l'evento con i nuovi dati
@@ -79,9 +110,12 @@ public class EventController {
         evento.setMaxNumber(event.getMaxPersons());
         eventRepo.save(evento);
         return evento;
-
     }
 
+    /**
+     * metodo che mi permette di eliminare l'evento
+     * @param eventId
+     */
     @DeleteMapping("/event/{eventId}")
     public void deleteEvent(@PathVariable("eventId") Long eventId) {
         // Cancella dal databse eventId
@@ -89,14 +123,27 @@ public class EventController {
         eventRepo.delete(evento);
     }
 
+    /**
+     * metodo che mi permette di annullare l'evento
+     * @param eventId
+     */
     @PatchMapping("/event/{eventId}")
     public void cancelEvent(@PathVariable("eventId") Long eventId) {
         // Chiamata al databse per annullare l'evento identificato da eventId
     }
 
+    /**
+     * metodo che mi permete di aggiungere un commento all'evento
+     * 
+     * @param comment
+     * @param eventId
+     * @param token
+     * @return l'evento con il commento 
+     * @throws FirebaseAuthException
+     */
     @PostMapping("/event/{eventId}/comment")
     public Comment addComment(@RequestBody CommentCreate comment, @PathVariable("eventId") Long eventId,
-            @RequestHeader("Authorization") String token) throws FirebaseAuthException {
+        @RequestHeader("Authorization") String token) throws FirebaseAuthException {
         FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
         String userId = check.getUid();
         AbstractUser user = userRepo.findByUid(userId);
@@ -110,6 +157,14 @@ public class EventController {
         return c;
     }
 
+    /**
+     * metodo che mi permette selezionato l'evento, di aggiungere una recensione all'evento
+     * @param review
+     * @param eventId
+     * @param token
+     * @return l'evento con la relativa recensione
+     * @throws FirebaseAuthException
+     */
     @PostMapping("/event/{eventId}/review")
     public Review addReview(@RequestBody ReviewCreate review, @PathVariable("eventId") Long eventId,
             @RequestHeader("Authorization") String token) throws FirebaseAuthException {
@@ -126,11 +181,12 @@ public class EventController {
         return r;
     }
 
-    @PostMapping("/event/photo")
-    public Comment addPhoto(@RequestBody String url, @RequestHeader("Authorization") String token)
+    /*
+    @PostMapping("/event/{eventId}/photo")
+    public Photo addPhoto(@RequestBody String url, @RequestHeader("Authorization") String token)
             throws FirebaseAuthException {
         // Chiamata al databse per aggiungere una foto all'evento
-        return new Comment(null, null, null, null, false);
+        return new Photo(null);
     }
 
     // @PostMapping("/event/{eventId}/partecipate")
@@ -146,6 +202,6 @@ public class EventController {
     // eventRepo.save(event);
     // userRepo.save(user);
     // return true;
-    // }
+    // }*/
 
 }

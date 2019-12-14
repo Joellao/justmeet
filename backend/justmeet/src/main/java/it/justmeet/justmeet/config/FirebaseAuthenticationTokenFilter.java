@@ -20,6 +20,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+/**
+ * Responsabilità:  
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
+
 @Component
 public class FirebaseAuthenticationTokenFilter extends OncePerRequestFilter {
 
@@ -27,6 +36,7 @@ public class FirebaseAuthenticationTokenFilter extends OncePerRequestFilter {
     private static final Logger logger = LogManager.getLogger(FirebaseAuthenticationTokenFilter.class);
 
     /**
+     *
      *
      * @param request
      * @param response
