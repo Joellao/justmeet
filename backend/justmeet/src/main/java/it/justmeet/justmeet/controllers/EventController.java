@@ -203,6 +203,9 @@ public class EventController {
 		String userId = check.getUid();
 		User user = (User) userRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
+		if(event.getPartecipants().size()==event.getMaxNumber()) {
+			return false;
+		}
 		event.addPartecipant(user);
 		user.partecipateEvent(event);
 		userRepo.save(user);
