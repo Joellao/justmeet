@@ -38,54 +38,7 @@ public class ReviewController {
 	EventRepository eventRepo;
 	@Autowired
 	ReviewRepository reviewRepo; // jpa è una libreria
-
-	/**
-	 * metodo che mi permette di creare la recensione
-	 * 
-	 * @param review
-	 * @param token
-	 * @param eventId
-	 * @return la recensione creata
-	 * @throws FirebaseAuthException
-	 */
-	@PostMapping("/review/{eventId}")
-	public Review addReview(@RequestBody ReviewCreate review, @RequestHeader("Authorization") String token,
-			@PathVariable("eventId") Long eventId) throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String userId = check.getUid();
-		User user = (User) userRepo.findByUid(userId);
-		Event event = eventRepo.findById(eventId).get();
-		// CHIAMATA AL DATABSE CON userId per avere la recensione
-		Review r = new Review(user, event, review.getBody(), review.getStars(), review.getDate());
-		reviewRepo.save(r);
-		return r;
-	}
-
-	/**
-	 * metodo che mi permette di visualizzare la recensione in base al suo id 
-	 * di riconoscimento
-	 * 
-	 * @param reviewId
-	 * @return l'id della recensione 
-	 */
-	@GetMapping("/review/{reviewId}")
-	public Review getReview(@PathVariable("reviewId") Long reviewId) {
-		// Select dal databse e ritorni
-		return reviewRepo.findById(reviewId).get();
-	}
-
 	
-	/*@PutMapping("/review/{reviewId}")
-	public Review modifyReview(@PathVariable("reviewId") Long reviewId, @RequestBody ReviewCreate review) {
-		// Modifica al database con le nuove cose
-		Review r = reviewRepo.findById(reviewId).get();
-		r.setBody(review.getBody());
-		r.setDate(review.getDate());
-		r.setStars(review.getStars());
-		reviewRepo.save(r);
-		return r;
-	}*/
-
 	/**
 	 * metodo che mi permette di eliminare una recensione
 	 * 

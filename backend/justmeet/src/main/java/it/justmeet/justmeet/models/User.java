@@ -40,6 +40,7 @@ public class User extends AbstractUser {
 		super(uid, name, email);
 		this.lastName = lastName;
 		this.birthDate = birthDate;
+		canCreatePublicEvent=false;
 	}
 
 	public String getFirstName() {

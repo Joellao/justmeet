@@ -17,6 +17,7 @@ import it.justmeet.justmeet.models.repositories.AnnouncementRepository;
 import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 import it.justmeet.justmeet.models.User;
+import it.justmeet.justmeet.config.WoWoUtility;
 import it.justmeet.justmeet.models.Announcement;
 import it.justmeet.justmeet.models.creates.AnnouncementCreate;
 import it.justmeet.justmeet.models.Comment;
@@ -83,12 +84,16 @@ public class AnnouncementController {
 	 * @param announcementId
 	 * @param announce
 	 * @return l'annuncio modificato
+	 * @throws FirebaseAuthException 
 	 */
 	@PutMapping(value = "/announcement/{announcementId}")
 	public Announcement modifyAnnouncement(@PathVariable("announcementId") Long announcementId,
-			@RequestBody AnnouncementCreate announce) {
+			@RequestBody AnnouncementCreate announce, @RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		// Chiamata al database per aggiornare l'evento con i nuovi dati
 		Announcement announcement = announcementRepo.findById(announcementId).get();
+		if(announcement.getUser().getUid()!=WoWoUtility.getInstance().getUid(token)) {
+			return null;
+		}
 		announcement.setName(announce.getName());
 		announcement.setCategory(announce.getCategory());
 		announcementRepo.save(announcement);
@@ -99,11 +104,15 @@ public class AnnouncementController {
 	 * metodo che mi permette di cancellare l'annuncio selezionato
 	 * 
 	 * @param announcementId
+	 * @throws FirebaseAuthException 
 	 */
 	@DeleteMapping("/announcement/{announcementId}")
-	public void deleteEvent(@PathVariable("announcementId") Long announcementId) {
+	public void deleteAnnouncement(@PathVariable("announcementId") Long announcementId, @RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		// Cancella dal databse eventId
 		Announcement announce = announcementRepo.findById(announcementId).get();
+		if(announce.getUser().getUid()!=WoWoUtility.getInstance().getUid(token)) {
+			return;
+		}
 		announcementRepo.delete(announce);
 	}
 

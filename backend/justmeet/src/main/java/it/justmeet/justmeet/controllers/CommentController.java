@@ -40,42 +40,6 @@ public class CommentController {
 	EventRepository eventRepo;
 	@Autowired
 	CommentRepository commentRepo; // jpa è una libreria
-
-
-	/**
-	 * metodo che mi permette di creare un commento
-	 * 
-	 * @param comment
-	 * @param token
-	 * @param eventId
-	 * @return commento creato
-	 * @throws FirebaseAuthException
-	 */
-	@PostMapping("/comment/{eventId}")
-	public Comment addComment(@RequestBody CommentCreate comment, @RequestHeader("Authorization") String token,
-			@PathVariable("eventId") Long eventId) throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String userId = check.getUid();
-		AbstractUser user = userRepo.findByUid(userId);
-	    Event event = eventRepo.findById(eventId).get();
-	    Comment c = new Comment(comment.getBody(), user, event, comment.getDate(), false);
-		commentRepo.save(c);
-		return c;
-	}
-
-	/**
-	 * metodo che mi permette di visualizzare il commento in base al suo id 
-	 * di riconoscimento
-	 * 
-	 * @param commentId
-	 * @return l'id del commento
-	 */
-	@GetMapping("/comment/{commentId}")
-	public Comment getComment(@PathVariable("commentId") Long commentId) {
-		// Select dal databse e ritorni
-		return commentRepo.findById(commentId).get();
-	}
-
 	
 	/**
 	 * metodo che mi permette di modificare un commento

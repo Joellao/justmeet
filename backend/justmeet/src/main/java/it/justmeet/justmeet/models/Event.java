@@ -62,7 +62,9 @@ public class Event {
     @OneToMany(mappedBy = "partecipatedEvents", fetch = FetchType.LAZY)
     private List<User> partecipants = new ArrayList<User>();
     // private List<String> photoUrls;
-
+    @Column(name = "publicEvent")
+    private boolean publicEvent;
+    
     protected Event() {
     }
 
@@ -79,7 +81,31 @@ public class Event {
         // this.photoUrls = new ArrayList<String>();
     }
 
-    public String getName() {
+    public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public List<User> getPartecipants() {
+		return partecipants;
+	}
+
+	public void setPartecipants(List<User> partecipants) {
+		this.partecipants = partecipants;
+	}
+
+	public boolean isPublicEvent() {
+		return publicEvent;
+	}
+
+	public void setPublicEvent(boolean publicEvent) {
+		this.publicEvent = publicEvent;
+	}
+
+	public String getName() {
         return name;
     }
 

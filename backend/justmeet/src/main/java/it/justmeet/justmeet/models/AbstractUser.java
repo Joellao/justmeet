@@ -42,8 +42,18 @@ public abstract class AbstractUser {
     protected List<Event> events = new ArrayList<>();
     @Column(name = "userType", insertable = false, updatable = false)
     protected int type;
+    
+    protected boolean canCreatePublicEvent=true;
+    
+    public boolean isCanCreatePublicEvent() {
+		return canCreatePublicEvent;
+	}
 
-    public AbstractUser() {
+	public void setCanCreatePublicEvent(boolean canCreatePublicEvent) {
+		this.canCreatePublicEvent = canCreatePublicEvent;
+	}
+
+	public AbstractUser() {
     }
 
     public AbstractUser(String uid, String firstName, String email) {
