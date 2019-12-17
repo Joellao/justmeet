@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +21,14 @@ import it.justmeet.justmeet.models.repositories.EventRepository;
 import it.justmeet.justmeet.models.repositories.ReviewRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 
+/**
+ * Responsabilità: coordina le azioni che si possono eseguire sulle recensioni
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
 @RestController
 public class ReviewController {
 
@@ -33,6 +39,15 @@ public class ReviewController {
 	@Autowired
 	ReviewRepository reviewRepo; // jpa è una libreria
 
+	/**
+	 * metodo che mi permette di creare la recensione
+	 * 
+	 * @param review
+	 * @param token
+	 * @param eventId
+	 * @return la recensione creata
+	 * @throws FirebaseAuthException
+	 */
 	@PostMapping("/review/{eventId}")
 	public Review addReview(@RequestBody ReviewCreate review, @RequestHeader("Authorization") String token,
 			@PathVariable("eventId") Long eventId) throws FirebaseAuthException {
@@ -46,13 +61,21 @@ public class ReviewController {
 		return r;
 	}
 
+	/**
+	 * metodo che mi permette di visualizzare la recensione in base al suo id 
+	 * di riconoscimento
+	 * 
+	 * @param reviewId
+	 * @return l'id della recensione 
+	 */
 	@GetMapping("/review/{reviewId}")
 	public Review getReview(@PathVariable("reviewId") Long reviewId) {
 		// Select dal databse e ritorni
 		return reviewRepo.findById(reviewId).get();
 	}
 
-	@PutMapping("/review/{reviewId}")
+	
+	/*@PutMapping("/review/{reviewId}")
 	public Review modifyReview(@PathVariable("reviewId") Long reviewId, @RequestBody ReviewCreate review) {
 		// Modifica al database con le nuove cose
 		Review r = reviewRepo.findById(reviewId).get();
@@ -61,8 +84,13 @@ public class ReviewController {
 		r.setStars(review.getStars());
 		reviewRepo.save(r);
 		return r;
-	}
+	}*/
 
+	/**
+	 * metodo che mi permette di eliminare una recensione
+	 * 
+	 * @param reviewId
+	 */
 	@DeleteMapping("/review/{reviewId}")
 	public void deleteReview(@PathVariable("reviewId") Long reviewId) {
 		// Cancella dal database

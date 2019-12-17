@@ -1,5 +1,13 @@
 package it.justmeet.justmeet.models.creates;
 
+/**
+ * Responsabilità: si occupa della creazione di un annuncio 
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
 public class AnnouncementCreate {
     private String name;
     private String category;

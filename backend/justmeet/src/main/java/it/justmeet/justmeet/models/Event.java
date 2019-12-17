@@ -14,11 +14,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+/**
+ * Responsabilità: definisce un evento  
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
 
 @Entity
 @Table(name = "events")
@@ -29,24 +37,10 @@ public class Event {
     private Long id;
     @Column(name = "name")
     private String name;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private AbstractUser user;
-
-    @JsonIgnoreProperties({ "event" })
-    public List<Review> getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
-
     @Column(name = "location")
     private String location;
     @Column(name = "date")
@@ -91,7 +85,7 @@ public class Event {
 
     // Per evitare ricorsione, quando si richiama l'utente il campo events non viene
     // incluso
-    @JsonIgnoreProperties({ "events" })
+    @JsonIgnoreProperties({ "events", "hibernateLazyInitializer" })
     public AbstractUser getUser() {
         return user;
     }
@@ -114,6 +108,19 @@ public class Event {
 
     public int getMaxNumber() {
         return maxNumber;
+    }
+    
+    @JsonIgnoreProperties({ "event" })
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     // public List<Review> getReviews() {

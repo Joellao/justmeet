@@ -15,6 +15,15 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/**
+ * Responsabilità: definisce una recensione  
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
+
 @Entity
 @Table(name = "reviews")
 public class Review {
@@ -30,13 +39,23 @@ public class Review {
     @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public Event event;
-
-    public void setUser(User user) {
-        this.user = user;
-    }
+    @Column(name = "body")
+    public String body;
+    @Column(name = "stars")
+    public int stars;
+    @Column(name = "date")
+    public String date;
 
     protected Review() {
-
+    	
+    }
+    
+    public Review(User user, Event event, String body, int stars, String date) {
+        this.user = user;
+        this.event = event;
+        this.body = body;
+        this.stars = stars;
+        this.date = date;
     }
 
     public void setEvent(Event event) {
@@ -52,21 +71,6 @@ public class Review {
     }
 
     public void setDate(String date) {
-        this.date = date;
-    }
-
-    @Column(name = "body")
-    public String body;
-    @Column(name = "stars")
-    public int stars;
-    @Column(name = "date")
-    public String date;
-
-    public Review(User user, Event event, String body, int stars, String date) {
-        this.user = user;
-        this.event = event;
-        this.body = body;
-        this.stars = stars;
         this.date = date;
     }
 
@@ -89,6 +93,10 @@ public class Review {
 
     public String getDate() {
         return date;
+    }
+    
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

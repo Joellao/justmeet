@@ -1,5 +1,14 @@
 package it.justmeet.justmeet.models.creates;
 
+/**
+ * Responsabilità: si occupa della creazione di una recensione 
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
+
 public class ReviewCreate {
     public String body;
     public int stars;

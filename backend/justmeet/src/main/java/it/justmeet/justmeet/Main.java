@@ -10,6 +10,17 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.io.ClassPathResource;
 
+
+
+/**
+ * Responsabilità:  avvia l'applicazione
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
+
 @SpringBootApplication
 public class Main {
     public static void main(String[] args) {

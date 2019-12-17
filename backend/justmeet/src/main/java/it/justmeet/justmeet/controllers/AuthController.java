@@ -2,7 +2,6 @@ package it.justmeet.justmeet.controllers;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -10,7 +9,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.google.firebase.auth.UserRecord.CreateRequest;
-import com.google.gson.JsonElement;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,11 +28,30 @@ import it.justmeet.justmeet.models.auth.LoginModel;
 import it.justmeet.justmeet.models.auth.SignupModelInstitution;
 import it.justmeet.justmeet.models.auth.SignupModelUser;
 
+
+/**
+ * Responsabilità: coordina le azioni di registrazione e login 
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica PIccioni
+ *
+ */
 @RestController
 public class AuthController {
     @Autowired
     UserRepository userRepo;
 
+    /**
+     * metodo che mi permette di fare il login all'interno del sistema
+     * 
+     * @param email
+     * @param password
+     * @return 
+     * @throws IOException
+     * @throws SQLException
+     * @throws URISyntaxException
+     */
     @PostMapping("/login")
     public Object login(@RequestParam("email") String email, @RequestParam("password") String password)
             throws IOException, SQLException, URISyntaxException {
@@ -48,6 +65,15 @@ public class AuthController {
         return json;
     }
 
+    /**
+     * metodo che permette la regisrrazione dell'utente istituzionale 
+     * 
+     * @param institution
+     * @return l'istituzione 
+     * @throws EmailAlreadyExistsException
+     * @throws SQLException
+     * @throws URISyntaxException
+     */
     @PostMapping("/signupInstitution")
     public UserRecord signupInstitution(@RequestBody SignupModelInstitution institution)
             throws EmailAlreadyExistsException, SQLException, URISyntaxException {
@@ -70,6 +96,15 @@ public class AuthController {
         return userRecord;
     }
 
+    /**
+     * metodo che permette la registrazione dell'utente base
+     * 
+     * @param user
+     * @return l'utente base
+     * @throws EmailAlreadyExistsException
+     * @throws SQLException
+     * @throws URISyntaxException
+     */
     @PostMapping("/signupUser")
     public UserRecord signupUser(@RequestBody SignupModelUser user)
             throws EmailAlreadyExistsException, SQLException, URISyntaxException {

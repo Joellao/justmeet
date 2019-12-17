@@ -1,5 +1,14 @@
 package it.justmeet.justmeet.models.auth;
 
+/**
+ * Responsabilità: definisce il modello per la registrazione dell'utente base  
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
+
 public class SignupModelUser {
     private String firstName;
     private String lastName;
@@ -7,14 +16,7 @@ public class SignupModelUser {
     private String email;
     private String password;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
+   
     public SignupModelUser(String firstName, String lastName, String birthDate, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -53,6 +55,14 @@ public class SignupModelUser {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
 }

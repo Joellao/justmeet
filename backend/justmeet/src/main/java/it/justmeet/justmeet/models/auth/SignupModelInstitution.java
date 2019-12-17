@@ -1,14 +1,21 @@
 package it.justmeet.justmeet.models.auth;
 
+/**
+ * Responsabilità: definisce il modello per la registrazione dell'utente istituzionale 
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
+
 public class SignupModelInstitution {
     private String name;
-    private int p_iva;
     private String email;
     private String password;
 
-    public SignupModelInstitution(String name, int p_iva, String email, String password) {
+    public SignupModelInstitution(String name, String email, String password) {
         this.name = name;
-        this.p_iva = p_iva;
         this.email = email;
         this.password = password;
     }
@@ -19,14 +26,6 @@ public class SignupModelInstitution {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getP_iva() {
-        return p_iva;
-    }
-
-    public void setP_iva(int p_iva) {
-        this.p_iva = p_iva;
     }
 
     public String getEmail() {

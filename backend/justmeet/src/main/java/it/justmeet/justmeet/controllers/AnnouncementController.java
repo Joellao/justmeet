@@ -13,19 +13,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.justmeet.justmeet.models.creates.EventCreate;
 import it.justmeet.justmeet.models.repositories.AnnouncementRepository;
 import it.justmeet.justmeet.models.repositories.CommentRepository;
-import it.justmeet.justmeet.models.repositories.EventRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.Announcement;
 import it.justmeet.justmeet.models.creates.AnnouncementCreate;
 import it.justmeet.justmeet.models.Comment;
-import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.creates.CommentCreate;
 
 import org.springframework.web.bind.annotation.PutMapping;
+
+/**
+ * Responsabilità: coordina le azioni che si possono eseguire sull'annuncio 
+ * 
+ * @author Joel Sina
+ * @author Giulia Morelli
+ * @author Jessica Piccioni
+ *
+ */
 
 @RestController
 public class AnnouncementController {
@@ -36,6 +42,15 @@ public class AnnouncementController {
 	@Autowired
 	CommentRepository commentRepo;
 
+	
+	/**
+	 * chiamata post che mi permette di creare l'annuncio
+	 * 
+	 * @param annuncio
+	 * @param token
+	 * @return l'annuncio creato
+	 * @throws FirebaseAuthException
+	 */
 	@PostMapping("/announcement")
 	public Announcement createAnnouncement(@RequestBody AnnouncementCreate annuncio,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
@@ -48,12 +63,27 @@ public class AnnouncementController {
 		return announce;
 	}
 
+	/**
+	 * metodo che grazie alla chiamata get mi permette di visualizzare l'annuncio
+	 * in base al suo id di riconoscimento
+	 * 
+	 * @param announceId
+	 * @return l'id dell'annuncio selezionato
+	 */
 	@GetMapping("/announcement/{announcementId}")
 	public Announcement getAnnouncement(@PathVariable("announcementId") Long announceId) {
 		// Chiamata al databse con eventId per avere le info dell'annuncio
 		return announcementRepo.findById(announceId).get();
 	}
 
+	/**
+	 *metodo che mi permette la modifica delle informazioni relative all'annuncio 
+	 *quali nome e categoria
+	 *
+	 * @param announcementId
+	 * @param announce
+	 * @return l'annuncio modificato
+	 */
 	@PutMapping(value = "/announcement/{announcementId}")
 	public Announcement modifyAnnouncement(@PathVariable("announcementId") Long announcementId,
 			@RequestBody AnnouncementCreate announce) {
@@ -65,6 +95,11 @@ public class AnnouncementController {
 		return announcement;
 	}
 
+	/**
+	 * metodo che mi permette di cancellare l'annuncio selezionato
+	 * 
+	 * @param announcementId
+	 */
 	@DeleteMapping("/announcement/{announcementId}")
 	public void deleteEvent(@PathVariable("announcementId") Long announcementId) {
 		// Cancella dal databse eventId
@@ -72,6 +107,15 @@ public class AnnouncementController {
 		announcementRepo.delete(announce);
 	}
 
+	/**
+	 * questo metodo mi permette di aggiungere un commneto sotto l'annuncio selezionato
+	 * 
+	 * @param comment
+	 * @param token
+	 * @param announcementId
+	 * @return annuncio con il commento inserito
+	 * @throws FirebaseAuthException
+	 */
 	@PostMapping("/announcement/{announcementId}/comment")
 	public Comment addComment(@RequestBody CommentCreate comment, @RequestHeader("Authorization") String token,
 			@PathVariable("announcementId") Long announcementId) throws FirebaseAuthException {
