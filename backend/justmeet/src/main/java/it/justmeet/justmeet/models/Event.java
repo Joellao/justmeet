@@ -3,6 +3,7 @@ package it.justmeet.justmeet.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -55,9 +57,11 @@ public class Event {
     private String categoria;
     @Column(name = "maxNumber")
     private int maxNumber;
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "events_comments",referencedColumnName = "id")
     private List<Comment> comments = new ArrayList<Comment>();
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     private List<Review> reviews = new ArrayList<Review>();
     @OneToMany(mappedBy = "partecipatedEvents", fetch = FetchType.LAZY)
     private List<User> partecipants = new ArrayList<User>();

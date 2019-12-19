@@ -164,10 +164,7 @@ public class EventController {
 		Event event = eventRepo.findById(eventId).get();
 		Comment c = new Comment(comment.getBody(), user, comment.getDate(), false);
 		event.addComment(c);
-
 		eventRepo.save(event);
-		commentRepo.save(c);
-		// Chiamata al databse per aggiungere un commento legato a questo evento
 		return c;
 	}
 
@@ -190,10 +187,7 @@ public class EventController {
 		Event event = eventRepo.findById(eventId).get();
 		Review r = new Review(user, event, review.getBody(), review.getStars(), review.getDate());
 		event.addReview(r);
-
 		eventRepo.save(event);
-		reviewRepo.save(r);
-		// Chiamata al databse per aggiungere un commento legato a questo evento
 		return r;
 	}
 	
@@ -226,6 +220,7 @@ public class EventController {
 		}	
 		return false;
 	}
+
 
 	/*
 	 * @PostMapping("/event/{eventId}/photo") public Photo addPhoto(@RequestBody

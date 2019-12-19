@@ -3,6 +3,7 @@ package it.justmeet.justmeet.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -42,7 +43,9 @@ public class Announcement {
 	@JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private AbstractUser user;
-	@OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "announcements_comments",referencedColumnName = "id")
 	private List<Comment> comments = new ArrayList<Comment>();
 	
 	

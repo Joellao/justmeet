@@ -135,7 +135,6 @@ public class AnnouncementController {
 		Comment c = new Comment(comment.getBody(), user, comment.getDate(), false);
 		announcement.addComment(c);
 		announcementRepo.save(announcement);
-		commentRepo.save(c);
 		return c;
 	}
 }
