@@ -162,7 +162,7 @@ public class EventController {
 		String userId = check.getUid();
 		AbstractUser user = userRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
-		Comment c = new Comment(comment.getBody(), user, event, comment.getDate(), false);
+		Comment c = new Comment(comment.getBody(), user, comment.getDate(), false);
 		event.addComment(c);
 
 		eventRepo.save(event);

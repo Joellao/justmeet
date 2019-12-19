@@ -132,13 +132,10 @@ public class AnnouncementController {
 		String userId = check.getUid();
 		User user = (User) userRepo.findByUid(userId);
 		Announcement announcement = announcementRepo.findById(announcementId).get();
-		// Comment c = new Comment(comment.getBody(), user, announcement,
-		// comment.getDate(), false);
-		// announcement.addComment(c);
-
-		// announcementRepo.save(announcement);
-		// commentRepo.save(c);
-		// Chiamata al databse per aggiungere un commento legato a questo evento
-		return null;
+		Comment c = new Comment(comment.getBody(), user, comment.getDate(), false);
+		announcement.addComment(c);
+		announcementRepo.save(announcement);
+		commentRepo.save(c);
+		return c;
 	}
 }

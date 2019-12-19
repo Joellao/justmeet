@@ -54,7 +54,6 @@ public class Announcement {
 		this.name = name;
 		this.user = user;
 		this.category = categoria;
-		this.comments = new ArrayList<Comment>();
 		}
 
 	public String getName() {
@@ -99,5 +98,8 @@ public class Announcement {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+	public boolean addComment(Comment comment) {
+		return this.comments.add(comment);
 	}
 }
