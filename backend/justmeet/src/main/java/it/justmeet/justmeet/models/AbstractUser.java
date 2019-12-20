@@ -44,6 +44,7 @@ public abstract class AbstractUser {
     protected int type;
     
     protected boolean canCreatePublicEvent=true;
+    protected boolean canSeeOthersProfile = true;
     
     public boolean isCanCreatePublicEvent() {
 		return canCreatePublicEvent;
@@ -120,6 +121,14 @@ public abstract class AbstractUser {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public boolean isCanSeeOthersProfile() {
+        return canSeeOthersProfile;
+    }
+
+    public void setCanSeeOthersProfile(boolean canSeeOthersProfile) {
+        this.canSeeOthersProfile = canSeeOthersProfile;
     }
 
 }

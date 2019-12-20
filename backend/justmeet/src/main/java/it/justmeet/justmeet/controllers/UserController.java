@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.justmeet.justmeet.models.AbstractUser;
-import it.justmeet.justmeet.models.repositories.EventRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 
 /**
- * Responsabilità: coordina le azioni che può eseguire un utente qualsiasi  
+ * Responsabilità: coordina le azioni che può eseguire un utente qualsiasi
  * 
  * @author Joel Sina
  * @author Giulia Morelli
@@ -25,24 +24,44 @@ import it.justmeet.justmeet.models.repositories.UserRepository;
 @RestController
 public class UserController {
     @Autowired
-    UserRepository repo1;
-    @Autowired
-    EventRepository repo2;
+    UserRepository userRepo;
 
     /**
-     * metodo che mi permette di visualizzare il profilo dell'utent ein base al suo username
+     * metodo che mi permette di visualizzare il profilo dell'utent ein base al suo
+     * username
+     * 
      * @param name
      * @param token
      * @return l'utente selezionato in base all'username
      * @throws FirebaseAuthException
      */
-    @GetMapping("/user/{username}")
-    public AbstractUser get(@PathVariable("username") String name, @RequestHeader("Authorization") String token)
-            throws FirebaseAuthException {
+    @GetMapping("/user")
+    public AbstractUser getProfile(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
         FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
         String userId = check.getUid();
-        System.out.println(userId);
-        AbstractUser user = repo1.findByUid(userId);
+        AbstractUser user = userRepo.findByUid(userId);
         return user;
+    }
+
+    /**
+     * metodo che mi permette di visualizzare il profilo dell'utent ein base al suo
+     * username
+     * 
+     * @param name
+     * @param token
+     * @return l'utente selezionato in base all'username
+     * @throws FirebaseAuthException
+     */
+    @GetMapping("/user/{userId}")
+    public AbstractUser getOtherProfile(@PathVariable("userId") String otherId,
+            @RequestHeader("Authorization") String token) throws FirebaseAuthException {
+        FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+        String userId = check.getUid();
+        AbstractUser me = userRepo.findByUid(userId);
+        if (me.isCanSeeOthersProfile()) {
+            AbstractUser other = userRepo.findByUid(otherId);
+            return other;
+        }
+        return null;
     }
 }

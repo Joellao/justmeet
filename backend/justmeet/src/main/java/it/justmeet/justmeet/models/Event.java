@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -22,7 +21,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 /**
- * Responsabilità: definisce un evento  
+ * Responsabilità: definisce un evento
  * 
  * @author Joel Sina
  * @author Giulia Morelli
@@ -57,18 +56,18 @@ public class Event {
     private String categoria;
     @Column(name = "maxNumber")
     private int maxNumber;
-    @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "events_comments",referencedColumnName = "id")
+    @JoinColumn(name = "events_comments", referencedColumnName = "id")
     private List<Comment> comments = new ArrayList<Comment>();
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<Review>();
-    @OneToMany(mappedBy = "partecipatedEvents", fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<User> partecipants = new ArrayList<User>();
     // private List<String> photoUrls;
     @Column(name = "publicEvent")
     private boolean publicEvent;
-    
+
     protected Event() {
     }
 
@@ -86,36 +85,36 @@ public class Event {
     }
 
     public String getDescription() {
-		return description;
-	}
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public List<User> getPartecipants() {
-		return partecipants;
-	}
+    public List<User> getPartecipants() {
+        return partecipants;
+    }
 
-	public void setPartecipants(List<User> partecipants) {
-		this.partecipants = partecipants;
-	}
+    public void setPartecipants(List<User> partecipants) {
+        this.partecipants = partecipants;
+    }
 
-	public boolean isPublicEvent() {
-		return publicEvent;
-	}
+    public boolean isPublicEvent() {
+        return publicEvent;
+    }
 
-	public void setPublicEvent(boolean publicEvent) {
-		this.publicEvent = publicEvent;
-	}
+    public void setPublicEvent(boolean publicEvent) {
+        this.publicEvent = publicEvent;
+    }
 
-	public String getName() {
+    public String getName() {
         return name;
     }
 
     // Per evitare ricorsione, quando si richiama l'utente il campo events non viene
     // incluso
-    @JsonIgnoreProperties({ "events", "hibernateLazyInitializer" })
+    @JsonIgnoreProperties({ "events", "hibernateLazyInitializer", "partecipatedEvents" })
     public AbstractUser getUser() {
         return user;
     }
@@ -139,7 +138,7 @@ public class Event {
     public int getMaxNumber() {
         return maxNumber;
     }
-    
+
     @JsonIgnoreProperties({ "event" })
     public List<Review> getReviews() {
         return reviews;
@@ -233,6 +232,7 @@ public class Event {
         this.partecipants.add(user);
     }
 
+    @JsonIgnoreProperties({ "partecipatedEvents", "events" })
     public List<User> getParticipants() {
         return partecipants;
     }

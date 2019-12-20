@@ -112,6 +112,7 @@ public class User extends AbstractUser {
 		this.partecipatedEvents.add(e);
 	}
 
+	@JsonIgnoreProperties({"partecipants"})
 	public List<Event> getPartecipatedEvents() {
 		return partecipatedEvents;
 	}

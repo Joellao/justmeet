@@ -213,9 +213,11 @@ public class EventController {
 		String userId = check.getUid();
 		User user = (User) userRepo.findByUid(userId);
 		Event evento = eventRepo.findById(eventId).get();
-		if(user.getEvents().contains(evento)) {
-			user.getEvents().remove(evento);
+		if(user.getPartecipatedEvents().contains(evento)) {
+			user.getPartecipatedEvents().remove(evento);
 			evento.getPartecipants().remove(user);
+			userRepo.save(user);
+			eventRepo.save(evento);
 			return true;
 		}	
 		return false;

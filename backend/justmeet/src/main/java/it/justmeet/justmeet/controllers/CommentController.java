@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.justmeet.justmeet.models.Comment;
-import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.creates.CommentCreate;
 import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.repositories.EventRepository;
@@ -31,7 +30,7 @@ public class CommentController {
 	EventRepository eventRepo;
 	@Autowired
 	CommentRepository commentRepo; // jpa è una libreria
-	
+
 	/**
 	 * metodo che mi permette di modificare un commento
 	 * 
@@ -60,5 +59,5 @@ public class CommentController {
 		Comment c = commentRepo.findById(commentId).get();
 		commentRepo.delete(c);
 	}
-	
+
 }

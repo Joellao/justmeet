@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import it.justmeet.justmeet.exceptions.EmailAlreadyExistsException;
+import it.justmeet.justmeet.models.Institution;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 import it.justmeet.justmeet.models.auth.LoginModel;
@@ -86,6 +87,7 @@ public class AuthController {
 				throw new EmailAlreadyExistsException();
 			}
 		}
+		userRepo.save(new Institution(userRecord.getUid(), userRecord.getDisplayName(), userRecord.getEmail()));
 		return userRecord;
 	}
 

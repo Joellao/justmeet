@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * Responsabilità: definisce un utente autenticato istituzionale  
+ * Responsabilità: definisce un utente autenticato istituzionale
  * 
  * @author Joel Sina
  * @author Giulia Morelli
@@ -18,8 +18,12 @@ import javax.persistence.Table;
 @DiscriminatorValue("2")
 public class Institution extends AbstractUser {
 
+    public Institution() {
+    }
+
     public Institution(String uid, String name, String email) {
         super(uid, name, email);
+        canSeeOthersProfile = false;
     }
 
     public String getName() {
