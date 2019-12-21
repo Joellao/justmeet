@@ -92,6 +92,7 @@ public class Event {
         this.description = description;
     }
 
+    @JsonIgnoreProperties({ "partecipatedEvents", "events" })
     public List<User> getPartecipants() {
         return partecipants;
     }
@@ -114,7 +115,7 @@ public class Event {
 
     // Per evitare ricorsione, quando si richiama l'utente il campo events non viene
     // incluso
-    @JsonIgnoreProperties({ "events", "hibernateLazyInitializer", "partecipatedEvents" })
+    @JsonIgnoreProperties({ "events", "hibernateLazyInitializer", "partecipatedEvents", "reviews" })
     public AbstractUser getUser() {
         return user;
     }

@@ -26,7 +26,7 @@ import it.justmeet.justmeet.models.creates.CommentCreate;
 import org.springframework.web.bind.annotation.PutMapping;
 
 /**
- * Responsabilità: coordina le azioni che si possono eseguire sull'annuncio 
+ * Responsabilità: coordina le azioni che si possono eseguire sull'annuncio
  * 
  * @author Joel Sina
  * @author Giulia Morelli
@@ -43,7 +43,6 @@ public class AnnouncementController {
 	@Autowired
 	CommentRepository commentRepo;
 
-	
 	/**
 	 * chiamata post che mi permette di creare l'annuncio
 	 * 
@@ -65,8 +64,8 @@ public class AnnouncementController {
 	}
 
 	/**
-	 * metodo che grazie alla chiamata get mi permette di visualizzare l'annuncio
-	 * in base al suo id di riconoscimento
+	 * metodo che grazie alla chiamata get mi permette di visualizzare l'annuncio in
+	 * base al suo id di riconoscimento
 	 * 
 	 * @param announceId
 	 * @return l'id dell'annuncio selezionato
@@ -78,20 +77,21 @@ public class AnnouncementController {
 	}
 
 	/**
-	 *metodo che mi permette la modifica delle informazioni relative all'annuncio 
-	 *quali nome e categoria
+	 * metodo che mi permette la modifica delle informazioni relative all'annuncio
+	 * quali nome e categoria
 	 *
 	 * @param announcementId
 	 * @param announce
 	 * @return l'annuncio modificato
-	 * @throws FirebaseAuthException 
+	 * @throws FirebaseAuthException
 	 */
 	@PutMapping(value = "/announcement/{announcementId}")
 	public Announcement modifyAnnouncement(@PathVariable("announcementId") Long announcementId,
-			@RequestBody AnnouncementCreate announce, @RequestHeader("Authorization") String token) throws FirebaseAuthException {
+			@RequestBody AnnouncementCreate announce, @RequestHeader("Authorization") String token)
+			throws FirebaseAuthException {
 		// Chiamata al database per aggiornare l'evento con i nuovi dati
 		Announcement announcement = announcementRepo.findById(announcementId).get();
-		if(announcement.getUser().getUid()!=WoWoUtility.getInstance().getUid(token)) {
+		if (announcement.getUser().getUid() != WoWoUtility.getInstance().getUid(token)) {
 			return null;
 		}
 		announcement.setName(announce.getName());
@@ -104,20 +104,22 @@ public class AnnouncementController {
 	 * metodo che mi permette di cancellare l'annuncio selezionato
 	 * 
 	 * @param announcementId
-	 * @throws FirebaseAuthException 
+	 * @throws FirebaseAuthException
 	 */
 	@DeleteMapping("/announcement/{announcementId}")
-	public void deleteAnnouncement(@PathVariable("announcementId") Long announcementId, @RequestHeader("Authorization") String token) throws FirebaseAuthException {
+	public void deleteAnnouncement(@PathVariable("announcementId") Long announcementId,
+			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		// Cancella dal databse eventId
 		Announcement announce = announcementRepo.findById(announcementId).get();
-		if(announce.getUser().getUid()!=WoWoUtility.getInstance().getUid(token)) {
+		if (!announce.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
 			return;
 		}
 		announcementRepo.delete(announce);
 	}
 
 	/**
-	 * questo metodo mi permette di aggiungere un commneto sotto l'annuncio selezionato
+	 * questo metodo mi permette di aggiungere un commneto sotto l'annuncio
+	 * selezionato
 	 * 
 	 * @param comment
 	 * @param token

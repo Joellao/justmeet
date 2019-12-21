@@ -100,14 +100,15 @@ public class EventController {
 	 * @param eventId
 	 * @param event
 	 * @return l'evento modificato
-	 * @throws FirebaseAuthException 
+	 * @throws FirebaseAuthException
 	 */
 	@PutMapping(value = "/event/{eventId}")
-	public Event modifyEvent(@PathVariable("eventId") Long eventId, @RequestBody EventCreate event, @RequestHeader("Authorization") String token) throws FirebaseAuthException {
+	public Event modifyEvent(@PathVariable("eventId") Long eventId, @RequestBody EventCreate event,
+			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		// Chiamata al database per aggiornare l'evento con i nuovi dati
 		// return new Event(eventId, null, eventId, eventId, false, eventId, 0);
 		Event evento = eventRepo.findById(eventId).get();
-		if(evento.getUser().getUid()!=WoWoUtility.getInstance().getUid(token)) {
+		if (!evento.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
 			return null;
 		}
 		evento.setName(event.getName());
@@ -124,13 +125,14 @@ public class EventController {
 	 * metodo che mi permette di eliminare l'evento
 	 * 
 	 * @param eventId
-	 * @throws FirebaseAuthException 
+	 * @throws FirebaseAuthException
 	 */
 	@DeleteMapping("/event/{eventId}")
-	public void deleteEvent(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token) throws FirebaseAuthException {
+	public void deleteEvent(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token)
+			throws FirebaseAuthException {
 		// Cancella dal databse eventId
 		Event evento = eventRepo.findById(eventId).get();
-		if(evento.getUser().getUid()!=WoWoUtility.getInstance().getUid(token)) {
+		if (!evento.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
 			return;
 		}
 		eventRepo.delete(evento);
@@ -190,14 +192,15 @@ public class EventController {
 		eventRepo.save(event);
 		return r;
 	}
-	
+
 	@PostMapping("/event/{eventId}/prenote")
-	public boolean prenote(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token) throws FirebaseAuthException {
+	public boolean prenote(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token)
+			throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
 		User user = (User) userRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
-		if(event.getPartecipants().size()==event.getMaxNumber()) {
+		if (event.getPartecipants().size() == event.getMaxNumber()) {
 			return false;
 		}
 		event.addPartecipant(user);
@@ -206,23 +209,23 @@ public class EventController {
 		eventRepo.save(event);
 		return true;
 	}
-	
+
 	@PatchMapping("/event/{eventId}/cancelPrenote")
-	public boolean cancelPrenote(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token) throws FirebaseAuthException {
+	public boolean cancelPrenote(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token)
+			throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
 		User user = (User) userRepo.findByUid(userId);
 		Event evento = eventRepo.findById(eventId).get();
-		if(user.getPartecipatedEvents().contains(evento)) {
+		if (user.getPartecipatedEvents().contains(evento)) {
 			user.getPartecipatedEvents().remove(evento);
 			evento.getPartecipants().remove(user);
 			userRepo.save(user);
 			eventRepo.save(evento);
 			return true;
-		}	
+		}
 		return false;
 	}
-
 
 	/*
 	 * @PostMapping("/event/{eventId}/photo") public Photo addPhoto(@RequestBody

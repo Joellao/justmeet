@@ -1,6 +1,7 @@
 package it.justmeet.justmeet.models.creates;
+
 /**
- * Responsabilità: si occupa della creazione di un commento 
+ * Responsabilità: si occupa della creazione di un commento
  * 
  * @author Joel Sina
  * @author Giulia Morelli

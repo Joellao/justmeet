@@ -16,7 +16,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * Responsabilità: definisce una recensione  
+ * Responsabilità: definisce una recensione
  * 
  * @author Joel Sina
  * @author Giulia Morelli
@@ -47,9 +47,9 @@ public class Review {
     public String date;
 
     protected Review() {
-    	
+
     }
-    
+
     public Review(User user, Event event, String body, int stars, String date) {
         this.user = user;
         this.event = event;
@@ -74,7 +74,7 @@ public class Review {
         this.date = date;
     }
 
-    @JsonIgnoreProperties({ "reviews", "events" })
+    @JsonIgnoreProperties({ "reviews", "events", "partecipatedEvents" })
     public User getUser() {
         return user;
     }
@@ -94,7 +94,7 @@ public class Review {
     public String getDate() {
         return date;
     }
-    
+
     public void setUser(User user) {
         this.user = user;
     }
