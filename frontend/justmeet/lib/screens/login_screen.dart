@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:justmeet/components/custom_field.dart';
+import 'package:justmeet/controller/AuthController.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -11,14 +14,23 @@ class _LoginScreenState extends State<LoginScreen> {
   String _username, _password;
   bool isLoading = false;
 
-  _submit() {
+  _submit() async {
     if (_formKey.currentState.validate()) {
       setState(() {
         isLoading = true;
       });
       _formKey.currentState.save();
-      print(_username);
-      print(_password);
+      try {
+        FirebaseUser result = await Provider.of<AuthController>(context)
+            .signIn(_username, _password);
+      } on AuthException catch (error) {
+        print(error);
+      } on Exception catch (error) {
+        print(error);
+      }
+      // if (result != null) {
+      //   Navigator.pushReplacementNamed(context, "HomePageScreen");
+      // }
     }
   }
 
@@ -100,8 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: EdgeInsets.symmetric(
                         horizontal: 70.0,
                       ),
-                      onPressed: () => Navigator.pushReplacementNamed(
-                          context, "HomePageScreen"),
+                      onPressed: _submit,
                       child: Text(
                         "Login",
                         style: TextStyle(

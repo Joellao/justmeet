@@ -1,5 +1,7 @@
 package it.justmeet.justmeet.controllers;
 
+import java.util.List;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
@@ -51,7 +53,17 @@ public class EventController {
 	ReviewRepository reviewRepo;
 
 	/**
-	 * metodo che mi permette dic reare un nuovo evento
+	 * Metodo che mi permette di avere tutti gli eventi
+	 * 
+	 * @return
+	 */
+	@GetMapping("event")
+	public List<Event> getEvents() {
+		return eventRepo.findAll();
+	}
+
+	/**
+	 * metodo che mi permette di creare un nuovo evento
 	 * 
 	 * @param event
 	 * @param token

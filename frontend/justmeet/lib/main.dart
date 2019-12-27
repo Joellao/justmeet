@@ -1,20 +1,21 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:justmeet/controller/AuthController.dart';
 import 'package:justmeet/screens/login_screen.dart';
 import 'package:justmeet/screens/signup_screen.dart';
 import 'package:justmeet/screens/homepage_screen.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(JustMeet());
+void main() => runApp(
+      ChangeNotifierProvider<AuthController>(
+        child: JustMeet(),
+        create: (BuildContext context) {
+          return AuthController();
+        },
+      ),
+    );
 
 class JustMeet extends StatelessWidget {
-  final bool isLogged = false;
-
-  Widget getScreen() {
-    if (isLogged) {
-      return HomePageScreen();
-    }
-    return LoginScreen();
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,11 +24,37 @@ class JustMeet extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.transparent,
       ),
-      home: Container(
-        child: SafeArea(
-          child: getScreen(),
-        ),
+      home: HomePageScreen(),
+      routes: {
+        'LoginScreen': (context) => LoginScreen(),
+        'SignupScreen': (context) => SignupScreen(),
+        'HomePageScreen': (context) => HomePageScreen(),
+      },
+    );
+    return MaterialApp(
+      title: 'JustMeet',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.transparent,
       ),
+      home: FutureBuilder(
+          future: Provider.of<AuthController>(context).getUser(),
+          builder: (context, AsyncSnapshot<FirebaseUser> snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.error != null) {
+                print("error");
+                return Text(snapshot.error.toString());
+              }
+              return snapshot.hasData ? HomePageScreen() : LoginScreen();
+            } else {
+              return Center(
+                child: Container(
+                  child: CircularProgressIndicator(),
+                  alignment: Alignment(0.0, 0.0),
+                ),
+              );
+            }
+          }),
       routes: {
         'LoginScreen': (context) => LoginScreen(),
         'SignupScreen': (context) => SignupScreen(),
