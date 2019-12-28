@@ -91,7 +91,7 @@ public class AnnouncementController {
 			throws FirebaseAuthException {
 		// Chiamata al database per aggiornare l'evento con i nuovi dati
 		Announcement announcement = announcementRepo.findById(announcementId).get();
-		if (!announcement.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
+		if (announcement.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
 			return null;
 		}
 		announcement.setName(announce.getName());

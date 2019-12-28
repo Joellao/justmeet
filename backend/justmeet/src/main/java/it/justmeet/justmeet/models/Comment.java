@@ -30,11 +30,11 @@ public class Comment {
     @Column(name = "id")
     private Long id;
     @Column(name = "body")
-    public String body;
+    private String body;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    public AbstractUser user;
+    private AbstractUser user;
     /*
      * @ManyToOne(fetch = FetchType.LAZY, optional = false)
      * 
@@ -52,10 +52,9 @@ public class Comment {
     protected Comment() {
     }
 
-    public Comment(String body, AbstractUser user, /* Event event */ String date, boolean state) {
+    public Comment(String body, AbstractUser user,String date, boolean state) {
         this.body = body;
         this.user = user;
-        // this.event = event;
         this.date = date;
         this.state = state;
     }

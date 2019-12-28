@@ -38,13 +38,13 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    public Event event;
+    private Event event;
     @Column(name = "body")
-    public String body;
+    private String body;
     @Column(name = "stars")
-    public int stars;
+    private int stars;
     @Column(name = "date")
-    public String date;
+    private String date;
 
     protected Review() {
 

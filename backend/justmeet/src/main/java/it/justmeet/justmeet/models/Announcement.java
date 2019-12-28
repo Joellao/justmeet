@@ -102,6 +102,7 @@ public class Announcement {
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
 	public boolean addComment(Comment comment) {
 		return this.comments.add(comment);
 	}
