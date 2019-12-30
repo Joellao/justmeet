@@ -120,7 +120,8 @@ public class UserController {
 		String id = check.getUid();
 		AbstractUser user = userRepo.findByUid(userId);
 		return user.getEvents();
-
 	}
+	
+	
 
 }

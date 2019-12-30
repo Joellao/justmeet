@@ -156,8 +156,14 @@ public class EventController {
 	 * @param eventId
 	 */
 	@PatchMapping("/event/{eventId}")
-	public void cancelEvent(@PathVariable("eventId") Long eventId) {
-		// Chiamata al databse per annullare l'evento identificato da eventId
+	public void cancelEvent(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token)
+			throws FirebaseAuthException {
+		Event evento = eventRepo.findById(eventId).get();
+		if (!evento.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
+			return;
+		}
+		evento.setCancelled(true);
+		eventRepo.save(evento);
 	}
 
 	/**
@@ -239,15 +245,13 @@ public class EventController {
 		return false;
 	}
 
-	
-	 @PostMapping("/event/{eventId}/photo") public Photo addPhoto(@RequestBody
-	  String url, @RequestHeader("Authorization") String token) throws
-	  FirebaseAuthException { 
-		 // Chiamata al databse per aggiungere una foto
-		 return new Photo(null); 
-		 
-	 }
-	  
-	 
+	@PostMapping("/event/{eventId}/photo")
+	public Photo addPhoto(@RequestBody String url, @RequestHeader("Authorization") String token)
+			throws FirebaseAuthException {
+		// Chiamata al databse per aggiungere una foto
+		return new Photo(null);
 
+	}
+
+	
 }
