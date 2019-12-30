@@ -4,6 +4,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.justmeet.justmeet.config.WoWoUtility;
 import it.justmeet.justmeet.models.AbstractUser;
 import it.justmeet.justmeet.models.Comment;
+import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.creates.CommentCreate;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 
@@ -29,57 +32,57 @@ import it.justmeet.justmeet.models.repositories.UserRepository;
  */
 @RestController
 public class UserController {
-    @Autowired
-    UserRepository userRepo;
+	@Autowired
+	UserRepository userRepo;
 
-    /**
-     * metodo che mi permette di visualizzare il profilo dell'utent ein base al suo
-     * username
-     * 
-     * @param name
-     * @param token
-     * @return l'utente selezionato in base all'username
-     * @throws FirebaseAuthException
-     */
-    @GetMapping("/user")
-    public AbstractUser getProfile(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-        FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-        String userId = check.getUid();
-        AbstractUser user = userRepo.findByUid(userId);
-        return user;
-    }
+	/**
+	 * metodo che mi permette di visualizzare il profilo dell'utent ein base al suo
+	 * username
+	 * 
+	 * @param name
+	 * @param token
+	 * @return l'utente selezionato in base all'username
+	 * @throws FirebaseAuthException
+	 */
+	@GetMapping("/user")
+	public AbstractUser getProfile(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+		String userId = check.getUid();
+		AbstractUser user = userRepo.findByUid(userId);
+		return user;
+	}
 
-    /**
-     * metodo che mi permette di visualizzare il profilo dell'utent ein base al suo
-     * username
-     * 
-     * @param name
-     * @param token
-     * @return l'utente selezionato in base all'username
-     * @throws FirebaseAuthException
-     */
-    @GetMapping("/user/{userId}")
-    public AbstractUser getOtherProfile(@PathVariable("userId") String otherId,
-            @RequestHeader("Authorization") String token) throws FirebaseAuthException {
-        FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-        String userId = check.getUid();
-        AbstractUser me = userRepo.findByUid(userId);
-        if (me.isCanSeeOthersProfile()) {
-            AbstractUser other = userRepo.findByUid(otherId);
-            return other;
-        }
-        return null;
-    }
-    
-    /**
+	/**
+	 * metodo che mi permette di visualizzare il profilo dell'utent ein base al suo
+	 * username
+	 * 
+	 * @param name
+	 * @param token
+	 * @return l'utente selezionato in base all'username
+	 * @throws FirebaseAuthException
+	 */
+	@GetMapping("/user/{userId}")
+	public AbstractUser getOtherProfile(@PathVariable("userId") String otherId,
+			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+		String userId = check.getUid();
+		AbstractUser me = userRepo.findByUid(userId);
+		if (me.isCanSeeOthersProfile()) {
+			AbstractUser other = userRepo.findByUid(otherId);
+			return other;
+		}
+		return null;
+	}
+
+	/**
 	 * metodo che mi permette di modificare il profilo di un utente
 	 * 
 	 * @param userId
 	 * @param user
 	 * @return profilo utente modificato
-	 * @throws FirebaseAuthException 
+	 * @throws FirebaseAuthException
 	 */
-	@PutMapping("/user/{userId}/modify")
+	@PutMapping("/user/{userId}")
 	public AbstractUser modifyUser(@PathVariable("userId") String userId, @RequestBody AbstractUser user,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		// Modifica al database con le nuove cose
@@ -94,22 +97,30 @@ public class UserController {
 		userRepo.save(me);
 		return me;
 	}
-	
+
 	/**
 	 * metodo che mi permette di eliminare un account
 	 * 
 	 * @param userId
-	 * @throws FirebaseAuthException 
+	 * @throws FirebaseAuthException
 	 */
-	@DeleteMapping("/user/{userId}/delete")
-	public void deleteComment(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token) 
-	throws FirebaseAuthException {
-		
-			AbstractUser me= userRepo.findByUid(userId);
-			if (!me.getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			return;
+	@DeleteMapping("/user/{userId}")//PORTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	public void deleteUser(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
+			throws FirebaseAuthException {
+		AbstractUser me = userRepo.findByUid(userId);
+		if (!me.getUid().equals(WoWoUtility.getInstance().getUid(token))) {
 		}
 		userRepo.delete(me);
 	}
-	
+
+	@GetMapping("/user/{userId}/event")
+	public List<Event> getEvents(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
+			throws FirebaseAuthException {
+		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+		String id = check.getUid();
+		AbstractUser user = userRepo.findByUid(userId);
+		return user.getEvents();
+
+	}
+
 }

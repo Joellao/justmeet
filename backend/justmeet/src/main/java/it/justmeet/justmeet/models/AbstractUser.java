@@ -6,6 +6,10 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -39,6 +43,7 @@ public abstract class AbstractUser {
     @Column(name = "bio")
     protected String bio;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     protected List<Event> events = new ArrayList<>();
     @Column(name = "userType", insertable = false, updatable = false)
     protected int type;

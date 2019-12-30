@@ -244,7 +244,9 @@ public class EventController {
 	  String url, @RequestHeader("Authorization") String token) throws
 	  FirebaseAuthException { 
 		 // Chiamata al databse per aggiungere una foto
-		 return new Photo(null); }
+		 return new Photo(null); 
+		 
+	 }
 	  
 	 
 
