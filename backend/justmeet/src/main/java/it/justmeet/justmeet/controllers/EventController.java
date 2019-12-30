@@ -255,15 +255,13 @@ public class EventController {
 
 	}
 	
-	@GetMapping("/event/eventName")
+	@GetMapping("/event/{eventName}/find")
 	public List<Event> findEvent(@PathVariable("eventName") String eventName,@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
 		List<Event> result = eventRepo.findAll().stream().filter(event -> eventName.equals(event.getName())).collect(Collectors.toList());
-		
-		
 		return result;
-	}	
+	}
 
 	
 }
