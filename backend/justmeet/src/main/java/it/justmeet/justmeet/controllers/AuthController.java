@@ -64,7 +64,7 @@ public class AuthController {
 	}
 
 	/**
-	 * metodo che permette la regisrrazione dell'utente istituzionale
+	 * metodo che permette la registrazione dell'utente istituzionale
 	 * 
 	 * @param institution
 	 * @return l'istituzione

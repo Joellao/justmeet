@@ -5,12 +5,18 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.justmeet.justmeet.config.WoWoUtility;
 import it.justmeet.justmeet.models.AbstractUser;
+import it.justmeet.justmeet.models.Comment;
+import it.justmeet.justmeet.models.creates.CommentCreate;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 
 /**
@@ -64,4 +70,46 @@ public class UserController {
         }
         return null;
     }
+    
+    /**
+	 * metodo che mi permette di modificare il profilo di un utente
+	 * 
+	 * @param userId
+	 * @param user
+	 * @return profilo utente modificato
+	 * @throws FirebaseAuthException 
+	 */
+	@PutMapping("/user/{userId}/modify")
+	public AbstractUser modifyUser(@PathVariable("userId") String userId, @RequestBody AbstractUser user,
+			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		// Modifica al database con le nuove cose
+		AbstractUser me = userRepo.findByUid(userId);
+		if (!me.getUid().equals(WoWoUtility.getInstance().getUid(token))) {
+			return null;
+		}
+		me.setBio(user.getBio());
+		me.setProfileImage(user.getProfileImage());
+		me.setFirstName(user.getFirstName());
+		me.setEmail(user.getEmail());
+		userRepo.save(me);
+		return me;
+	}
+	
+	/**
+	 * metodo che mi permette di eliminare un account
+	 * 
+	 * @param userId
+	 * @throws FirebaseAuthException 
+	 */
+	@DeleteMapping("/user/{userId}/delete")
+	public void deleteComment(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token) 
+	throws FirebaseAuthException {
+		
+			AbstractUser me= userRepo.findByUid(userId);
+			if (!me.getUid().equals(WoWoUtility.getInstance().getUid(token))) {
+			return;
+		}
+		userRepo.delete(me);
+	}
+	
 }
