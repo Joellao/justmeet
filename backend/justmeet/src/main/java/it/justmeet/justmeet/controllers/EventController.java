@@ -1,6 +1,7 @@
 package it.justmeet.justmeet.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -30,6 +31,7 @@ import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.Photo;
 import it.justmeet.justmeet.models.Review;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -252,6 +254,16 @@ public class EventController {
 		return new Photo(null);
 
 	}
+	
+	@GetMapping("/event/eventName")
+	public List<Event> findEvent(@PathVariable("eventName") String eventName,@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+		String userId = check.getUid();
+		List<Event> result = eventRepo.findAll().stream().filter(event -> eventName.equals(event.getName())).collect(Collectors.toList());
+		
+		
+		return result;
+	}	
 
 	
 }

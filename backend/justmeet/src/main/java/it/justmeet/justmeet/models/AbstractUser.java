@@ -38,12 +38,12 @@ public abstract class AbstractUser {
     protected String firstName;
     @Column(name = "email")
     protected String email;
-    @Column(name = "profileImage")
+	@Column(name = "profileImage")
     protected String profileImage;
     @Column(name = "bio")
     protected String bio;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action=OnDeleteAction.CASCADE)
     protected List<Event> events = new ArrayList<>();
     @Column(name = "userType", insertable = false, updatable = false)
     protected int type;

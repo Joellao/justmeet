@@ -112,6 +112,7 @@ public class UserController {
 		}
 		userRepo.delete(me);
 	}
+	
 
 	@GetMapping("/user/{userId}/event")
 	public List<Event> getEvents(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
@@ -122,6 +123,13 @@ public class UserController {
 		return user.getEvents();
 	}
 	
+	@GetMapping("/user/")
+	public AbstractUser findProfile(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+		String userId = check.getUid();
+		AbstractUser user = userRepo.findByUid(userId);
+		return user;
+	}	
 	
 
 }
