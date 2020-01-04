@@ -36,13 +36,17 @@ public class User extends AbstractUser {
 	protected User() {
 	}
 
-	public User(String uid, String name, String lastName, String email, String birthDate) {
-		super(uid, name, email);
+	public User(String uid, String username, String firstName, String lastName, String email, String birthDate) {
+		super(uid, username, firstName, email);
 		this.lastName = lastName;
 		this.birthDate = birthDate;
 		canCreatePublicEvent=false;
 	}
 
+	public String getUsername() {
+		return userName;
+	}
+	
 	public String getFirstName() {
 		return firstName;
 	}
@@ -75,6 +79,10 @@ public class User extends AbstractUser {
 		this.uid = uid;
 	}
 
+	public void setUsername(String userName) {
+		this.userName = userName;
+	}
+	
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}

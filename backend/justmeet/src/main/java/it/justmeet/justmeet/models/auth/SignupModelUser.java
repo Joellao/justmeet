@@ -10,6 +10,7 @@ package it.justmeet.justmeet.models.auth;
  */
 
 public class SignupModelUser {
+	private String userName;
     private String firstName;
     private String lastName;
     private String birthDate;
@@ -17,7 +18,8 @@ public class SignupModelUser {
     private String password;
 
    
-    public SignupModelUser(String firstName, String lastName, String birthDate, String email, String password) {
+    public SignupModelUser(String userName, String firstName, String lastName, String birthDate, String email, String password) {
+    	this.userName=userName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
@@ -25,7 +27,18 @@ public class SignupModelUser {
         this.password = password;
     }
 
-    public String getFirstName() {
+    
+    public String getUserName() {
+		return userName;
+	}
+
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+
+	public String getFirstName() {
         return firstName;
     }
 

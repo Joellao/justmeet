@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,8 +37,7 @@ public class UserController {
 	UserRepository userRepo;
 
 	/**
-	 * metodo che mi permette di visualizzare il profilo dell'utent ein base al suo
-	 * username
+	 * metodo che mi permette di visualizzare il profilo dell'utente in base al suo id
 	 * 
 	 * @param name
 	 * @param token
@@ -123,12 +123,13 @@ public class UserController {
 		return user.getEvents();
 	}
 	
-	@GetMapping("/user/")
-	public AbstractUser findProfile(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+	@GetMapping("/user/{username}/find")
+	public List<AbstractUser> findProfile(@PathVariable("userName") String userName ,@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
-		AbstractUser user = userRepo.findByUid(userId);
-		return user;
+		List<AbstractUser> result = userRepo.findAll().stream().filter(user -> userName.equals(user.getUsername())).collect(Collectors.toList());
+		return result;
+
 	}	
 	
 

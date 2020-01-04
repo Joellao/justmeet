@@ -34,7 +34,9 @@ public abstract class AbstractUser {
     @Id
     @Column(name = "uid")
     protected String uid;
-    @Column(name = "firstName")
+    @Column(name = "userName")
+    protected String userName;
+    @Column(name="firstName")
     protected String firstName;
     @Column(name = "email")
     protected String email;
@@ -62,9 +64,10 @@ public abstract class AbstractUser {
 	public AbstractUser() {
     }
 
-    public AbstractUser(String uid, String firstName, String email) {
+    public AbstractUser(String uid, String userName, String firstName, String email) {
         this.uid = uid;
-        this.firstName = firstName;
+        this.userName = userName;
+        this.firstName=firstName;
         this.email = email;
     }
 
@@ -72,15 +75,24 @@ public abstract class AbstractUser {
         this.events.add(e);
     }
 
+    public String getUsername() {
+        return userName;
+    }
+
+    public void setUsername(String userName) {
+        this.userName = userName;
+    }
+    
+   
     public String getFirstName() {
-        return firstName;
-    }
+		return firstName;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public String getEmail() {
+	public String getEmail() {
         return email;
     }
 

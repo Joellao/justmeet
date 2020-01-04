@@ -10,17 +10,30 @@ package it.justmeet.justmeet.models.auth;
  */
 
 public class SignupModelInstitution {
+	private String userName;
     private String name;
     private String email;
     private String password;
 
-    public SignupModelInstitution(String name, String email, String password) {
+    public SignupModelInstitution(String username, String name, String email, String password) {
+    	this.userName=username;
         this.name = name;
         this.email = email;
         this.password = password;
     }
 
-    public String getName() {
+    
+    public String getUserName() {
+		return userName;
+	}
+
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+
+	public String getName() {
         return name;
     }
 

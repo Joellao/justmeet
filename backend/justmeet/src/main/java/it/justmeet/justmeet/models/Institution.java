@@ -21,14 +21,17 @@ public class Institution extends AbstractUser {
     public Institution() {
     }
 
-    public Institution(String uid, String name, String email) {
-        super(uid, name, email);
+    public Institution(String uid, String username, String name, String email) {
+        super(uid, username,name, email);
         canSeeOthersProfile = false;
     }
-
+    
+    public String getUsername() {
+  		return userName;
+  	}
     public String getName() {
-        return firstName;
-    }
+		return firstName;
+	}
 
     public String getEmail() {
         return email;
