@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,7 @@ import it.justmeet.justmeet.config.WoWoUtility;
 import it.justmeet.justmeet.models.AbstractUser;
 import it.justmeet.justmeet.models.Comment;
 import it.justmeet.justmeet.models.Event;
+import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.creates.CommentCreate;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 
@@ -123,14 +125,57 @@ public class UserController {
 		return user.getEvents();
 	}
 	
-	@GetMapping("/user/{username}/find")
+	@GetMapping("/user/{userName}/find")
 	public List<AbstractUser> findProfile(@PathVariable("userName") String userName ,@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
 		List<AbstractUser> result = userRepo.findAll().stream().filter(user -> userName.equals(user.getUsername())).collect(Collectors.toList());
 		return result;
 
-	}	
+	}
 	
-
+	@PatchMapping("/user/{userId}")
+	public void requestFriend(@PathVariable("userId") String userId,@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+		String id = check.getUid();
+		User user= (User)getOtherProfile(userId,token);
+		User me=(User)getProfile(token);
+		user.getRequestFriends().add(me);
+		userRepo.save(user);
+	}
+	
+	@PatchMapping("/user/{userId}/{answer}")
+	public void answerFriend(@PathVariable("userId") String userId,@PathVariable("answer") Boolean answer,@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+		String id = check.getUid();
+		User user= (User)getOtherProfile(userId,token);
+		User me=(User)getProfile(token);
+		if(answer) {
+			me.getFriends().add(user);
+			user.getFriends().add(me);
+		}
+		me.getRequestFriends().remove(user);
+	}
+	
+	@GetMapping("/user/friends")
+	public List<User> getFriends(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		return ((User)getProfile(token)).getFriends();
+	}
+	
+	@GetMapping("/user/requestFriends/aaa")
+	public List<User> getRequestFriends(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		return ((User)getProfile(token)).getRequestFriends();
+	}
+	
+	@PutMapping("/user/{userId}/removeFriend")
+	public void removeFriend(@PathVariable("userId") String userId,@RequestHeader("Authorization") String token) throws FirebaseAuthException  {
+		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+		String id = check.getUid();
+		User user= (User)getOtherProfile(userId,token);
+		User me=(User)getProfile(token);
+		me.getFriends().remove(user);
+		user.getFriends().remove(me);
+		userRepo.save(me);
+		userRepo.save(user);
+	}
 }

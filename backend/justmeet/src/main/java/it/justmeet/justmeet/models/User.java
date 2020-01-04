@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -32,6 +33,10 @@ public class User extends AbstractUser {
 	private String birthDate;
 	@OneToMany(fetch = FetchType.LAZY)
 	private List<Event> partecipatedEvents = new ArrayList<Event>();
+	@OneToMany(fetch = FetchType.LAZY)
+	private List<User> requestFriends=new ArrayList<User>();
+	@ManyToMany(fetch = FetchType.LAZY)
+	private List<User> friends=new ArrayList<User>();
 
 	protected User() {
 	}
@@ -127,6 +132,22 @@ public class User extends AbstractUser {
 
 	public void setPartecipatedEvents(List<Event> partecipatedEvents) {
 		this.partecipatedEvents = partecipatedEvents;
+	}
+
+	public List<User> getFriends() {
+		return friends;
+	}
+
+	public void setFriends(List<User> friends) {
+		this.friends = friends;
+	}
+
+	public List<User> getRequestFriends() {
+		return requestFriends;
+	}
+
+	public void setRequestFriends(List<User> requestFriends) {
+		this.requestFriends = requestFriends;
 	}
 
 }
