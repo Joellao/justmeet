@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * Responsabilità: definisce un utente auteticato base  
+ * Responsabilità: definisce un utente auteticato base
  * 
  * @author Joel Sina
  * @author Giulia Morelli
@@ -34,9 +34,9 @@ public class User extends AbstractUser {
 	@OneToMany(fetch = FetchType.LAZY)
 	private List<Event> partecipatedEvents = new ArrayList<Event>();
 	@OneToMany(fetch = FetchType.LAZY)
-	private List<User> requestFriends=new ArrayList<User>();
+	private List<User> requestFriends = new ArrayList<User>();
 	@ManyToMany(fetch = FetchType.LAZY)
-	private List<User> friends=new ArrayList<User>();
+	private List<User> friends = new ArrayList<User>();
 
 	protected User() {
 	}
@@ -45,13 +45,13 @@ public class User extends AbstractUser {
 		super(uid, username, firstName, email);
 		this.lastName = lastName;
 		this.birthDate = birthDate;
-		canCreatePublicEvent=false;
+		canCreatePublicEvent = false;
 	}
 
 	public String getUsername() {
 		return userName;
 	}
-	
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -87,7 +87,7 @@ public class User extends AbstractUser {
 	public void setUsername(String userName) {
 		this.userName = userName;
 	}
-	
+
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
@@ -125,7 +125,7 @@ public class User extends AbstractUser {
 		this.partecipatedEvents.add(e);
 	}
 
-	@JsonIgnoreProperties({"partecipants"})
+	@JsonIgnoreProperties({ "partecipants" })
 	public List<Event> getPartecipatedEvents() {
 		return partecipatedEvents;
 	}
@@ -134,6 +134,7 @@ public class User extends AbstractUser {
 		this.partecipatedEvents = partecipatedEvents;
 	}
 
+	@JsonIgnoreProperties({ "friends", "requestFriends", "partecipatedEvents", "events" })
 	public List<User> getFriends() {
 		return friends;
 	}
