@@ -1,5 +1,7 @@
 package it.justmeet.justmeet.models;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -16,66 +22,56 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Table(name = "photos")
 public class Photo {
-	  	@Id
-	    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-	    @Column(name = "id")
-	    private Long id;
-	    @Column(name = "url")
-	    private String url;
-	    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-	    @JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
-	    @OnDelete(action = OnDeleteAction.CASCADE)
-	    private AbstractUser user;
-	    @Column(name = "date")
-	    private String date;
-	    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-	    @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
-	    @OnDelete(action = OnDeleteAction.CASCADE)
-	    private Event event;
+	@Id
+	@GeneratedValue(strategy = GenerationType.TABLE)
+	@Column(name = "id")
+	private Long id;
+	@Column(name = "url", length = 4000)
+	private String url;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private AbstractUser user;
+	@Column(name = "date")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date date;
 
-	  protected Photo() {}
-	  
-	  public Photo(String url, AbstractUser user, String date, Event event) {
-	        this.url=url;
-	        this.user = user;
-	        this.date = date;
-	        this.event=event;
-	    }
+	protected Photo() {
+	}
+
+	public Photo(String url, AbstractUser user, Date date) {
+		this.url = url;
+		this.user = user;
+		this.date = date;
+	}
 
 	public Long getId() {
-			return id;
-		}
+		return id;
+	}
 
-		public void setId(Long id) {
-			this.id = id;
-		}
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-		public AbstractUser getUser() {
-			return user;
-		}
+	@JsonIgnoreProperties({ "photoUrls", "events", "partecipatedEvents" })
+	public AbstractUser getUser() {
+		return user;
+	}
 
-		public void setUser(AbstractUser user) {
-			this.user = user;
-		}
+	public void setUser(AbstractUser user) {
+		this.user = user;
+	}
 
-		public String getDate() {
-			return date;
-		}
+	public Date getDate() {
+		return date;
+	}
 
-		public void setDate(String date) {
-			this.date = date;
-		}
+	public void setDate(Date date) {
+		this.date = date;
+	}
 
-		public Event getEvent() {
-			return event;
-		}
-
-		public void setEvent(Event event) {
-			this.event = event;
-		}
-
-	public Photo (String url) {
-		this.url=url;
+	public Photo(String url) {
+		this.url = url;
 	}
 
 	public String getUrl() {

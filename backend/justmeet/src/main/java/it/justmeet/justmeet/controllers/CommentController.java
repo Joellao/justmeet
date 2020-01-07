@@ -3,18 +3,24 @@ package it.justmeet.justmeet.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Date;
 
 import com.google.firebase.auth.FirebaseAuthException;
 
 import it.justmeet.justmeet.config.WoWoUtility;
 import it.justmeet.justmeet.models.Comment;
+import it.justmeet.justmeet.models.SegnalazioneCommento;
 import it.justmeet.justmeet.models.creates.CommentCreate;
 import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.repositories.EventRepository;
+import it.justmeet.justmeet.models.repositories.SegnalazioneCommentoRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 
 /**
@@ -34,6 +40,8 @@ public class CommentController {
 	EventRepository eventRepo;
 	@Autowired
 	CommentRepository commentRepo; // jpa è una libreria
+	@Autowired
+	SegnalazioneCommentoRepository scRepo; // jpa è una libreria
 
 	/**
 	 * metodo che mi permette di modificare un commento
@@ -41,7 +49,7 @@ public class CommentController {
 	 * @param commentId
 	 * @param comment
 	 * @return commento modificato
-	 * @throws FirebaseAuthException 
+	 * @throws FirebaseAuthException
 	 */
 	@PutMapping("/comment/{commentId}")
 	public Comment modifyComment(@PathVariable("commentId") Long commentId, @RequestBody CommentCreate comment,
@@ -52,7 +60,7 @@ public class CommentController {
 			return null;
 		}
 		c.setBody(comment.getBody());
-		c.setDate(comment.getDate());
+		c.setDate(new Date());
 		commentRepo.save(c);
 		return c;
 	}
@@ -61,17 +69,25 @@ public class CommentController {
 	 * metodo che mi permette di eliminare un commento
 	 * 
 	 * @param commentId
-	 * @throws FirebaseAuthException 
+	 * @throws FirebaseAuthException
 	 */
 	@DeleteMapping("/comment/{commentId}")
-	public void deleteComment(@PathVariable("commentId") Long commentId, @RequestHeader("Authorization") String token) 
-	throws FirebaseAuthException {
-		
-			Comment c = commentRepo.findById(commentId).get();
-			if (!c.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
+	public void deleteComment(@PathVariable("commentId") Long commentId, @RequestHeader("Authorization") String token)
+			throws FirebaseAuthException {
+		Comment c = commentRepo.findById(commentId).get();
+		if (!c.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
 			return;
 		}
 		commentRepo.delete(c);
+	}
+
+	@PostMapping("/comment/{commentId}")
+	public void segnala(@PathVariable("commentId") Long commentId, @RequestHeader("Authorization") String token,
+			@RequestParam("body") String body) throws FirebaseAuthException {
+		String uid = WoWoUtility.getInstance().getUid(token);
+		SegnalazioneCommento sc = new SegnalazioneCommento(userRepo.findByUid(uid),
+				commentRepo.findById(commentId).get(), body);
+		scRepo.save(sc);
 	}
 
 }

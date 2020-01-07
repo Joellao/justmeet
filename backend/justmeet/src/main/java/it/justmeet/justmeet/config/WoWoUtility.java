@@ -1,11 +1,17 @@
 package it.justmeet.justmeet.config;
 
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.Bucket;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import com.google.firebase.cloud.StorageClient;
 
 public class WoWoUtility {
-	
+
 	private static WoWoUtility instance;
 
 	public String getUid(String token) throws FirebaseAuthException {
@@ -22,5 +28,13 @@ public class WoWoUtility {
 			instance = new WoWoUtility();
 		}
 		return instance;
+	}
+
+	public static String getPhotoUrl(String fileName, byte[] bytes) {
+		Bucket bucket = StorageClient.getInstance().bucket();
+		Blob blob = bucket.create(fileName, bytes);
+		URL url = blob.signUrl(12312312, TimeUnit.DAYS);
+		return url.toString();
+
 	}
 }

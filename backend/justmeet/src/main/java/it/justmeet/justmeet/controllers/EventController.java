@@ -1,5 +1,9 @@
 package it.justmeet.justmeet.controllers;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,11 +19,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import it.justmeet.justmeet.models.creates.EventCreate;
 import it.justmeet.justmeet.models.creates.ReviewCreate;
 import it.justmeet.justmeet.models.repositories.EventRepository;
+import it.justmeet.justmeet.models.repositories.PhotoRepository;
 import it.justmeet.justmeet.models.repositories.ReviewRepository;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.config.WoWoUtility;
@@ -31,7 +38,6 @@ import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.Photo;
 import it.justmeet.justmeet.models.Review;
-import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -54,6 +60,9 @@ public class EventController {
 	@Autowired
 	ReviewRepository reviewRepo;
 
+	@Autowired
+	PhotoRepository photoRepo;
+
 	/**
 	 * Metodo che mi permette di avere tutti gli eventi
 	 * 
@@ -71,15 +80,17 @@ public class EventController {
 	 * @param token
 	 * @return l'evento creato
 	 * @throws FirebaseAuthException
+	 * @throws ParseException
 	 */
 	@PostMapping("/event")
 	public Event createEvent(@RequestBody EventCreate event, @RequestHeader("Authorization") String token)
-			throws FirebaseAuthException {
+			throws FirebaseAuthException, ParseException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
 		AbstractUser user = userRepo.findByUid(userId);
-		Event evento = new Event(event.getName(), event.getLocation(), event.getDescription(), event.getDate(),
-				event.isFree(), event.getCategory(), event.getMaxPersons());
+		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(event.getDate());
+		Event evento = new Event(event.getName(), event.getLocation(), event.getDescription(), date, event.isFree(),
+				event.getCategory(), event.getMaxPersons());
 		if (user.isCanCreatePublicEvent()) {
 			evento.setPublicEvent(true);
 		} else {
@@ -115,18 +126,20 @@ public class EventController {
 	 * @param event
 	 * @return l'evento modificato
 	 * @throws FirebaseAuthException
+	 * @throws ParseException
 	 */
 	@PutMapping(value = "/event/{eventId}")
 	public Event modifyEvent(@PathVariable("eventId") Long eventId, @RequestBody EventCreate event,
-			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+			@RequestHeader("Authorization") String token) throws FirebaseAuthException, ParseException {
 		// Chiamata al database per aggiornare l'evento con i nuovi dati
 		// return new Event(eventId, null, eventId, eventId, false, eventId, 0);
 		Event evento = eventRepo.findById(eventId).get();
 		if (!evento.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
 			return null;
 		}
+		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(event.getDate());
 		evento.setName(event.getName());
-		evento.setDate(event.getDate());
+		evento.setDate(date);
 		evento.setLocation(event.getLocation());
 		evento.setFree(event.isFree());
 		evento.setCategory(event.getCategory());
@@ -184,7 +197,7 @@ public class EventController {
 		String userId = check.getUid();
 		AbstractUser user = userRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
-		Comment c = new Comment(comment.getBody(), user, comment.getDate(), false);
+		Comment c = new Comment(comment.getBody(), user, new Date(), false);
 		event.addComment(c);
 		eventRepo.save(event);
 		return c;
@@ -207,7 +220,7 @@ public class EventController {
 		String userId = check.getUid();
 		User user = (User) userRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
-		Review r = new Review(user, event, review.getBody(), review.getStars(), review.getDate());
+		Review r = new Review(user, event, review.getBody(), review.getStars(), new Date());
 		event.addReview(r);
 		eventRepo.save(event);
 		return r;
@@ -248,20 +261,39 @@ public class EventController {
 	}
 
 	@PostMapping("/event/{eventId}/photo")
-	public Photo addPhoto(@RequestBody String url, @RequestHeader("Authorization") String token)
-			throws FirebaseAuthException {
-		// Chiamata al databse per aggiungere una foto
-		return new Photo(null);
-
-	}
-	
-	@GetMapping("/event/{eventName}/find")
-	public List<Event> findEvent(@PathVariable("eventName") String eventName,@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+	public Photo addPhoto(@RequestHeader("Authorization") String token, @RequestParam("photo") MultipartFile file,
+			@PathVariable("eventId") Long eventId) throws Exception {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
-		List<Event> result = eventRepo.findAll().stream().filter(event -> eventName.equals(event.getName())).collect(Collectors.toList());
+		if (file.isEmpty()) {
+			throw new Exception("File vuoto");
+		}
+		try {
+			// Get the file and save it somewhere
+			byte[] bytes = file.getBytes();
+			String url = WoWoUtility.getPhotoUrl(file.getOriginalFilename(), bytes);
+			Event event = eventRepo.findById(eventId).get();
+			Photo photo = new Photo(url, userRepo.findByUid(userId), new Date());
+			event.addPhoto(photo);
+			photoRepo.save(photo);
+			eventRepo.save(event);
+			return new Photo(url);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// Chiamata al databse per aggiungere una foto
+		return null;
+
+	}
+
+	@GetMapping("/event/{eventName}/find")
+	public List<Event> findEvent(@PathVariable("eventName") String eventName,
+			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
+		String userId = check.getUid();
+		List<Event> result = eventRepo.findAll().stream().filter(event -> eventName.equals(event.getName()))
+				.collect(Collectors.toList());
 		return result;
 	}
 
-	
 }

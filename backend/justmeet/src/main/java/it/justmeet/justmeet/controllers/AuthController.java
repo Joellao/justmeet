@@ -87,7 +87,8 @@ public class AuthController {
 				throw new EmailAlreadyExistsException();
 			}
 		}
-		userRepo.save(new Institution(userRecord.getUid(), institution.getUserName(), userRecord.getDisplayName(), userRecord.getEmail()));
+		userRepo.save(new Institution(userRecord.getUid(), institution.getUserName(), userRecord.getDisplayName(),
+				userRecord.getEmail()));
 		return userRecord;
 	}
 
@@ -116,8 +117,8 @@ public class AuthController {
 				throw new EmailAlreadyExistsException();
 			}
 		}
-		userRepo.save(new User(userRecord.getUid(), user.getUserName(), user.getFirstName(), user.getLastName(), user.getEmail(),
-				user.getBirthDate()));
+		userRepo.save(new User(userRecord.getUid(), user.getUserName(), user.getFirstName(), user.getLastName(),
+				user.getEmail(), user.getBirthDate()));
 
 		return userRecord;
 	}
@@ -135,4 +136,5 @@ public class AuthController {
 				login, Object.class);
 		return result;
 	}
+
 }

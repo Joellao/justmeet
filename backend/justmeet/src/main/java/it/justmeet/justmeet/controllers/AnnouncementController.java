@@ -1,5 +1,7 @@
 package it.justmeet.justmeet.controllers;
 
+import java.util.Date;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
@@ -58,7 +60,7 @@ public class AnnouncementController {
 		String userId = check.getUid();
 		// CHIAMATA AL DATABSE CON userId per avere l'utente
 		User user = (User) userRepo.findByUid(userId);
-		Announcement announce = new Announcement(annuncio.getName(), user, annuncio.getCategory());
+		Announcement announce = new Announcement(annuncio.getName(), user, annuncio.getCategory(), new Date());
 		announcementRepo.save(announce);
 		return announce;
 	}
@@ -134,7 +136,7 @@ public class AnnouncementController {
 		String userId = check.getUid();
 		User user = (User) userRepo.findByUid(userId);
 		Announcement announcement = announcementRepo.findById(announcementId).get();
-		Comment c = new Comment(comment.getBody(), user, comment.getDate(), false);
+		Comment c = new Comment(comment.getBody(), user, new Date(), false);
 		announcement.addComment(c);
 		announcementRepo.save(announcement);
 		return c;

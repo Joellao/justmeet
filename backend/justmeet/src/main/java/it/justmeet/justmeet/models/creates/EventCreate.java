@@ -1,7 +1,9 @@
 package it.justmeet.justmeet.models.creates;
 
+import java.util.Date;
+
 /**
- * Responsabilità: si occupa della creazione di un evento 
+ * Responsabilità: si occupa della creazione di un evento
  * 
  * @author Joel Sina
  * @author Giulia Morelli
@@ -18,10 +20,11 @@ public class EventCreate {
     private String category;
     private int maxPersons;
 
-    public EventCreate(String name, String location, String description, String date, boolean isFree, String category, int maxPersons) {
+    public EventCreate(String name, String location, String description, String date, boolean isFree, String category,
+            int maxPersons) {
         this.name = name;
         this.location = location;
-        this.description=description;
+        this.description = description;
         this.date = date;
         this.isFree = isFree;
         this.category = category;
@@ -29,14 +32,14 @@ public class EventCreate {
     }
 
     public String getDescription() {
-		return description;
-	}
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getName() {
+    public String getName() {
         return name;
     }
 

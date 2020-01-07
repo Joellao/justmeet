@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -32,6 +33,7 @@ public class User extends AbstractUser {
 	@Column(name = "birthDate")
 	private String birthDate;
 	@OneToMany(fetch = FetchType.LAZY)
+	@OrderBy("date DESC")
 	private List<Event> partecipatedEvents = new ArrayList<Event>();
 	@OneToMany(fetch = FetchType.LAZY)
 	private List<User> requestFriends = new ArrayList<User>();

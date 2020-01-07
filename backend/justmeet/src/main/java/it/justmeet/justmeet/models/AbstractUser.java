@@ -5,6 +5,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Responsabilità: definisce un qualsiasi utente auteticato  
+ * Responsabilità: definisce un qualsiasi utente auteticato
  * 
  * @author Joel Sina
  * @author Giulia Morelli
@@ -36,38 +37,39 @@ public abstract class AbstractUser {
     protected String uid;
     @Column(name = "userName")
     protected String userName;
-    @Column(name="firstName")
+    @Column(name = "firstName")
     protected String firstName;
     @Column(name = "email")
     protected String email;
-	@Column(name = "profileImage")
+    @Column(name = "profileImage")
     protected String profileImage;
     @Column(name = "bio")
     protected String bio;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @OnDelete(action=OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OrderBy("date DESC")
     protected List<Event> events = new ArrayList<>();
     @Column(name = "userType", insertable = false, updatable = false)
     protected int type;
-    
-    protected boolean canCreatePublicEvent=true;
+
+    protected boolean canCreatePublicEvent = true;
     protected boolean canSeeOthersProfile = true;
-    
+
     public boolean isCanCreatePublicEvent() {
-		return canCreatePublicEvent;
-	}
+        return canCreatePublicEvent;
+    }
 
-	public void setCanCreatePublicEvent(boolean canCreatePublicEvent) {
-		this.canCreatePublicEvent = canCreatePublicEvent;
-	}
+    public void setCanCreatePublicEvent(boolean canCreatePublicEvent) {
+        this.canCreatePublicEvent = canCreatePublicEvent;
+    }
 
-	public AbstractUser() {
+    public AbstractUser() {
     }
 
     public AbstractUser(String uid, String userName, String firstName, String email) {
         this.uid = uid;
         this.userName = userName;
-        this.firstName=firstName;
+        this.firstName = firstName;
         this.email = email;
     }
 
@@ -82,17 +84,16 @@ public abstract class AbstractUser {
     public void setUsername(String userName) {
         this.userName = userName;
     }
-    
-   
+
     public String getFirstName() {
-		return firstName;
-	}
+        return firstName;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public String getEmail() {
+    public String getEmail() {
         return email;
     }
 

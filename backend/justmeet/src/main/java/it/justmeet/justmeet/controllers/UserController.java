@@ -19,10 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.justmeet.justmeet.config.WoWoUtility;
 import it.justmeet.justmeet.models.AbstractUser;
-import it.justmeet.justmeet.models.Comment;
 import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.User;
-import it.justmeet.justmeet.models.creates.CommentCreate;
+import it.justmeet.justmeet.models.creates.UserCreate;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 
 /**
@@ -86,7 +85,7 @@ public class UserController {
 	 * @throws FirebaseAuthException
 	 */
 	@PutMapping("/user/{userId}")
-	public AbstractUser modifyUser(@PathVariable("userId") String userId, @RequestBody AbstractUser user,
+	public AbstractUser modifyUser(@PathVariable("userId") String userId, @RequestBody UserCreate user,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		// Modifica al database con le nuove cose
 		AbstractUser me = userRepo.findByUid(userId);
@@ -94,8 +93,8 @@ public class UserController {
 			return null;
 		}
 		me.setBio(user.getBio());
-		me.setProfileImage(user.getProfileImage());
-		me.setFirstName(user.getFirstName());
+		me.setProfileImage(user.getProfilePhoto());
+		me.setUsername(user.getUsername());
 		me.setEmail(user.getEmail());
 		userRepo.save(me);
 		return me;
@@ -171,7 +170,7 @@ public class UserController {
 		return ((User) getProfile(token)).getFriends();
 	}
 
-	@GetMapping("/user/requestFriends/aaa")
+	@GetMapping("/user/requestFriends")
 	public List<User> getRequestFriends(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		return ((User) getProfile(token)).getRequestFriends();
 	}
@@ -188,4 +187,5 @@ public class UserController {
 		userRepo.save(me);
 		userRepo.save(user);
 	}
+
 }

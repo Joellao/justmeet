@@ -1,7 +1,9 @@
 package it.justmeet.justmeet.models.creates;
 
+import java.util.Date;
+
 /**
- * Responsabilità: si occupa della creazione di una recensione 
+ * Responsabilità: si occupa della creazione di una recensione
  * 
  * @author Joel Sina
  * @author Giulia Morelli
@@ -12,12 +14,10 @@ package it.justmeet.justmeet.models.creates;
 public class ReviewCreate {
     public String body;
     public int stars;
-    public String date;
 
-    public ReviewCreate(String body, int stars, String date) {
+    public ReviewCreate(String body, int stars) {
         this.body = body;
         this.stars = stars;
-        this.date = date;
     }
 
     public String getBody() {
@@ -28,20 +28,12 @@ public class ReviewCreate {
         return stars;
     }
 
-    public String getDate() {
-        return date;
-    }
-
     public void setBody(String body) {
         this.body = body;
     }
 
     public void setStars(int stars) {
         this.stars = stars;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
 }

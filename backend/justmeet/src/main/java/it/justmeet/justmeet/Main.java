@@ -10,10 +10,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.io.ClassPathResource;
 
-
-
 /**
- * Responsabilità:  avvia l'applicazione
+ * Responsabilità: avvia l'applicazione
  * 
  * @author Joel Sina
  * @author Giulia Morelli
@@ -29,6 +27,7 @@ public class Main {
         try {
             FirebaseOptions options = new FirebaseOptions.Builder().setCredentials(GoogleCredentials.fromStream(
                     new ClassPathResource("/justmeet-ea052-firebase-adminsdk-hqpog-acfd828f0b.json").getInputStream()))
+                    .setStorageBucket("justmeet-ea052.appspot.com")
                     .setDatabaseUrl("https://justmeet-ea052.firebaseio.com/").build();
             FirebaseApp.initializeApp(options);
         } catch (IOException e) {

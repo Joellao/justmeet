@@ -1,5 +1,7 @@
 package it.justmeet.justmeet.models;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -45,14 +49,15 @@ public class Comment {
      * @JsonIgnore public Event event;
      */
     @Column(name = "date")
-    public String date;
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date date;
     @Column(name = "state")
     public boolean state;
 
     protected Comment() {
     }
 
-    public Comment(String body, AbstractUser user,String date, boolean state) {
+    public Comment(String body, AbstractUser user, Date date, boolean state) {
         this.body = body;
         this.user = user;
         this.date = date;
@@ -72,7 +77,7 @@ public class Comment {
      * public Event getEvent() { return event; }
      */
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
@@ -100,7 +105,7 @@ public class Comment {
      * public void setEvent(Event event) { this.event = event; }
      */
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

@@ -1,6 +1,7 @@
 package it.justmeet.justmeet.models;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -14,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -45,7 +48,8 @@ public class Event {
     @Column(name = "location")
     private String location;
     @Column(name = "date")
-    private String date;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date date;
     @Column(name = "description")
     private String description;
     @Column(name = "isFree")
@@ -64,14 +68,15 @@ public class Event {
     private List<Review> reviews = new ArrayList<Review>();
     @OneToMany(fetch = FetchType.LAZY)
     private List<User> partecipants = new ArrayList<User>();
-    // private List<String> photoUrls;
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Photo> photoUrls = new ArrayList<Photo>();
     @Column(name = "publicEvent")
     private boolean publicEvent;
 
     protected Event() {
     }
 
-    public Event(String name, String location, String description, String date, boolean isFree, String categoria,
+    public Event(String name, String location, String description, Date date, boolean isFree, String categoria,
             int maxNumber) {
         this.name = name;
         this.location = location;
@@ -79,9 +84,6 @@ public class Event {
         this.isFree = isFree;
         this.categoria = categoria;
         this.maxNumber = maxNumber;
-        // this.comments = new ArrayList<Comment>();
-        // this.reviews = new ArrayList<Review>();
-        // this.photoUrls = new ArrayList<String>();
     }
 
     public String getDescription() {
@@ -124,7 +126,7 @@ public class Event {
         return location;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
@@ -153,21 +155,18 @@ public class Event {
         this.categoria = categoria;
     }
 
-    // public List<Review> getReviews() {
-    // return reviews;
-    // }
+    @JsonIgnoreProperties("user")
+    public List<Photo> getPhotoUrls() {
+        return photoUrls;
+    }
 
-    // public void setReviews(List<Review> reviews) {
-    // this.reviews = reviews;
-    // }
+    public void setPhotoUrls(List<Photo> photoUrls) {
+        this.photoUrls = photoUrls;
+    }
 
-    // public List<String> getPhotoUrls() {
-    // return photoUrls;
-    // }
-
-    // public void setPhotoUrls(List<String> photoUrls) {
-    // this.photoUrls = photoUrls;
-    // }
+    public void addPhoto(Photo photo) {
+        this.photoUrls.add(photo);
+    }
 
     public boolean isCancelled() {
         return cancelled;
@@ -193,7 +192,7 @@ public class Event {
         this.location = location;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

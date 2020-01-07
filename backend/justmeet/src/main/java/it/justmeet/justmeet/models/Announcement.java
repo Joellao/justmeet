@@ -1,6 +1,7 @@
 package it.justmeet.justmeet.models;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -14,12 +15,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 /**
- * Responsabilità: definisce un annuncio 
+ * Responsabilità: definisce un annuncio
  * 
  * @author Joel Sina
  * @author Giulia Morelli
@@ -43,21 +46,24 @@ public class Announcement {
 	@JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private AbstractUser user;
-	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "announcements_comments",referencedColumnName = "id")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JoinColumn(name = "announcements_comments", referencedColumnName = "id")
 	private List<Comment> comments = new ArrayList<Comment>();
-	
-	
+	@Column(name = "date")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date date;
+
 	protected Announcement() {
 
 	}
 
-	public Announcement(String name, AbstractUser user, String categoria) {
+	public Announcement(String name, AbstractUser user, String categoria, Date date) {
 		this.name = name;
 		this.user = user;
 		this.category = categoria;
-		}
+		this.date = date;
+	}
 
 	public String getName() {
 		return name;
@@ -102,8 +108,20 @@ public class Announcement {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
+
 	public boolean addComment(Comment comment) {
 		return this.comments.add(comment);
+	}
+
+	public void setUser(AbstractUser user) {
+		this.user = user;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 }
