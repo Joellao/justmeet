@@ -24,6 +24,7 @@ public class Institution extends AbstractUser {
     public Institution(String uid, String username, String name, String email) {
         super(uid, username,name, email);
         canSeeOthersProfile = false;
+        canBeFriend=false;
     }
     
     public String getUsername() {

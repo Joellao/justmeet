@@ -129,6 +129,8 @@ public class UserController {
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
+		if(!getProfile(token).isCanSeeOthersProfile())
+			return null;
 		List<AbstractUser> result = userRepo.findAll().stream().filter(user -> userName.equals(user.getUsername()))
 				.collect(Collectors.toList());
 		return result;
@@ -140,8 +142,10 @@ public class UserController {
 			throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String id = check.getUid();
-		User user = (User) getOtherProfile(userId, token);
-		User me = (User) getProfile(token);
+		AbstractUser user = getOtherProfile(userId, token);
+		AbstractUser me = getProfile(token);
+		if(!user.isCanBeFriend() || !me.isCanBeFriend())
+			return;
 		user.getRequestFriends().add(me);
 		userRepo.save(user);
 	}
@@ -153,6 +157,8 @@ public class UserController {
 		String id = check.getUid();
 		User user = (User) getOtherProfile(userId, token);
 		User me = (User) getProfile(token);
+		if(!user.isCanBeFriend() || !me.isCanBeFriend())
+			return;
 		if (answer) {
 			me.getFriends().add(user);
 			user.getFriends().add(me);
@@ -166,13 +172,13 @@ public class UserController {
 	}
 
 	@GetMapping("/user/friends")
-	public List<User> getFriends(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		return ((User) getProfile(token)).getFriends();
+	public List<AbstractUser> getFriends(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		return getProfile(token).getFriends();
 	}
 
 	@GetMapping("/user/requestFriends")
-	public List<User> getRequestFriends(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		return ((User) getProfile(token)).getRequestFriends();
+	public List<AbstractUser> getRequestFriends(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		return getProfile(token).getRequestFriends();
 	}
 
 	@PutMapping("/user/{userId}/removeFriend")
@@ -180,8 +186,10 @@ public class UserController {
 			throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String id = check.getUid();
-		User user = (User) getOtherProfile(userId, token);
-		User me = (User) getProfile(token);
+		AbstractUser user = getOtherProfile(userId, token);
+		AbstractUser me = getProfile(token);
+		if(!user.isCanBeFriend() || !me.isCanBeFriend())
+			return;
 		me.getFriends().remove(user);
 		user.getFriends().remove(me);
 		userRepo.save(me);

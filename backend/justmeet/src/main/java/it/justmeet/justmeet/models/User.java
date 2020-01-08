@@ -35,10 +35,7 @@ public class User extends AbstractUser {
 	@OneToMany(fetch = FetchType.LAZY)
 	@OrderBy("date DESC")
 	private List<Event> partecipatedEvents = new ArrayList<Event>();
-	@OneToMany(fetch = FetchType.LAZY)
-	private List<User> requestFriends = new ArrayList<User>();
-	@ManyToMany(fetch = FetchType.LAZY)
-	private List<User> friends = new ArrayList<User>();
+	
 
 	protected User() {
 	}
@@ -136,21 +133,6 @@ public class User extends AbstractUser {
 		this.partecipatedEvents = partecipatedEvents;
 	}
 
-	@JsonIgnoreProperties({ "friends", "requestFriends", "partecipatedEvents", "events" })
-	public List<User> getFriends() {
-		return friends;
-	}
-
-	public void setFriends(List<User> friends) {
-		this.friends = friends;
-	}
-
-	public List<User> getRequestFriends() {
-		return requestFriends;
-	}
-
-	public void setRequestFriends(List<User> requestFriends) {
-		this.requestFriends = requestFriends;
-	}
+	
 
 }

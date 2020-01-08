@@ -4,12 +4,15 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -51,11 +54,32 @@ public abstract class AbstractUser {
     protected List<Event> events = new ArrayList<>();
     @Column(name = "userType", insertable = false, updatable = false)
     protected int type;
+    @OneToMany(fetch = FetchType.LAZY)
+	private List<AbstractUser> requestFriends = new ArrayList<AbstractUser>();
+	@ManyToMany(fetch = FetchType.LAZY)
+	private List<AbstractUser> friends = new ArrayList<AbstractUser>();
 
     protected boolean canCreatePublicEvent = true;
     protected boolean canSeeOthersProfile = true;
+    protected boolean canBeFriend= true;
+    
+    public String getUserName() {
+		return userName;
+	}
 
-    public boolean isCanCreatePublicEvent() {
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public boolean isCanBeFriend() {
+		return canBeFriend;
+	}
+
+	public void setCanBeFriend(boolean canBeFriend) {
+		this.canBeFriend = canBeFriend;
+	}
+
+	public boolean isCanCreatePublicEvent() {
         return canCreatePublicEvent;
     }
 
@@ -148,5 +172,22 @@ public abstract class AbstractUser {
     public void setCanSeeOthersProfile(boolean canSeeOthersProfile) {
         this.canSeeOthersProfile = canSeeOthersProfile;
     }
+    
+    @JsonIgnoreProperties({ "friends", "requestFriends", "partecipatedEvents", "events" })
+	public List<AbstractUser> getFriends() {
+		return friends;
+	}
+
+	public void setFriends(List<AbstractUser> friends) {
+		this.friends = friends;
+	}
+
+	public List<AbstractUser> getRequestFriends() {
+		return requestFriends;
+	}
+
+	public void setRequestFriends(List<AbstractUser> requestFriends) {
+		this.requestFriends = requestFriends;
+	}
 
 }
