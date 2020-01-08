@@ -73,6 +73,11 @@ public class Event {
     @Column(name = "publicEvent")
     private boolean publicEvent;
 
+    @Column(name = "longitude")
+    private double longitude;
+    @Column(name = "latitude")
+    private double latitude;
+
     protected Event() {
     }
 
@@ -239,6 +244,22 @@ public class Event {
 
     public void setParticipants(List<User> participants) {
         this.partecipants = participants;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
 }

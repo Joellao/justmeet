@@ -1,17 +1,26 @@
 package it.justmeet.justmeet.controllers;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import it.justmeet.justmeet.models.creates.EventCreate;
@@ -38,6 +49,7 @@ import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.Photo;
 import it.justmeet.justmeet.models.Review;
+import it.justmeet.justmeet.models.RispostaLocation;
 
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -81,10 +93,15 @@ public class EventController {
 	 * @return l'evento creato
 	 * @throws FirebaseAuthException
 	 * @throws ParseException
+	 * @throws UnsupportedEncodingException
+	 * @throws RestClientException
+	 * @throws JsonProcessingException
+	 * @throws JsonMappingException
 	 */
 	@PostMapping("/event")
 	public Event createEvent(@RequestBody EventCreate event, @RequestHeader("Authorization") String token)
-			throws FirebaseAuthException, ParseException {
+			throws FirebaseAuthException, ParseException, RestClientException, UnsupportedEncodingException,
+			JsonMappingException, JsonProcessingException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
 		AbstractUser user = userRepo.findByUid(userId);
@@ -96,6 +113,17 @@ public class EventController {
 		} else {
 			evento.setPublicEvent(false);
 		}
+
+		RestTemplate r = new RestTemplate();
+
+		ResponseEntity<List<RispostaLocation>> rateResponse = r.exchange(
+				"https://eu1.locationiq.com/v1/search.php?key=18f98769274079&q="
+						+ URLEncoder.encode(event.getLocation(), "UTF-8") + "&format=json",
+				HttpMethod.GET, null, new ParameterizedTypeReference<List<RispostaLocation>>() {
+				});
+		List<RispostaLocation> list = rateResponse.getBody();
+		evento.setLatitude(Double.parseDouble(list.get(0).getLat()));
+		evento.setLongitude(Double.parseDouble(list.get(0).getLon()));
 		evento.setUser(user);
 		eventRepo.save(evento);
 		user.addEvent(evento);

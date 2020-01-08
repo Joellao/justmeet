@@ -129,7 +129,7 @@ public class UserController {
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
-		if(!getProfile(token).isCanSeeOthersProfile())
+		if (!getProfile(token).isCanSeeOthersProfile())
 			return null;
 		List<AbstractUser> result = userRepo.findAll().stream().filter(user -> userName.equals(user.getUsername()))
 				.collect(Collectors.toList());
@@ -144,7 +144,7 @@ public class UserController {
 		String id = check.getUid();
 		AbstractUser user = getOtherProfile(userId, token);
 		AbstractUser me = getProfile(token);
-		if(!user.isCanBeFriend() || !me.isCanBeFriend())
+		if (!user.isCanBeFriend() || !me.isCanBeFriend())
 			return;
 		user.getRequestFriends().add(me);
 		userRepo.save(user);
@@ -155,9 +155,9 @@ public class UserController {
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String id = check.getUid();
-		User user = (User) getOtherProfile(userId, token);
-		User me = (User) getProfile(token);
-		if(!user.isCanBeFriend() || !me.isCanBeFriend())
+		AbstractUser user = getOtherProfile(userId, token);
+		AbstractUser me = getProfile(token);
+		if (!user.isCanBeFriend() || !me.isCanBeFriend())
 			return;
 		if (answer) {
 			me.getFriends().add(user);
@@ -177,7 +177,8 @@ public class UserController {
 	}
 
 	@GetMapping("/user/requestFriends")
-	public List<AbstractUser> getRequestFriends(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+	public List<AbstractUser> getRequestFriends(@RequestHeader("Authorization") String token)
+			throws FirebaseAuthException {
 		return getProfile(token).getRequestFriends();
 	}
 
@@ -188,7 +189,7 @@ public class UserController {
 		String id = check.getUid();
 		AbstractUser user = getOtherProfile(userId, token);
 		AbstractUser me = getProfile(token);
-		if(!user.isCanBeFriend() || !me.isCanBeFriend())
+		if (!user.isCanBeFriend() || !me.isCanBeFriend())
 			return;
 		me.getFriends().remove(user);
 		user.getFriends().remove(me);

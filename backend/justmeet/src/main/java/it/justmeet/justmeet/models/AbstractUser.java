@@ -55,31 +55,35 @@ public abstract class AbstractUser {
     @Column(name = "userType", insertable = false, updatable = false)
     protected int type;
     @OneToMany(fetch = FetchType.LAZY)
-	private List<AbstractUser> requestFriends = new ArrayList<AbstractUser>();
-	@ManyToMany(fetch = FetchType.LAZY)
-	private List<AbstractUser> friends = new ArrayList<AbstractUser>();
+    private List<AbstractUser> requestFriends = new ArrayList<AbstractUser>();
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<AbstractUser> friends = new ArrayList<AbstractUser>();
+    @Column(name = "longitude")
+    private double longitude;
+    @Column(name = "latitude")
+    private double latitude;
 
     protected boolean canCreatePublicEvent = true;
     protected boolean canSeeOthersProfile = true;
-    protected boolean canBeFriend= true;
-    
+    protected boolean canBeFriend = true;
+
     public String getUserName() {
-		return userName;
-	}
+        return userName;
+    }
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
-	public boolean isCanBeFriend() {
-		return canBeFriend;
-	}
+    public boolean isCanBeFriend() {
+        return canBeFriend;
+    }
 
-	public void setCanBeFriend(boolean canBeFriend) {
-		this.canBeFriend = canBeFriend;
-	}
+    public void setCanBeFriend(boolean canBeFriend) {
+        this.canBeFriend = canBeFriend;
+    }
 
-	public boolean isCanCreatePublicEvent() {
+    public boolean isCanCreatePublicEvent() {
         return canCreatePublicEvent;
     }
 
@@ -172,22 +176,38 @@ public abstract class AbstractUser {
     public void setCanSeeOthersProfile(boolean canSeeOthersProfile) {
         this.canSeeOthersProfile = canSeeOthersProfile;
     }
-    
+
     @JsonIgnoreProperties({ "friends", "requestFriends", "partecipatedEvents", "events" })
-	public List<AbstractUser> getFriends() {
-		return friends;
-	}
+    public List<AbstractUser> getFriends() {
+        return friends;
+    }
 
-	public void setFriends(List<AbstractUser> friends) {
-		this.friends = friends;
-	}
+    public void setFriends(List<AbstractUser> friends) {
+        this.friends = friends;
+    }
 
-	public List<AbstractUser> getRequestFriends() {
-		return requestFriends;
-	}
+    public List<AbstractUser> getRequestFriends() {
+        return requestFriends;
+    }
 
-	public void setRequestFriends(List<AbstractUser> requestFriends) {
-		this.requestFriends = requestFriends;
-	}
+    public void setRequestFriends(List<AbstractUser> requestFriends) {
+        this.requestFriends = requestFriends;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
 
 }
