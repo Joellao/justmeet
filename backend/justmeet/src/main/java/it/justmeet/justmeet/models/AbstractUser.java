@@ -52,8 +52,8 @@ public abstract class AbstractUser {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @OrderBy("date DESC")
     protected List<Event> events = new ArrayList<>();
-    @Column(name = "userType", insertable = false, updatable = false)
-    protected int type;
+    //@Column(name = "userType", insertable = false, updatable = false)
+    //protected int type;
     @OneToMany(fetch = FetchType.LAZY)
     private List<AbstractUser> requestFriends = new ArrayList<AbstractUser>();
     @ManyToMany(fetch = FetchType.LAZY)
@@ -66,8 +66,17 @@ public abstract class AbstractUser {
     protected boolean canCreatePublicEvent = true;
     protected boolean canSeeOthersProfile = true;
     protected boolean canBeFriend = true;
+    protected boolean canCreateAnnouncement= true;
+    
+    public boolean isCanCreateAnnouncement() {
+		return canCreateAnnouncement;
+	}
 
-    public String getUserName() {
+	public void setCanCreateAnnouncement(boolean canCreateAnnouncement) {
+		this.canCreateAnnouncement = canCreateAnnouncement;
+	}
+
+	public String getUserName() {
         return userName;
     }
 
@@ -161,13 +170,13 @@ public abstract class AbstractUser {
         this.uid = uid;
     }
 
-    public int getType() {
+    /*public int getType() {
         return type;
     }
 
     public void setType(int type) {
         this.type = type;
-    }
+    }*/
 
     public boolean isCanSeeOthersProfile() {
         return canSeeOthersProfile;

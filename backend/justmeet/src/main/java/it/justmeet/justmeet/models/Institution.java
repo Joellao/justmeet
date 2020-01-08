@@ -25,6 +25,7 @@ public class Institution extends AbstractUser {
         super(uid, username,name, email);
         canSeeOthersProfile = false;
         canBeFriend=false;
+        canCreateAnnouncement=false;
     }
     
     public String getUsername() {

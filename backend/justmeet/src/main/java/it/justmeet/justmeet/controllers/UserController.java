@@ -157,8 +157,6 @@ public class UserController {
 		String id = check.getUid();
 		AbstractUser user = getOtherProfile(userId, token);
 		AbstractUser me = getProfile(token);
-		if (!user.isCanBeFriend() || !me.isCanBeFriend())
-			return;
 		if (answer) {
 			me.getFriends().add(user);
 			user.getFriends().add(me);
@@ -173,12 +171,16 @@ public class UserController {
 
 	@GetMapping("/user/friends")
 	public List<AbstractUser> getFriends(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		if (!getProfile(token).isCanBeFriend())
+			return null;
 		return getProfile(token).getFriends();
 	}
 
 	@GetMapping("/user/requestFriends")
 	public List<AbstractUser> getRequestFriends(@RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
+		if (!getProfile(token).isCanBeFriend())
+			return null;
 		return getProfile(token).getRequestFriends();
 	}
 
@@ -189,8 +191,6 @@ public class UserController {
 		String id = check.getUid();
 		AbstractUser user = getOtherProfile(userId, token);
 		AbstractUser me = getProfile(token);
-		if (!user.isCanBeFriend() || !me.isCanBeFriend())
-			return;
 		me.getFriends().remove(user);
 		user.getFriends().remove(me);
 		userRepo.save(me);

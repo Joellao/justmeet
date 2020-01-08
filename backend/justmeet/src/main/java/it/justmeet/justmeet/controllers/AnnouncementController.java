@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import it.justmeet.justmeet.models.repositories.AnnouncementRepository;
 import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
-import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.config.WoWoUtility;
 import it.justmeet.justmeet.models.Announcement;
 import it.justmeet.justmeet.models.creates.AnnouncementCreate;
@@ -58,9 +57,9 @@ public class AnnouncementController {
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
-		// CHIAMATA AL DATABSE CON userId per avere l'utente
-		User user = (User) userRepo.findByUid(userId);
-		Announcement announce = new Announcement(annuncio.getName(), user, annuncio.getCategory(), new Date());
+		if(!userRepo.findByUid(userId).isCanCreateAnnouncement())
+			return null;
+		Announcement announce = new Announcement(annuncio.getName(), userRepo.findByUid(userId), annuncio.getCategory(), new Date());
 		announcementRepo.save(announce);
 		return announce;
 	}
@@ -91,7 +90,6 @@ public class AnnouncementController {
 	public Announcement modifyAnnouncement(@PathVariable("announcementId") Long announcementId,
 			@RequestBody AnnouncementCreate announce, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
-		// Chiamata al database per aggiornare l'evento con i nuovi dati
 		Announcement announcement = announcementRepo.findById(announcementId).get();
 		if (announcement.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
 			return null;
@@ -134,9 +132,10 @@ public class AnnouncementController {
 			@PathVariable("announcementId") Long announcementId) throws FirebaseAuthException {
 		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
 		String userId = check.getUid();
-		User user = (User) userRepo.findByUid(userId);
+		if(!userRepo.findByUid(userId).isCanCreateAnnouncement())
+			return null;
 		Announcement announcement = announcementRepo.findById(announcementId).get();
-		Comment c = new Comment(comment.getBody(), user, new Date(), false);
+		Comment c = new Comment(comment.getBody(), userRepo.findByUid(userId), new Date(), false);
 		announcement.addComment(c);
 		announcementRepo.save(announcement);
 		return c;

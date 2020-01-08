@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
@@ -102,8 +100,7 @@ public class EventController {
 	public Event createEvent(@RequestBody EventCreate event, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException, ParseException, RestClientException, UnsupportedEncodingException,
 			JsonMappingException, JsonProcessingException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String userId = check.getUid();
+		String userId = WoWoUtility.getInstance().getUid(token);
 		AbstractUser user = userRepo.findByUid(userId);
 		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(event.getDate());
 		Event evento = new Event(event.getName(), event.getLocation(), event.getDescription(), date, event.isFree(),
@@ -221,8 +218,7 @@ public class EventController {
 	@PostMapping("/event/{eventId}/comment")
 	public Comment addComment(@RequestBody CommentCreate comment, @PathVariable("eventId") Long eventId,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String userId = check.getUid();
+		String userId = WoWoUtility.getInstance().getUid(token);
 		AbstractUser user = userRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
 		Comment c = new Comment(comment.getBody(), user, new Date(), false);
@@ -244,8 +240,7 @@ public class EventController {
 	@PostMapping("/event/{eventId}/review")
 	public Review addReview(@RequestBody ReviewCreate review, @PathVariable("eventId") Long eventId,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String userId = check.getUid();
+		String userId = WoWoUtility.getInstance().getUid(token);
 		User user = (User) userRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
 		Review r = new Review(user, event, review.getBody(), review.getStars(), new Date());
@@ -317,8 +312,7 @@ public class EventController {
 	@GetMapping("/event/{eventName}/find")
 	public List<Event> findEvent(@PathVariable("eventName") String eventName,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String userId = check.getUid();
+		String uid = WoWoUtility.getInstance().getUid(token);
 		List<Event> result = eventRepo.findAll().stream().filter(event -> eventName.equals(event.getName()))
 				.collect(Collectors.toList());
 		return result;

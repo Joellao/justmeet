@@ -54,7 +54,7 @@ public class CommentController {
 	@PutMapping("/comment/{commentId}")
 	public Comment modifyComment(@PathVariable("commentId") Long commentId, @RequestBody CommentCreate comment,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		// Modifica al database con le nuove cose
+		
 		Comment c = commentRepo.findById(commentId).get();
 		if (!c.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
 			return null;
