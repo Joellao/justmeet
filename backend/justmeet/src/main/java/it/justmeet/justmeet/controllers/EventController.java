@@ -257,7 +257,7 @@ public class EventController {
 			return false;
 		}
 		event.addPartecipant(user);
-		user.partecipateEvent(event);
+		user.removePartecipateEvent(event);
 		userRepo.save(user);
 		eventRepo.save(event);
 		return true;
@@ -270,8 +270,8 @@ public class EventController {
 		User user = (User) userRepo.findByUid(userId);
 		Event evento = eventRepo.findById(eventId).get();
 		if (user.getPartecipatedEvents().contains(evento)) {
-			user.getPartecipatedEvents().remove(evento);
-			evento.getPartecipants().remove(user);
+			user.removePartecipateEvent(evento);
+			evento.removePartecipant(user);
 			userRepo.save(user);
 			eventRepo.save(evento);
 			return true;

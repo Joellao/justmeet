@@ -73,10 +73,6 @@ public class Comment {
         return user;
     }
 
-    /*
-     * public Event getEvent() { return event; }
-     */
-
     public Date getDate() {
         return date;
     }
@@ -100,10 +96,6 @@ public class Comment {
     public void setUser(AbstractUser user) {
         this.user = user;
     }
-
-    /*
-     * public void setEvent(Event event) { this.event = event; }
-     */
 
     public void setDate(Date date) {
         this.date = date;

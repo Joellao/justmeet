@@ -1,6 +1,7 @@
 package it.justmeet.justmeet.models;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -12,6 +13,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 /**
  * Responsabilità: definisce un utente auteticato base
@@ -30,20 +32,27 @@ public class User extends AbstractUser {
 	@Column(name = "lastName")
 	private String lastName;
 	@Column(name = "birthDate")
-	private String birthDate;
+	private Date birthDate;
 	@OneToMany(fetch = FetchType.LAZY)
 	@OrderBy("date DESC")
 	private List<Event> partecipatedEvents = new ArrayList<Event>();
-	
 
 	protected User() {
 	}
 
-	public User(String uid, String username, String firstName, String lastName, String email, String birthDate) {
+	public User(String uid, String username, String firstName, String lastName, String email, Date birthDate) {
 		super(uid, username, firstName, email);
 		this.lastName = lastName;
 		this.birthDate = birthDate;
 		canCreatePublicEvent = false;
+	}
+
+	public void addPartecipateEvent(Event e) {
+		this.partecipatedEvents.add(e);
+	}
+	
+	public void removePartecipateEvent(Event e) {
+		this.partecipatedEvents.remove(e);
 	}
 
 	public String getUsername() {
@@ -62,7 +71,7 @@ public class User extends AbstractUser {
 		return email;
 	}
 
-	public String getBirthDate() {
+	public Date getBirthDate() {
 		return birthDate;
 	}
 
@@ -98,7 +107,7 @@ public class User extends AbstractUser {
 		this.email = email;
 	}
 
-	public void setBirthDate(String birthDate) {
+	public void setBirthDate(Date birthDate) {
 		this.birthDate = birthDate;
 	}
 
@@ -119,10 +128,6 @@ public class User extends AbstractUser {
 		this.events = events;
 	}
 
-	public void partecipateEvent(Event e) {
-		this.partecipatedEvents.add(e);
-	}
-
 	@JsonIgnoreProperties({ "partecipants" })
 	public List<Event> getPartecipatedEvents() {
 		return partecipatedEvents;
@@ -131,7 +136,5 @@ public class User extends AbstractUser {
 	public void setPartecipatedEvents(List<Event> partecipatedEvents) {
 		this.partecipatedEvents = partecipatedEvents;
 	}
-
-	
 
 }

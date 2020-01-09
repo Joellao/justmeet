@@ -3,6 +3,8 @@ package it.justmeet.justmeet.controllers;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import it.justmeet.justmeet.exceptions.EmailAlreadyExistsException;
+import it.justmeet.justmeet.exceptions.WrongPasswordException;
 import it.justmeet.justmeet.models.Institution;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.repositories.UserRepository;
@@ -49,17 +52,16 @@ public class AuthController {
 	 * @throws IOException
 	 * @throws SQLException
 	 * @throws URISyntaxException
+	 * @throws WrongPasswordException 
 	 */
 	@PostMapping("/login")
 	public Object login(@RequestParam("email") String email, @RequestParam("password") String password)
-			throws IOException, SQLException, URISyntaxException {
+			throws IOException, SQLException, URISyntaxException, WrongPasswordException {
+		if(!validateEmail(email))
+			throw new IllegalArgumentException("Email non valida");
+		if(password.length()<8)
+			throw new WrongPasswordException("Password troppo corta");
 		Object json = fireBaseSignIn(email, password);
-		// Statement st = DatabaseConfig.getConnection().createStatement();
-		// ResultSet rs = st.executeQuery("SELECT * FROM users;");
-		// while (rs.next()) {
-		// System.out.println(rs.getString("id"));
-		// System.out.println(rs.getString("email"));
-		// }
 		return json;
 	}
 
@@ -71,15 +73,14 @@ public class AuthController {
 	 * @throws EmailAlreadyExistsException
 	 * @throws SQLException
 	 * @throws URISyntaxException
+	 * @throws WrongPasswordException 
 	 */
 	@PostMapping("/signupInstitution")
 	public UserRecord signupInstitution(@RequestBody SignupModelInstitution institution)
-			throws EmailAlreadyExistsException, SQLException, URISyntaxException {
+			throws EmailAlreadyExistsException, SQLException, URISyntaxException, WrongPasswordException {
 		CreateRequest request = new CreateRequest().setEmail(institution.getEmail()).setEmailVerified(false)
 				.setPassword(institution.getPassword()).setDisplayName(institution.getName()).setDisabled(false);
-
 		UserRecord userRecord = null;
-
 		try {
 			userRecord = FirebaseAuth.getInstance().createUser(request);
 		} catch (FirebaseAuthException e) {
@@ -87,6 +88,10 @@ public class AuthController {
 				throw new EmailAlreadyExistsException();
 			}
 		}
+		if(!validateEmail(institution.getEmail()))
+			throw new IllegalArgumentException("Email non valida");
+		if(institution.getPassword().length()<8)
+			throw new WrongPasswordException("Password troppo corta");
 		userRepo.save(new Institution(userRecord.getUid(), institution.getUserName(), userRecord.getDisplayName(),
 				userRecord.getEmail()));
 		return userRecord;
@@ -100,16 +105,16 @@ public class AuthController {
 	 * @throws EmailAlreadyExistsException
 	 * @throws SQLException
 	 * @throws URISyntaxException
+	 * @throws WrongPasswordException 
 	 */
 	@PostMapping("/signupUser")
 	public UserRecord signupUser(@RequestBody SignupModelUser user)
-			throws EmailAlreadyExistsException, SQLException, URISyntaxException {
+			throws EmailAlreadyExistsException, SQLException, URISyntaxException, WrongPasswordException {
 		CreateRequest request = new CreateRequest().setEmail(user.getEmail()).setEmailVerified(false)
 				.setPassword(user.getPassword()).setDisplayName(user.getFirstName() + " " + user.getLastName())
 				.setDisabled(false);
 
 		UserRecord userRecord = null;
-
 		try {
 			userRecord = FirebaseAuth.getInstance().createUser(request);
 		} catch (FirebaseAuthException e) {
@@ -117,6 +122,10 @@ public class AuthController {
 				throw new EmailAlreadyExistsException();
 			}
 		}
+		if(!validateEmail(user.getEmail()))
+			throw new IllegalArgumentException("Email non valida");
+		if(user.getPassword().length()<8)
+			throw new WrongPasswordException("Password troppo corta");
 		userRepo.save(new User(userRecord.getUid(), user.getUserName(), user.getFirstName(), user.getLastName(),
 				user.getEmail(), user.getBirthDate()));
 
@@ -135,6 +144,13 @@ public class AuthController {
 				"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDF0V8-WK52yY_HKsoar4D0NBkY2zvn-pQ",
 				login, Object.class);
 		return result;
+	}
+	
+	private boolean validateEmail(String email) {
+		String  expressionPlus="^[\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+		Pattern pPlus = Pattern.compile(expressionPlus, Pattern.CASE_INSENSITIVE);
+		Matcher mPlus = pPlus.matcher(email);
+		return mPlus.matches();
 	}
 
 }

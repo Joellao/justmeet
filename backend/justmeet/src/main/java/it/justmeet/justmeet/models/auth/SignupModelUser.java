@@ -1,5 +1,7 @@
 package it.justmeet.justmeet.models.auth;
 
+import java.util.Date;
+
 /**
  * Responsabilità: definisce il modello per la registrazione dell'utente base  
  * 
@@ -13,12 +15,12 @@ public class SignupModelUser {
 	private String userName;
     private String firstName;
     private String lastName;
-    private String birthDate;
+    private Date birthDate;
     private String email;
     private String password;
 
    
-    public SignupModelUser(String userName, String firstName, String lastName, String birthDate, String email, String password) {
+    public SignupModelUser(String userName, String firstName, String lastName, Date birthDate, String email, String password) {
     	this.userName=userName;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -54,11 +56,11 @@ public class SignupModelUser {
         this.lastName = lastName;
     }
 
-    public String getBirthDate() {
+    public Date getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(String birthDate) {
+    public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
     }
 

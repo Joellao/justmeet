@@ -35,231 +35,231 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Table(name = "events")
 public class Event {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id")
-    private Long id;
-    @Column(name = "name")
-    private String name;
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private AbstractUser user;
-    @Column(name = "location")
-    private String location;
-    @Column(name = "date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
-    @Column(name = "description")
-    private String description;
-    @Column(name = "isFree")
-    private boolean isFree;
-    @Column(name = "cancelled")
-    private boolean cancelled = false;
-    @Column(name = "categoria")
-    private String categoria;
-    @Column(name = "maxNumber")
-    private int maxNumber;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "events_comments", referencedColumnName = "id")
-    private List<Comment> comments = new ArrayList<Comment>();
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Review> reviews = new ArrayList<Review>();
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<User> partecipants = new ArrayList<User>();
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Photo> photoUrls = new ArrayList<Photo>();
-    @Column(name = "publicEvent")
-    private boolean publicEvent;
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "id")
+	private Long id;
+	@Column(name = "name")
+	private String name;
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private AbstractUser user;
+	@Column(name = "location")
+	private String location;
+	@Column(name = "date")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date date;
+	@Column(name = "description")
+	private String description;
+	@Column(name = "isFree")
+	private boolean isFree;
+	@Column(name = "cancelled")
+	private boolean cancelled = false;
+	@Column(name = "category")
+	private String category;
+	@Column(name = "maxNumber")
+	private int maxNumber;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JoinColumn(name = "events_comments", referencedColumnName = "id")
+	private List<Comment> comments = new ArrayList<Comment>();
+	@OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<Review> reviews = new ArrayList<Review>();
+	@OneToMany(fetch = FetchType.LAZY)
+	private List<User> partecipants = new ArrayList<User>();
+	@OneToMany(fetch = FetchType.LAZY)
+	private List<Photo> photos = new ArrayList<Photo>();
+	@Column(name = "isPublic")
+	private boolean isPublic;
 
-    @Column(name = "longitude")
-    private double longitude;
-    @Column(name = "latitude")
-    private double latitude;
+	@Column(name = "longitude")
+	private double longitude;
+	@Column(name = "latitude")
+	private double latitude;
 
-    protected Event() {
-    }
+	protected Event() {
+	}
 
-    public Event(String name, String location, String description, Date date, boolean isFree, String categoria,
-            int maxNumber) {
-        this.name = name;
-        this.location = location;
-        this.date = date;
-        this.isFree = isFree;
-        this.categoria = categoria;
-        this.maxNumber = maxNumber;
-    }
+	public Event(String name, String location, String description, Date date, boolean isFree, String category,
+			int maxNumber) {
+		this.name = name;
+		this.location = location;
+		this.date = date;
+		this.isFree = isFree;
+		this.category = category;
+		this.maxNumber = maxNumber;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public void addComment(Comment comment) {
+		this.comments.add(comment);
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void addReview(Review review) {
+		this.reviews.add(review);
+	}
 
-    @JsonIgnoreProperties({ "partecipatedEvents", "events" })
-    public List<User> getPartecipants() {
-        return partecipants;
-    }
+	public void addPartecipant(User user) {
+		this.partecipants.add(user);
+	}
+	
+	public void removePartecipant(User user) {
+		this.partecipants.remove(user);
+	}
 
-    public void setPartecipants(List<User> partecipants) {
-        this.partecipants = partecipants;
-    }
+	public void addPhoto(Photo photo) {
+		this.photos.add(photo);
+	}
 
-    public boolean isPublicEvent() {
-        return publicEvent;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setPublicEvent(boolean publicEvent) {
-        this.publicEvent = publicEvent;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public String getName() {
-        return name;
-    }
+	@JsonIgnoreProperties({ "partecipatedEvents", "events" })
+	public List<User> getPartecipants() {
+		return partecipants;
+	}
 
-    // Per evitare ricorsione, quando si richiama l'utente il campo events non viene
-    // incluso
-    @JsonIgnoreProperties({ "events", "hibernateLazyInitializer", "partecipatedEvents", "reviews" })
-    public AbstractUser getUser() {
-        return user;
-    }
+	public void setPartecipants(List<User> partecipants) {
+		this.partecipants = partecipants;
+	}
 
-    public String getLocation() {
-        return location;
-    }
+	public boolean isPublicEvent() {
+		return isPublic;
+	}
 
-    public Date getDate() {
-        return date;
-    }
+	public void setPublicEvent(boolean isPublic) {
+		this.isPublic = isPublic;
+	}
 
-    public boolean isFree() {
-        return isFree;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getCategoria() {
-        return categoria;
-    }
+	// Per evitare ricorsione, quando si richiama l'utente il campo events non viene
+	// incluso
+	@JsonIgnoreProperties({ "events", "hibernateLazyInitializer", "partecipatedEvents", "reviews" })
+	public AbstractUser getUser() {
+		return user;
+	}
 
-    public int getMaxNumber() {
-        return maxNumber;
-    }
+	public String getLocation() {
+		return location;
+	}
 
-    @JsonIgnoreProperties({ "event" })
-    public List<Review> getReviews() {
-        return reviews;
-    }
+	public Date getDate() {
+		return date;
+	}
 
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
-    }
+	public boolean isFree() {
+		return isFree;
+	}
 
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
+	public String getCategory() {
+		return category;
+	}
 
-    @JsonIgnoreProperties("user")
-    public List<Photo> getPhotoUrls() {
-        return photoUrls;
-    }
+	public int getMaxNumber() {
+		return maxNumber;
+	}
 
-    public void setPhotoUrls(List<Photo> photoUrls) {
-        this.photoUrls = photoUrls;
-    }
+	@JsonIgnoreProperties({ "event" })
+	public List<Review> getReviews() {
+		return reviews;
+	}
 
-    public void addPhoto(Photo photo) {
-        this.photoUrls.add(photo);
-    }
+	public void setReviews(List<Review> reviews) {
+		this.reviews = reviews;
+	}
 
-    public boolean isCancelled() {
-        return cancelled;
-    }
+	public void setCategory(String category) {
+		this.category = category;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	@JsonIgnoreProperties("user")
+	public List<Photo> getPhotoUrls() {
+		return photos;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setPhotoUrls(List<Photo> photos) {
+		this.photos = photos;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public boolean isCancelled() {
+		return cancelled;
+	}
 
-    public void setUser(AbstractUser user) {
-        this.user = user;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setFree(boolean isFree) {
-        this.isFree = isFree;
-    }
+	public void setUser(AbstractUser user) {
+		this.user = user;
+	}
 
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
-    }
+	public void setLocation(String location) {
+		this.location = location;
+	}
 
-    public void setCategory(String categoria) {
-        this.categoria = categoria;
-    }
+	public void setDate(Date date) {
+		this.date = date;
+	}
 
-    public void setMaxNumber(int maxNumber) {
-        this.maxNumber = maxNumber;
-    }
+	public void setFree(boolean isFree) {
+		this.isFree = isFree;
+	}
 
-    public List<Comment> getComments() {
-        return comments;
-    }
+	public void setCancelled(boolean cancelled) {
+		this.cancelled = cancelled;
+	}
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
+	public void setMaxNumber(int maxNumber) {
+		this.maxNumber = maxNumber;
+	}
 
-    public void addComment(Comment comment) {
-        this.comments.add(comment);
-    }
+	public List<Comment> getComments() {
+		return comments;
+	}
 
-    public void addReview(Review review) {
-        this.reviews.add(review);
-    }
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
 
-    public void addPartecipant(User user) {
-        this.partecipants.add(user);
-    }
+	@JsonIgnoreProperties({ "partecipatedEvents", "events" })
+	public List<User> getParticipants() {
+		return partecipants;
+	}
 
-    @JsonIgnoreProperties({ "partecipatedEvents", "events" })
-    public List<User> getParticipants() {
-        return partecipants;
-    }
+	public void setParticipants(List<User> participants) {
+		this.partecipants = participants;
+	}
 
-    public void setParticipants(List<User> participants) {
-        this.partecipants = participants;
-    }
+	public double getLongitude() {
+		return longitude;
+	}
 
-    public double getLongitude() {
-        return longitude;
-    }
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
+	public double getLatitude() {
+		return latitude;
+	}
 
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
 
 }
