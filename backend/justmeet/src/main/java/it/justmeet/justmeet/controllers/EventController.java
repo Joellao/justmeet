@@ -11,9 +11,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -252,8 +250,7 @@ public class EventController {
 	@PostMapping("/event/{eventId}/prenote")
 	public boolean prenote(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String userId = check.getUid();
+		String userId = WoWoUtility.getInstance().getUid(token);
 		User user = (User) userRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
 		if (event.getPartecipants().size() == event.getMaxNumber()) {
@@ -269,8 +266,7 @@ public class EventController {
 	@PatchMapping("/event/{eventId}/cancelPrenote")
 	public boolean cancelPrenote(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String userId = check.getUid();
+		String userId =WoWoUtility.getInstance().getUid(token);
 		User user = (User) userRepo.findByUid(userId);
 		Event evento = eventRepo.findById(eventId).get();
 		if (user.getPartecipatedEvents().contains(evento)) {
@@ -286,8 +282,7 @@ public class EventController {
 	@PostMapping("/event/{eventId}/photo")
 	public Photo addPhoto(@RequestHeader("Authorization") String token, @RequestParam("photo") MultipartFile file,
 			@PathVariable("eventId") Long eventId) throws Exception {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String userId = check.getUid();
+		String userId = WoWoUtility.getInstance().getUid(token);
 		if (file.isEmpty()) {
 			throw new Exception("File vuoto");
 		}
@@ -312,7 +307,7 @@ public class EventController {
 	@GetMapping("/event/{eventName}/find")
 	public List<Event> findEvent(@PathVariable("eventName") String eventName,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		String uid = WoWoUtility.getInstance().getUid(token);
+		WoWoUtility.getInstance().getUid(token);
 		List<Event> result = eventRepo.findAll().stream().filter(event -> eventName.equals(event.getName()))
 				.collect(Collectors.toList());
 		return result;

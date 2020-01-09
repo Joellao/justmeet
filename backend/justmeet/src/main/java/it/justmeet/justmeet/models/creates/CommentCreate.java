@@ -1,6 +1,5 @@
 package it.justmeet.justmeet.models.creates;
 
-import java.util.Date;
 
 /**
  * Responsabilità: si occupa della creazione di un commento

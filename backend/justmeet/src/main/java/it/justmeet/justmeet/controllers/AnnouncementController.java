@@ -73,7 +73,6 @@ public class AnnouncementController {
 	 */
 	@GetMapping("/announcement/{announcementId}")
 	public Announcement getAnnouncement(@PathVariable("announcementId") Long announceId) {
-		// Chiamata al databse con eventId per avere le info dell'annuncio
 		return announcementRepo.findById(announceId).get();
 	}
 
@@ -109,7 +108,6 @@ public class AnnouncementController {
 	@DeleteMapping("/announcement/{announcementId}")
 	public void deleteAnnouncement(@PathVariable("announcementId") Long announcementId,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		// Cancella dal databse eventId
 		Announcement announce = announcementRepo.findById(announcementId).get();
 		if (!announce.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
 			return;
@@ -130,8 +128,7 @@ public class AnnouncementController {
 	@PostMapping("/announcement/{announcementId}/comment")
 	public Comment addComment(@RequestBody CommentCreate comment, @RequestHeader("Authorization") String token,
 			@PathVariable("announcementId") Long announcementId) throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String userId = check.getUid();
+		String userId = WoWoUtility.getInstance().getUid(token);
 		if(!userRepo.findByUid(userId).isCanCreateAnnouncement())
 			return null;
 		Announcement announcement = announcementRepo.findById(announcementId).get();

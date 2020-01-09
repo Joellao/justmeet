@@ -1,8 +1,7 @@
 package it.justmeet.justmeet.controllers;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import it.justmeet.justmeet.config.WoWoUtility;
 import it.justmeet.justmeet.models.AbstractUser;
 import it.justmeet.justmeet.models.Event;
-import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.creates.UserCreate;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 
@@ -48,8 +46,7 @@ public class UserController {
 	 */
 	@GetMapping("/user")
 	public AbstractUser getProfile(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String userId = check.getUid();
+		String userId = WoWoUtility.getInstance().getUid(token);
 		AbstractUser user = userRepo.findByUid(userId);
 		return user;
 	}
@@ -66,8 +63,7 @@ public class UserController {
 	@GetMapping("/user/{userId}")
 	public AbstractUser getOtherProfile(@PathVariable("userId") String otherId,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String userId = check.getUid();
+		String userId = WoWoUtility.getInstance().getUid(token);
 		AbstractUser me = userRepo.findByUid(userId);
 		if (me.isCanSeeOthersProfile()) {
 			AbstractUser other = userRepo.findByUid(otherId);
@@ -118,8 +114,7 @@ public class UserController {
 	@GetMapping("/user/{userId}/event")
 	public List<Event> getEvents(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String id = check.getUid();
+		WoWoUtility.getInstance().getUid(token);
 		AbstractUser user = userRepo.findByUid(userId);
 		return user.getEvents();
 	}
@@ -127,8 +122,7 @@ public class UserController {
 	@GetMapping("/user/{userName}/find")
 	public List<AbstractUser> findProfile(@PathVariable("userName") String userName,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String userId = check.getUid();
+		WoWoUtility.getInstance().getUid(token);
 		if (!getProfile(token).isCanSeeOthersProfile())
 			return null;
 		List<AbstractUser> result = userRepo.findAll().stream().filter(user -> userName.equals(user.getUsername()))
@@ -140,8 +134,7 @@ public class UserController {
 	@PatchMapping("/user/{userId}")
 	public void requestFriend(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String id = check.getUid();
+		WoWoUtility.getInstance().getUid(token);
 		AbstractUser user = getOtherProfile(userId, token);
 		AbstractUser me = getProfile(token);
 		if (!user.isCanBeFriend() || !me.isCanBeFriend())
@@ -153,8 +146,7 @@ public class UserController {
 	@PatchMapping("/user/{userId}/{answer}")
 	public void answerFriend(@PathVariable("userId") String userId, @PathVariable("answer") Boolean answer,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String id = check.getUid();
+		WoWoUtility.getInstance().getUid(token);
 		AbstractUser user = getOtherProfile(userId, token);
 		AbstractUser me = getProfile(token);
 		if (answer) {
@@ -171,6 +163,7 @@ public class UserController {
 
 	@GetMapping("/user/friends")
 	public List<AbstractUser> getFriends(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		WoWoUtility.getInstance().getUid(token);
 		if (!getProfile(token).isCanBeFriend())
 			return null;
 		return getProfile(token).getFriends();
@@ -179,6 +172,7 @@ public class UserController {
 	@GetMapping("/user/requestFriends")
 	public List<AbstractUser> getRequestFriends(@RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
+		WoWoUtility.getInstance().getUid(token);
 		if (!getProfile(token).isCanBeFriend())
 			return null;
 		return getProfile(token).getRequestFriends();
@@ -187,8 +181,7 @@ public class UserController {
 	@PutMapping("/user/{userId}/removeFriend")
 	public void removeFriend(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String id = check.getUid();
+		WoWoUtility.getInstance().getUid(token);
 		AbstractUser user = getOtherProfile(userId, token);
 		AbstractUser me = getProfile(token);
 		me.getFriends().remove(user);
