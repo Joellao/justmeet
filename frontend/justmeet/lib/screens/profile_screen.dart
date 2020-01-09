@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/EventProfile.dart';
+import 'package:justmeet/components/widgets/event_widget.dart';
 import 'package:provider/provider.dart';
 import '../controller/AuthController.dart';
 
@@ -61,9 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 children: <Widget>[
                   ...snapshot.data.events.map((f) {
                     Event event = Event.fromJson(f);
-                    return EventProfile(
-                      event: event,
-                    );
+                    return EventWidget(event: event);
                   }),
                 ],
               ),

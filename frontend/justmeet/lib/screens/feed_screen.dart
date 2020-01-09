@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/widgets/EventFeed.dart';
+import 'package:justmeet/components/widgets/event_widget.dart';
 import 'package:justmeet/controller/AuthController.dart';
 import 'package:provider/provider.dart';
 
@@ -29,8 +30,8 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   Future<List<Event>> getData() async {
-    FirebaseUser user = await Provider.of<AuthController>(context).getUser();
-    IdTokenResult token = await user.getIdToken();
+    //FirebaseUser user = await Provider.of<AuthController>(context).getUser();
+    //IdTokenResult token = await user.getIdToken();
     // Response response = await dio.get(
     //   "https://justmeetgjj.herokuapp.com/event/",
     //   options: Options(
@@ -67,7 +68,8 @@ class _FeedScreenState extends State<FeedScreen> {
               itemCount: snapshot.data.length,
               itemBuilder: (BuildContext context, int index) {
                 Event event = snapshot.data.elementAt(index);
-                return EventFeed(event: event);
+                print(event.name);
+                return EventWidget(event: event);
               },
             );
           } else if (snapshot.hasError) {

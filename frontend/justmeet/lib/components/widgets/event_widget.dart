@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:justmeet/components/models/event.dart';
-import 'package:justmeet/controller/AuthController.dart';
-import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:justmeet/components/models/event.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class EventWidget extends StatelessWidget {
+class EventWidget extends StatefulWidget {
   final Event event;
-  final Widget widget;
-  EventWidget({this.event, this.widget}) : super();
+  final Widget w;
+
+  const EventWidget({Key key, this.event, this.w}) : super(key: key);
+  @override
+  _EventWidgetState createState() => _EventWidgetState();
+}
+
+class _EventWidgetState extends State<EventWidget> {
   static Future<void> openMap(String location) async {
     String result = location.replaceAll(RegExp(' '), '+');
     String googleUrl =
@@ -34,7 +38,7 @@ class EventWidget extends StatelessWidget {
         ),
         child: Column(
           children: <Widget>[
-            this.widget != null ? this.widget : SizedBox(),
+            widget.w != null ? widget.w : SizedBox(),
             Row(
               children: <Widget>[
                 Padding(
@@ -59,7 +63,7 @@ class EventWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        event.name,
+                        widget.event.name,
                         textAlign: TextAlign.left,
                         style: GoogleFonts.roboto(
                           textStyle: TextStyle(
@@ -70,7 +74,7 @@ class EventWidget extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        event.location,
+                        widget.event.location,
                         textAlign: TextAlign.left,
                         style: GoogleFonts.roboto(
                           textStyle: TextStyle(
@@ -78,9 +82,9 @@ class EventWidget extends StatelessWidget {
                           ),
                         ),
                       ),
-                      event.description != ""
+                      widget.event.description != ""
                           ? Text(
-                              event.description,
+                              widget.event.description,
                               textAlign: TextAlign.left,
                               style: GoogleFonts.roboto(
                                 textStyle: TextStyle(
@@ -91,7 +95,7 @@ class EventWidget extends StatelessWidget {
                             )
                           : SizedBox(),
                       Text(
-                        event.date,
+                        widget.event.date,
                         textAlign: TextAlign.left,
                         style: GoogleFonts.roboto(
                           textStyle: TextStyle(
@@ -102,7 +106,7 @@ class EventWidget extends StatelessWidget {
                       Row(
                         children: <Widget>[
                           InkWell(
-                            onTap: () => openMap(event.location),
+                            onTap: () => openMap(widget.event.location),
                             child: Icon(
                               Icons.directions,
                               size: 40,
@@ -117,13 +121,9 @@ class EventWidget extends StatelessWidget {
                             child: Icon(
                               Icons.star,
                               size: 45,
-                              color:
-                                  /*event.partecipants.contains(
-                                      Provider.of<AuthController>(context)
-                                          .getUser())*/
-                                  "ciao" != "ciao"
-                                      ? Color(0xFF695E6C)
-                                      : Color(0xFFbfacc8),
+                              color: "ciao" != "ciao"
+                                  ? Color(0xFF695E6C)
+                                  : Color(0xFFbfacc8),
                             ),
                           )
                         ],
@@ -159,7 +159,7 @@ class EventWidget extends StatelessWidget {
                         ),
                         FittedBox(
                           child: Text(
-                            event.maxNumber.toString(),
+                            widget.event.maxNumber.toString(),
                             style: TextStyle(
                               fontSize: 22.0,
                               fontWeight: FontWeight.w600,
@@ -194,7 +194,8 @@ class EventWidget extends StatelessWidget {
                         ),
                         FittedBox(
                           child: Text(
-                            (event.maxNumber - event.partecipants.length)
+                            (widget.event.maxNumber -
+                                    widget.event.partecipants.length)
                                 .toString(),
                             style: TextStyle(
                               fontSize: 22.0,
@@ -223,13 +224,13 @@ class EventWidget extends StatelessWidget {
                           ),
                         ),
                       ),
-                      onPressed:
-                          ((event.maxNumber - event.partecipants.length) > 0)
-                              ? () =>
-                                  Scaffold.of(context).showSnackBar(SnackBar(
-                                    content: Text("Prenotazione effettuata"),
-                                  ))
-                              : null,
+                      onPressed: ((widget.event.maxNumber -
+                                  widget.event.partecipants.length) >
+                              0)
+                          ? () => Scaffold.of(context).showSnackBar(SnackBar(
+                                content: Text("Prenotazione effettuata"),
+                              ))
+                          : null,
                     ),
                   ),
                 )
