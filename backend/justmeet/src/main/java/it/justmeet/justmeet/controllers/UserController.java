@@ -2,7 +2,6 @@ package it.justmeet.justmeet.controllers;
 
 import com.google.firebase.auth.FirebaseAuthException;
 
-
 import java.util.List;
 import java.util.stream.Collectors;
 

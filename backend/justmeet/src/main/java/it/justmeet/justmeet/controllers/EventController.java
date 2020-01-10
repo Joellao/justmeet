@@ -247,6 +247,14 @@ public class EventController {
 		return r;
 	}
 
+	/**
+	 * Prenotazione all'evento
+	 * 
+	 * @param eventId
+	 * @param token
+	 * @return booleano con l'esito
+	 * @throws FirebaseAuthException
+	 */
 	@PostMapping("/event/{eventId}/prenote")
 	public boolean prenote(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
@@ -263,10 +271,18 @@ public class EventController {
 		return true;
 	}
 
+	/**
+	 * Cancella prenotazione
+	 * 
+	 * @param eventId
+	 * @param token
+	 * @return esisto cancellazione
+	 * @throws FirebaseAuthException
+	 */
 	@PatchMapping("/event/{eventId}/cancelPrenote")
 	public boolean cancelPrenote(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
-		String userId =WoWoUtility.getInstance().getUid(token);
+		String userId = WoWoUtility.getInstance().getUid(token);
 		User user = (User) userRepo.findByUid(userId);
 		Event evento = eventRepo.findById(eventId).get();
 		if (user.getPartecipatedEvents().contains(evento)) {
@@ -279,6 +295,15 @@ public class EventController {
 		return false;
 	}
 
+	/**
+	 * Aggiungi una foto all'evento
+	 * 
+	 * @param token
+	 * @param file
+	 * @param eventId
+	 * @return Photo
+	 * @throws Exception
+	 */
 	@PostMapping("/event/{eventId}/photo")
 	public Photo addPhoto(@RequestHeader("Authorization") String token, @RequestParam("photo") MultipartFile file,
 			@PathVariable("eventId") Long eventId) throws Exception {
@@ -304,6 +329,14 @@ public class EventController {
 
 	}
 
+	/**
+	 * Trova evento dal nome
+	 * 
+	 * @param eventName
+	 * @param token
+	 * @return lista di eventi con quel nome
+	 * @throws FirebaseAuthException
+	 */
 	@GetMapping("/event/{eventName}/find")
 	public List<Event> findEvent(@PathVariable("eventName") String eventName,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
@@ -311,6 +344,23 @@ public class EventController {
 		List<Event> result = eventRepo.findAll().stream().filter(event -> eventName.equals(event.getName()))
 				.collect(Collectors.toList());
 		return result;
+	}
+
+	/**
+	 * Trova l'evento in un determinato raggio a partire dalle coordinate passate
+	 * 
+	 * @param token
+	 * @param latitude
+	 * @param longitude
+	 * @param raggio
+	 * @return
+	 */
+	@GetMapping("/event/map")
+	public List<Event> findEventMap(@RequestHeader("Authorization") String token,
+			@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude,
+			@RequestParam("raggio") int raggio) {
+		List<Long> idEventi = eventRepo.findByLatAndLon(latitude, longitude, raggio);
+		return eventRepo.findAllById(idEventi);
 	}
 
 }

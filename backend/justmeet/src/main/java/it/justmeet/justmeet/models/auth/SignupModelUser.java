@@ -1,9 +1,7 @@
 package it.justmeet.justmeet.models.auth;
 
-import java.util.Date;
-
 /**
- * Responsabilità: definisce il modello per la registrazione dell'utente base  
+ * Responsabilità: definisce il modello per la registrazione dell'utente base
  * 
  * @author Joel Sina
  * @author Giulia Morelli
@@ -12,16 +10,16 @@ import java.util.Date;
  */
 
 public class SignupModelUser {
-	private String userName;
+    private String userName;
     private String firstName;
     private String lastName;
-    private Date birthDate;
+    private String birthDate;
     private String email;
     private String password;
 
-   
-    public SignupModelUser(String userName, String firstName, String lastName, Date birthDate, String email, String password) {
-    	this.userName=userName;
+    public SignupModelUser(String userName, String firstName, String lastName, String birthDate, String email,
+            String password) {
+        this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
@@ -29,18 +27,15 @@ public class SignupModelUser {
         this.password = password;
     }
 
-    
     public String getUserName() {
-		return userName;
-	}
+        return userName;
+    }
 
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-
-	public String getFirstName() {
+    public String getFirstName() {
         return firstName;
     }
 
@@ -56,11 +51,11 @@ public class SignupModelUser {
         this.lastName = lastName;
     }
 
-    public Date getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -71,7 +66,7 @@ public class SignupModelUser {
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     public String getEmail() {
         return email;
     }

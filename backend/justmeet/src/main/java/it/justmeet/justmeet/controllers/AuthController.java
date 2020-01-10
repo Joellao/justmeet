@@ -3,6 +3,9 @@ package it.justmeet.justmeet.controllers;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,14 +55,14 @@ public class AuthController {
 	 * @throws IOException
 	 * @throws SQLException
 	 * @throws URISyntaxException
-	 * @throws WrongPasswordException 
+	 * @throws WrongPasswordException
 	 */
 	@PostMapping("/login")
 	public Object login(@RequestParam("email") String email, @RequestParam("password") String password)
 			throws IOException, SQLException, URISyntaxException, WrongPasswordException {
-		if(!validateEmail(email))
+		if (!validateEmail(email))
 			throw new IllegalArgumentException("Email non valida");
-		if(password.length()<8)
+		if (password.length() < 8)
 			throw new WrongPasswordException("Password troppo corta");
 		Object json = fireBaseSignIn(email, password);
 		return json;
@@ -73,7 +76,7 @@ public class AuthController {
 	 * @throws EmailAlreadyExistsException
 	 * @throws SQLException
 	 * @throws URISyntaxException
-	 * @throws WrongPasswordException 
+	 * @throws WrongPasswordException
 	 */
 	@PostMapping("/signupInstitution")
 	public UserRecord signupInstitution(@RequestBody SignupModelInstitution institution)
@@ -88,9 +91,9 @@ public class AuthController {
 				throw new EmailAlreadyExistsException();
 			}
 		}
-		if(!validateEmail(institution.getEmail()))
+		if (!validateEmail(institution.getEmail()))
 			throw new IllegalArgumentException("Email non valida");
-		if(institution.getPassword().length()<8)
+		if (institution.getPassword().length() < 8)
 			throw new WrongPasswordException("Password troppo corta");
 		userRepo.save(new Institution(userRecord.getUid(), institution.getUserName(), userRecord.getDisplayName(),
 				userRecord.getEmail()));
@@ -105,11 +108,12 @@ public class AuthController {
 	 * @throws EmailAlreadyExistsException
 	 * @throws SQLException
 	 * @throws URISyntaxException
-	 * @throws WrongPasswordException 
+	 * @throws WrongPasswordException
+	 * @throws ParseException
 	 */
 	@PostMapping("/signupUser")
-	public UserRecord signupUser(@RequestBody SignupModelUser user)
-			throws EmailAlreadyExistsException, SQLException, URISyntaxException, WrongPasswordException {
+	public UserRecord signupUser(@RequestBody SignupModelUser user) throws EmailAlreadyExistsException, SQLException,
+			URISyntaxException, WrongPasswordException, ParseException {
 		CreateRequest request = new CreateRequest().setEmail(user.getEmail()).setEmailVerified(false)
 				.setPassword(user.getPassword()).setDisplayName(user.getFirstName() + " " + user.getLastName())
 				.setDisabled(false);
@@ -122,12 +126,13 @@ public class AuthController {
 				throw new EmailAlreadyExistsException();
 			}
 		}
-		if(!validateEmail(user.getEmail()))
+		if (!validateEmail(user.getEmail()))
 			throw new IllegalArgumentException("Email non valida");
-		if(user.getPassword().length()<8)
+		if (user.getPassword().length() < 8)
 			throw new WrongPasswordException("Password troppo corta");
+		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(user.getBirthDate());
 		userRepo.save(new User(userRecord.getUid(), user.getUserName(), user.getFirstName(), user.getLastName(),
-				user.getEmail(), user.getBirthDate()));
+				user.getEmail(), date));
 
 		return userRecord;
 	}
@@ -145,9 +150,9 @@ public class AuthController {
 				login, Object.class);
 		return result;
 	}
-	
+
 	private boolean validateEmail(String email) {
-		String  expressionPlus="^[\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+		String expressionPlus = "^[\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
 		Pattern pPlus = Pattern.compile(expressionPlus, Pattern.CASE_INSENSITIVE);
 		Matcher mPlus = pPlus.matcher(email);
 		return mPlus.matches();
