@@ -1,6 +1,7 @@
 package it.justmeet.justmeet.config;
 
 import java.net.URL;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import com.google.cloud.storage.Blob;
@@ -32,9 +33,9 @@ public class WoWoUtility {
 
 	public static String getPhotoUrl(String fileName, byte[] bytes) {
 		Bucket bucket = StorageClient.getInstance().bucket();
-		Blob blob = bucket.create(fileName, bytes);
+		String random = UUID.randomUUID().toString();
+		Blob blob = bucket.create(random.concat(fileName), bytes);
 		URL url = blob.signUrl(12312312, TimeUnit.DAYS);
 		return url.toString();
-
 	}
 }
