@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:justmeet/components/colori.dart';
 
 class CustomField extends StatelessWidget {
   const CustomField({
@@ -8,16 +9,35 @@ class CustomField extends StatelessWidget {
     @required this.hint,
     @required this.validator,
     @required this.onSaved,
+    @required this.obscureText,
+    this.onTap,
+    this.initialValue,
+    this.controller,
   }) : super(key: key);
 
   final IconData icon;
   final String label;
   final String hint;
+  final bool obscureText;
   final Function(String) validator;
   final Function(String) onSaved;
+  final Function onTap;
+  final String initialValue;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
+    TextInputType type;
+    switch (label) {
+      case "Email":
+        type = TextInputType.emailAddress;
+        break;
+      case "Data di nascita":
+        type = TextInputType.datetime;
+        break;
+      default:
+        type = TextInputType.text;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -26,10 +46,10 @@ class CustomField extends StatelessWidget {
           style: TextStyle(
             fontSize: 14.0,
             fontWeight: FontWeight.w600,
-            color: Colors.white,
+            color: Colori.grigio,
             shadows: [
               Shadow(
-                color: Colors.white54,
+                color: Colori.grigio,
                 offset: Offset(0, 0),
               ),
             ],
@@ -37,9 +57,14 @@ class CustomField extends StatelessWidget {
         ),
         SizedBox(height: 10.0),
         TextFormField(
+          controller: this.controller,
+          obscureText: label == "Password" ? true : false,
+          readOnly: label == "Data di nascita" ? true : false,
+          onTap: this.onTap,
           onSaved: onSaved,
+          keyboardType: type,
           style: TextStyle(
-            color: Colors.white,
+            color: Colori.grigio,
             fontFamily: 'OpenSans',
           ),
           validator: validator,
@@ -50,17 +75,17 @@ class CustomField extends StatelessWidget {
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30.0),
               borderSide: BorderSide(
-                color: Colors.white,
+                color: Colori.grigio,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30.0),
               borderSide: BorderSide(
-                color: Colors.white,
+                color: Colori.grigio,
               ),
             ),
-            prefixIcon: Icon(icon, color: Colors.white),
-            focusColor: Colors.white,
+            prefixIcon: Icon(icon, color: Colori.grigio),
+            focusColor: Colori.grigio,
             hintText: hint,
             hintStyle: TextStyle(
               color: Colors.white54,

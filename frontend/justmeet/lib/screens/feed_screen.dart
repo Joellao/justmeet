@@ -1,12 +1,10 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/event.dart';
-import 'package:justmeet/components/widgets/EventFeed.dart';
 import 'package:justmeet/components/widgets/event_widget.dart';
-import 'package:justmeet/controller/AuthController.dart';
 import 'package:provider/provider.dart';
 
 class FeedScreen extends StatefulWidget {
@@ -23,6 +21,10 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
+
+  @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
@@ -30,35 +32,32 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   Future<List<Event>> getData() async {
-    //FirebaseUser user = await Provider.of<AuthController>(context).getUser();
-    //IdTokenResult token = await user.getIdToken();
-    // Response response = await dio.get(
-    //   "https://justmeetgjj.herokuapp.com/event/",
-    //   options: Options(
-    //     headers: {
-    //       "Authorization": token.token,
-    //     },
-    //   ),
-    // );
-    Response response = new Response(
-        statusCode: 200,
-        data:
-            '[{"id":3,"name":"Evento 3","user":{"uid":"0yISKL488gTvdPS1vckvyAoRwOu2","firstName":"Joel","email":"joel.sina97@gmail.com","profileImage":null,"bio":null,"type":1,"canCreatePublicEvent":false,"canSeeOthersProfile":true,"lastName":"Sina","birthDate":"04/08/1997"},"location":"SSM","date":"21/12/2019","description":null,"cancelled":false,"categoria":"Cat","maxNumber":8,"comments":[{"id":6,"body":"Commento Evento 3","user":{"uid":"0yISKL488gTvdPS1vckvyAoRwOu2","firstName":"Joel","email":"joel.sina97@gmail.com","profileImage":null,"bio":null,"type":1,"canCreatePublicEvent":false,"canSeeOthersProfile":true,"lastName":"Sina","birthDate":"04/08/1997"},"date":"Oggi","state":false}],"reviews":[],"partecipants":[],"publicEvent":false,"participants":[],"free":true},{"id":2,"name":"Evento 2 modificato","user":{"uid":"0yISKL488gTvdPS1vckvyAoRwOu2","firstName":"Joel","email":"joel.sina97@gmail.com","profileImage":null,"bio":null,"type":1,"canCreatePublicEvent":false,"canSeeOthersProfile":true,"lastName":"Sina","birthDate":"04/08/1997"},"location":"SSM","date":"21/12/2019","description":null,"cancelled":false,"categoria":"Cat","maxNumber":8,"comments":[],"reviews":[],"partecipants":[],"publicEvent":false,"participants":[],"free":true},{"id":12,"name":"Evento 3","user":{"uid":"uEdGOvsfDCa2C9htEE4uOygp5BE3","firstName":"Comune San Severino Marche","email":"comune@ciao.com","profileImage":null,"bio":null,"type":2,"canCreatePublicEvent":true,"canSeeOthersProfile":false,"name":"Comune San Severino Marche"},"location":"SSM","date":"21/12/2019","description":null,"cancelled":false,"categoria":"Cat","maxNumber":8,"comments":[],"reviews":[],"partecipants":[],"publicEvent":true,"participants":[],"free":true},{"id":13,"name":"Kiss and say goodbye","user":{"uid":"0yISKL488gTvdPS1vckvyAoRwOu2","firstName":"Joel","email":"joel.sina97@gmail.com","profileImage":null,"bio":null,"type":1,"canCreatePublicEvent":false,"canSeeOthersProfile":true,"lastName":"Sina","birthDate":"04/08/1997"},"location":"San Severino Marche","date":"30/12/2019","description":null,"cancelled":false,"categoria":"Concerto","maxNumber":12,"comments":[],"reviews":[],"partecipants":[],"publicEvent":false,"participants":[],"free":true}]');
+    String token = Provider.of<String>(context);
+    Response response = await dio.get(
+      "https://justmeetgjj.herokuapp.com/event/",
+      options: Options(
+        headers: {
+          "Authorization": token,
+        },
+      ),
+    );
+
     if (response.statusCode == 200) {
       List<Event> events = [];
-      List map = jsonDecode(response.toString());
-      List events2 = map;
+      List events2 = response.data;
       events2.forEach((event) {
         events.add(Event.fromJson(event));
       });
       return events;
+    } else {
+      return null;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xFF5257F2),
+      color: Colori.bluScuro,
       child: FutureBuilder<List<Event>>(
         initialData: [],
         builder: (context, snapshot) {
@@ -68,8 +67,10 @@ class _FeedScreenState extends State<FeedScreen> {
               itemCount: snapshot.data.length,
               itemBuilder: (BuildContext context, int index) {
                 Event event = snapshot.data.elementAt(index);
-                print(event.name);
-                return EventWidget(event: event);
+                return EventWidget(
+                  event: event,
+                  profileWidget: getProfileWidget(event),
+                );
               },
             );
           } else if (snapshot.hasError) {
@@ -78,6 +79,62 @@ class _FeedScreenState extends State<FeedScreen> {
           return Center(child: CircularProgressIndicator());
         },
         future: events,
+      ),
+    );
+  }
+
+  Widget getProfileWidget(Event event) {
+    return Container(
+      padding: EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              CircleAvatar(
+                backgroundImage: event.user.profileImage != ""
+                    ? NetworkImage(event.user.profileImage)
+                    : null,
+                child: event.user.profileImage == ""
+                    ? Icon(Icons.person, size: 25)
+                    : null,
+              ),
+              SizedBox(
+                width: 7.0,
+              ),
+              Text(
+                event.user.firstName,
+                textAlign: TextAlign.left,
+                style: GoogleFonts.roboto(
+                  textStyle: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(" "),
+              Text(
+                event.user.lastName,
+                textAlign: TextAlign.left,
+                style: GoogleFonts.roboto(
+                  textStyle: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+          InkWell(
+            onTap: () => print("More premuto"),
+            child: Icon(
+              Icons.more_vert,
+              size: 30.0,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/user.dart';
-import 'package:justmeet/components/widgets/EventProfile.dart';
 import 'package:justmeet/components/widgets/event_widget.dart';
+import 'package:justmeet/screens/profile_settings_screen.dart';
 import 'package:provider/provider.dart';
 import '../controller/AuthController.dart';
 
@@ -16,7 +17,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen>
     with AutomaticKeepAliveClientMixin {
   Dio dio = new Dio();
-  Future<User> user;
+  User user;
   @override
   void initState() {
     super.initState();
@@ -25,21 +26,15 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   bool get wantKeepAlive => true;
 
-  Future<User> getUser() async {
-    FirebaseUser user = await Provider.of<AuthController>(context).getUser();
-    IdTokenResult token = await user.getIdToken();
-    Response response = await dio.get(
-      "https://justmeetgjj.herokuapp.com/user",
-      options: Options(
-        headers: {
-          "Authorization": token.token,
-        },
-        responseType: ResponseType.json,
-      ),
-    );
-    if (response.statusCode == 200) {
-      return User.fromJson(response.data);
-    }
+  User getUser() {
+    User user = Provider.of<User>(context);
+    return user;
+  }
+
+  void signOut() async {
+    final auth = Provider.of<AuthController>(context);
+    await auth.signOut();
+    Navigator.pop(context);
   }
 
   @override
@@ -51,28 +46,59 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Color(0xFF5257F2),
-      child: FutureBuilder<User>(
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            print(snapshot.data.events);
-            return SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  ...snapshot.data.events.map((f) {
-                    Event event = Event.fromJson(f);
-                    return EventWidget(event: event);
-                  }),
-                ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colori.bluScuro,
+        elevation: 1,
+        title: Text(user.firstName + " " + user.lastName),
+        centerTitle: true,
+        actions: <Widget>[
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ProfileSettingsScreen(user: user)),
+              );
+            },
+            child: Icon(
+              Icons.settings,
+              size: 30.0,
+            ),
+          ),
+          SizedBox(width: 10)
+        ],
+      ),
+      body: Container(
+        color: Colori.bluScuro,
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              CircleAvatar(
+                radius: 70,
+                backgroundImage: user.profileImage != ""
+                    ? NetworkImage(user.profileImage)
+                    : null,
+                child: user.profileImage == ""
+                    ? Icon(Icons.person, size: 70)
+                    : null,
               ),
-            );
-          } else if (snapshot.hasError) {
-            return Text("${snapshot.error}");
-          }
-          return Center(child: CircularProgressIndicator());
-        },
-        future: user,
+              ListView.builder(
+                primary: false,
+                shrinkWrap: true,
+                itemCount: user.events.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Event event = Event.fromJson(user.events.elementAt(0));
+                  return EventWidget(
+                    event: event,
+                  );
+                },
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

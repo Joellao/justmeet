@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:justmeet/components/models/user.dart';
 
 class Event {
@@ -31,7 +32,8 @@ class Event {
       : this.name = json['name'],
         this.location = json['location'],
         this.category = json['category'],
-        this.date = json['date'],
+        this.date =
+            DateFormat("dd/MM/yyyy").format(DateTime.parse(json['date'])),
         this.description =
             json['description'] != null ? json['description'] : "",
         this.maxNumber = json['maxNumber'],

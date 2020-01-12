@@ -5,9 +5,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class EventWidget extends StatefulWidget {
   final Event event;
-  final Widget w;
+  final Widget profileWidget;
 
-  const EventWidget({Key key, this.event, this.w}) : super(key: key);
+  const EventWidget({Key key, this.event, this.profileWidget})
+      : super(key: key);
   @override
   _EventWidgetState createState() => _EventWidgetState();
 }
@@ -16,7 +17,7 @@ class _EventWidgetState extends State<EventWidget> {
   static Future<void> openMap(String location) async {
     String result = location.replaceAll(RegExp(' '), '+');
     String googleUrl =
-        'https://www.google.com/maps/search/?api=1&query=${result}';
+        'https://www.google.com/maps/search/?api=1&query=$result';
     if (await canLaunch(googleUrl)) {
       await launch(googleUrl);
     } else {
@@ -26,217 +27,222 @@ class _EventWidgetState extends State<EventWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(12.0),
-      child: Card(
-        elevation: 4,
-        color: Color(0XFFe1e2ef),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(20),
-          ),
-        ),
-        child: Column(
-          children: <Widget>[
-            widget.w != null ? widget.w : SizedBox(),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 8.0,
-                    left: 8.0,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                    child: Image.network(
-                      "https://apprecs.org/ios/images/app-icons/256/ca/644106186.jpg",
-                      height: 90,
-                      width: 150,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        widget.event.name,
-                        textAlign: TextAlign.left,
-                        style: GoogleFonts.roboto(
-                          textStyle: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        widget.event.location,
-                        textAlign: TextAlign.left,
-                        style: GoogleFonts.roboto(
-                          textStyle: TextStyle(
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                      widget.event.description != ""
-                          ? Text(
-                              widget.event.description,
-                              textAlign: TextAlign.left,
-                              style: GoogleFonts.roboto(
-                                textStyle: TextStyle(
-                                  fontSize: 12,
-                                ),
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            )
-                          : SizedBox(),
-                      Text(
-                        widget.event.date,
-                        textAlign: TextAlign.left,
-                        style: GoogleFonts.roboto(
-                          textStyle: TextStyle(
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                      Row(
-                        children: <Widget>[
-                          InkWell(
-                            onTap: () => openMap(widget.event.location),
-                            child: Icon(
-                              Icons.directions,
-                              size: 40,
-                              color: Color(0xFF02020a),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () =>
-                                Scaffold.of(context).showSnackBar(SnackBar(
-                              content: Text("Aggiungi ai preferiti"),
-                            )),
-                            child: Icon(
-                              Icons.star,
-                              size: 45,
-                              color: "ciao" != "ciao"
-                                  ? Color(0xFF695E6C)
-                                  : Color(0xFFbfacc8),
-                            ),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ],
+    return GestureDetector(
+      onTap: () => print("Click on the event"),
+      child: Padding(
+        padding: EdgeInsets.all(12.0),
+        child: Card(
+          elevation: 4,
+          color: Color(0XFFe1e2ef),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(20),
             ),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    width: 70,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFF695E6C), width: 1.5),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
+          ),
+          child: Column(
+            children: <Widget>[
+              widget.profileWidget != null ? widget.profileWidget : SizedBox(),
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 8.0,
+                      left: 8.0,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      child: Image.network(
+                        "https://apprecs.org/ios/images/app-icons/256/ca/644106186.jpg",
+                        height: 90,
+                        width: 150,
+                        fit: BoxFit.cover,
                       ),
                     ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "Totali",
+                          widget.event.name,
+                          textAlign: TextAlign.left,
                           style: GoogleFonts.roboto(
                             textStyle: TextStyle(
-                              color: Color(0xFF695E6C),
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          widget.event.location,
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.roboto(
+                            textStyle: TextStyle(
+                              fontSize: 15,
                             ),
                           ),
                         ),
-                        FittedBox(
-                          child: Text(
-                            widget.event.maxNumber.toString(),
-                            style: TextStyle(
-                              fontSize: 22.0,
-                              fontWeight: FontWeight.w600,
+                        widget.event.description != ""
+                            ? Text(
+                                widget.event.description,
+                                textAlign: TextAlign.left,
+                                style: GoogleFonts.roboto(
+                                  textStyle: TextStyle(
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              )
+                            : SizedBox(),
+                        Text(
+                          widget.event.date,
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.roboto(
+                            textStyle: TextStyle(
+                              fontSize: 12,
                             ),
                           ),
                         ),
+                        Row(
+                          children: <Widget>[
+                            InkWell(
+                              onTap: () => openMap(widget.event.location),
+                              child: Icon(
+                                Icons.directions,
+                                size: 40,
+                                color: Color(0xFF02020a),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () =>
+                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                content: Text("Aggiungi ai preferiti"),
+                              )),
+                              child: Icon(
+                                Icons.star,
+                                size: 45,
+                                color: "ciao" != "ciao"
+                                    ? Color(0xFF695E6C)
+                                    : Color(0xFFbfacc8),
+                              ),
+                            )
+                          ],
+                        )
                       ],
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                  child: Container(
-                    width: 70,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFF695E6C), width: 1.5),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      width: 70,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        border:
+                            Border.all(color: Color(0xFF695E6C), width: 1.5),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            "Totali",
+                            style: GoogleFonts.roboto(
+                              textStyle: TextStyle(
+                                color: Color(0xFF695E6C),
+                              ),
+                            ),
+                          ),
+                          FittedBox(
+                            child: Text(
+                              widget.event.maxNumber.toString(),
+                              style: TextStyle(
+                                fontSize: 22.0,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "Rimasti",
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: Container(
+                      width: 70,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        border:
+                            Border.all(color: Color(0xFF695E6C), width: 1.5),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            "Rimasti",
+                            style: GoogleFonts.roboto(
+                              textStyle: TextStyle(
+                                color: Color(0xFF695E6C),
+                              ),
+                            ),
+                          ),
+                          FittedBox(
+                            child: Text(
+                              (widget.event.maxNumber -
+                                      widget.event.partecipants.length)
+                                  .toString(),
+                              style: TextStyle(
+                                fontSize: 22.0,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Flexible(
+                    fit: FlexFit.tight,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: RaisedButton(
+                        color: Color(0xFF5257f2),
+                        elevation: 4,
+                        disabledColor: Colors.red,
+                        child: Text(
+                          "Prenotati",
                           style: GoogleFonts.roboto(
                             textStyle: TextStyle(
-                              color: Color(0xFF695E6C),
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                        FittedBox(
-                          child: Text(
-                            (widget.event.maxNumber -
-                                    widget.event.partecipants.length)
-                                .toString(),
-                            style: TextStyle(
-                              fontSize: 22.0,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: RaisedButton(
-                      color: Color(0xFF5257f2),
-                      elevation: 4,
-                      disabledColor: Colors.red,
-                      child: Text(
-                        "Prenotati",
-                        style: GoogleFonts.roboto(
-                          textStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        onPressed: ((widget.event.maxNumber -
+                                    widget.event.partecipants.length) >
+                                0)
+                            ? () => Scaffold.of(context).showSnackBar(SnackBar(
+                                  content: Text("Prenotazione effettuata"),
+                                ))
+                            : null,
                       ),
-                      onPressed: ((widget.event.maxNumber -
-                                  widget.event.partecipants.length) >
-                              0)
-                          ? () => Scaffold.of(context).showSnackBar(SnackBar(
-                                content: Text("Prenotazione effettuata"),
-                              ))
-                          : null,
                     ),
-                  ),
-                )
-              ],
-            )
-          ],
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

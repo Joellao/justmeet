@@ -44,7 +44,7 @@ public abstract class AbstractUser {
 	protected String firstName;
 	@Column(name = "email")
 	protected String email;
-	@Column(name = "profileImage")
+	@Column(name = "profileImage", length = 4000)
 	protected String profileImage;
 	@Column(name = "bio")
 	protected String bio;
