@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import it.justmeet.justmeet.config.WoWoUtility;
 import it.justmeet.justmeet.models.AbstractUser;
 import it.justmeet.justmeet.models.Event;
-import it.justmeet.justmeet.models.Photo;
 import it.justmeet.justmeet.models.creates.UserCreate;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 

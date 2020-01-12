@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
+import 'package:justmeet/components/models/creates/SignupUser.dart';
+import 'package:justmeet/controller/AuthController.dart';
+import 'package:provider/provider.dart';
 
 class SignupScreenUser extends StatefulWidget {
   @override
@@ -11,14 +14,17 @@ class SignupScreenUser extends StatefulWidget {
 class _SignupScreenUserState extends State<SignupScreenUser> {
   final _formKey = GlobalKey<FormState>();
   String _firstName, _lastName, _email, _password, _userName, _birthDate;
-  bool isLoading = false;
-
-  _submit() {
+  _submit() async {
     if (_formKey.currentState.validate()) {
-      setState(() {
-        isLoading = true;
-      });
       _formKey.currentState.save();
+      SignupUser form = SignupUser(
+          birthDate: _birthDate,
+          firstName: _firstName,
+          lastName: _lastName,
+          email: _email,
+          password: _password,
+          userName: _userName);
+      await Provider.of<AuthController>(context).signUpUser(form);
     }
   }
 

@@ -111,6 +111,5 @@ class _HomePageScreenState extends State<HomePageScreen>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }

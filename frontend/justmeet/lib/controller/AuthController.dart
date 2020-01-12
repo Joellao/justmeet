@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:justmeet/components/config.dart';
+import 'package:justmeet/components/models/creates/SignupInstitution.dart';
+import 'package:justmeet/components/models/creates/SignupUser.dart';
 import 'package:justmeet/components/models/user.dart';
 
 @immutable
@@ -12,10 +13,12 @@ class DummyUser {
 
 class AuthController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  Dio dio = new Dio();
   Future<User> getUser() async {
-    Dio dio = new Dio();
     FirebaseUser fbUser = await _auth.currentUser();
+    if (fbUser == null) {
+      return null;
+    }
     IdTokenResult token = await fbUser.getIdToken();
     Response response = await dio.get(
       "https://justmeetgjj.herokuapp.com/user",
@@ -45,9 +48,38 @@ class AuthController {
       FirebaseUser user = result.user;
       return _userFromFirebase(user);
     } catch (e) {
-      print(e);
       throw new Exception(e);
     }
+  }
+
+  Future<FirebaseUser> signUpUser(SignupUser form) async {
+    Response response =
+        await dio.post("https://justmeetgjj.herokuapp.com/signupUser", data: {
+      "email": form.email,
+      "firstName": form.firstName,
+      "lastName": form.lastName,
+      "password": form.password,
+      "birthDate": form.birthDate,
+      "userName": form.userName
+    });
+    if (response.statusCode == 401) {
+      return response.data;
+    }
+    return null;
+  }
+
+  Future<FirebaseUser> signUpInstitution(SignupInstitution form) async {
+    Response response = await dio
+        .post("https://justmeetgjj.herokuapp.com/signupInstitution", data: {
+      "name": form.name,
+      "email": form.email,
+      "password": form.password,
+      "userName": form.userName
+    });
+    if (response.statusCode == 401) {
+      return response.data;
+    }
+    return null;
   }
 
   DummyUser _userFromFirebase(FirebaseUser user) {

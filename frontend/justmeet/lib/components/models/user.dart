@@ -34,5 +34,5 @@ class User {
         this.events = json['events'],
         this.profileImage =
             json['profileImage'] == null ? "" : json['profileImage'],
-        this.username = json['username'] == null ? "" : json['usernmae'];
+        this.username = json['userName'] == null ? "" : json['userName'];
 }

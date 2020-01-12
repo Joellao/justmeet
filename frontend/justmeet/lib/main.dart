@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:justmeet/components/auth_widget.dart';
-import 'package:justmeet/components/models/user.dart';
+import 'package:justmeet/components/auth_widget_builder.dart';
 import 'package:justmeet/controller/AuthController.dart';
-import 'package:justmeet/controller/UserController.dart';
 import 'package:justmeet/screens/login_screen.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:justmeet/screens/signup_screen.dart';
@@ -19,25 +18,22 @@ class JustMeet extends StatelessWidget {
         Provider<AuthController>(
           create: (_) => AuthController(),
         ),
-        FutureProvider<String>.value(
-          value: AuthController().getToken(),
-        ),
-        FutureProvider<User>.value(
-          value: AuthController().getUser(),
-        ),
-        Provider<UserController>(
-          create: (_) => UserController(),
-        )
       ],
-      child: MaterialApp(
-        title: 'JustMeet',
-        debugShowCheckedModeBanner: false,
-        home: AuthWidget(),
-        routes: {
-          'LoginScreen': (context) => LoginScreen(),
-          'SignupScreen': (context) => SignupScreen(),
-          'HomePageScreen': (context) => HomePageScreen(),
-          'ProfileScreen': (context) => ProfileScreen(),
+      child: AuthWidgetBuilder(
+        builder: (context, userSnapshot) {
+          return MaterialApp(
+            title: 'JustMeet',
+            debugShowCheckedModeBanner: false,
+            home: AuthWidget(
+              userSnapshot: userSnapshot,
+            ),
+            routes: {
+              'LoginScreen': (context) => LoginScreen(),
+              'SignupScreen': (context) => SignupScreen(),
+              'HomePageScreen': (context) => HomePageScreen(),
+              'ProfileScreen': (context) => ProfileScreen(),
+            },
+          );
         },
       ),
     );

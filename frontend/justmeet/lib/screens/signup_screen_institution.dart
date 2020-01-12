@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
+import 'package:justmeet/components/models/creates/SignupInstitution.dart';
+import 'package:justmeet/controller/AuthController.dart';
+import 'package:provider/provider.dart';
 
 class SignupScreenInstitution extends StatefulWidget {
   @override
@@ -12,14 +14,13 @@ class SignupScreenInstitution extends StatefulWidget {
 class _SignupScreenInstitutionState extends State<SignupScreenInstitution> {
   final _formKey = GlobalKey<FormState>();
   String _name, _password, _email, _userName;
-  bool isLoading = false;
 
-  _submit() {
+  _submit() async {
     if (_formKey.currentState.validate()) {
-      setState(() {
-        isLoading = true;
-      });
       _formKey.currentState.save();
+      SignupInstitution form = SignupInstitution(
+          email: _email, password: _password, name: _name, userName: _userName);
+      await Provider.of<AuthController>(context).signUpInstitution(form);
     }
   }
 

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/event.dart';
@@ -7,7 +6,6 @@ import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/event_widget.dart';
 import 'package:justmeet/screens/profile_settings_screen.dart';
 import 'package:provider/provider.dart';
-import '../controller/AuthController.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -31,15 +29,8 @@ class _ProfileScreenState extends State<ProfileScreen>
     return user;
   }
 
-  void signOut() async {
-    final auth = Provider.of<AuthController>(context);
-    await auth.signOut();
-    Navigator.pop(context);
-  }
-
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     this.user = getUser();
   }
@@ -53,19 +44,22 @@ class _ProfileScreenState extends State<ProfileScreen>
         title: Text(user.firstName + " " + user.lastName),
         centerTitle: true,
         actions: <Widget>[
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ProfileSettingsScreen(user: user)),
-              );
-            },
-            child: Icon(
-              Icons.settings,
-              size: 30.0,
-            ),
-          ),
+          Provider.of<User>(context).uid == user.uid
+              ? InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ProfileSettingsScreen(user: user)),
+                    );
+                  },
+                  child: Icon(
+                    Icons.settings,
+                    size: 30.0,
+                  ),
+                )
+              : null,
           SizedBox(width: 10)
         ],
       ),
