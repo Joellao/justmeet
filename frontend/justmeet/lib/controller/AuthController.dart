@@ -53,6 +53,7 @@ class AuthController {
   }
 
   Future<FirebaseUser> signUpUser(SignupUser form) async {
+    print("ciao2");
     Response response =
         await dio.post("https://justmeetgjj.herokuapp.com/signupUser", data: {
       "email": form.email,
@@ -62,13 +63,16 @@ class AuthController {
       "birthDate": form.birthDate,
       "userName": form.userName
     });
+    print("ciao");
     if (response.statusCode == 401) {
+      print(response.data);
       return response.data;
     }
     return null;
   }
 
   Future<FirebaseUser> signUpInstitution(SignupInstitution form) async {
+    print("entrato");
     Response response = await dio
         .post("https://justmeetgjj.herokuapp.com/signupInstitution", data: {
       "name": form.name,
