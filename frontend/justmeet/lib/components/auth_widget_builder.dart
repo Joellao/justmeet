@@ -18,7 +18,13 @@ class AuthWidgetBuilder extends StatelessWidget {
         if (user != null) {
           return MultiProvider(
             providers: [
-              FutureProvider<User>.value(value: AuthController().getUser()),
+              FutureProvider<User>.value(
+                value: AuthController().getUser(),
+                catchError: (context, e) {
+                  print(e);
+                  return null;
+                },
+              ),
               FutureProvider<String>.value(
                 value: AuthController().getToken(),
               ),

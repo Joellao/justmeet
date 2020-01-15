@@ -16,22 +16,31 @@ class AuthController {
   Dio dio = new Dio();
   Future<User> getUser() async {
     FirebaseUser fbUser = await _auth.currentUser();
+
     if (fbUser == null) {
       return null;
     }
     IdTokenResult token = await fbUser.getIdToken();
-    Response response = await dio.get(
-      "https://justmeetgjj.herokuapp.com/user",
-      options: Options(
-        headers: {
-          "Authorization": token.token,
-        },
-        responseType: ResponseType.json,
-      ),
-    );
-    if (response.statusCode == 200) {
-      return User.fromJson(response.data);
+    try {
+      Response response = await dio.get(
+        "https://justmeetgjj.herokuapp.com/user",
+        options: Options(
+          headers: {
+            "Authorization": token.token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        return User.fromJson(response.data);
+      }
+      if (response.statusCode == 500) {
+        print("Ciao");
+      }
+    } on DioError catch (e) {
+      print(e);
     }
+
     return null;
   }
 

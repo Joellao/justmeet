@@ -35,6 +35,9 @@ class CustomField extends StatelessWidget {
       case "Data di nascita":
         type = TextInputType.datetime;
         break;
+      case "Data evento":
+        type = TextInputType.datetime;
+        break;
       case "Massimo numero partecipanti":
         type = TextInputType.number;
         break;

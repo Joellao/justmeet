@@ -13,11 +13,7 @@ class NewEventScreen extends StatefulWidget {
 
 class _NewEventScreenState extends State<NewEventScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _eventName,
-      _location,
-      _description,
-      _date,
-      _category = 'Cinema';
+  String _eventName, _location, _description, _date, _category = 'Cinema';
   bool _isFree = true;
   int _maxPersons;
 
@@ -42,7 +38,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
             "location": _location,
             "description": _description,
             "isFree": _isFree,
-            "category": _category,
+            "category": _category.toUpperCase(),
             "maxPersons": _maxPersons,
             'date': _date
           },
@@ -127,8 +123,8 @@ class _NewEventScreenState extends State<NewEventScreen> {
                 initialValue: this._date,
                 onTap: () async {
                   DateTime now = DateTime.now();
-                  DateTime initial = DateTime(1990, 1, 1);
-                  DateTime last = DateTime(now.year - 10, now.month, now.day);
+                  DateTime initial = DateTime(now.year, now.month, now.day + 1);
+                  DateTime last = DateTime(now.year + 2, now.month, now.day);
                   Future<DateTime> future = showDatePicker(
                     context: context,
                     initialDate: initial,

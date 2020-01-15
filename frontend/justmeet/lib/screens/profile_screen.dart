@@ -84,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 shrinkWrap: true,
                 itemCount: user.events.length,
                 itemBuilder: (BuildContext context, int index) {
-                  Event event = Event.fromJson(user.events.elementAt(0));
+                  Event event = Event.fromJson(user.events.elementAt(index));
                   return EventWidget(
                     event: event,
                   );
