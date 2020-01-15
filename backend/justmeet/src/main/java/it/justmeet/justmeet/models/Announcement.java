@@ -41,7 +41,7 @@ public class Announcement {
 	@Column(name = "name")
 	private String name;
 	@Column(name = "category")
-	private String category;
+	private Category category;
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
@@ -58,7 +58,7 @@ public class Announcement {
 
 	}
 
-	public Announcement(String name, AbstractUser user, String categoria, Date date) {
+	public Announcement(String name, AbstractUser user, Category categoria, Date date) {
 		this.name = name;
 		this.user = user;
 		this.category = categoria;
@@ -71,10 +71,6 @@ public class Announcement {
 
 	public AbstractUser getUser() {
 		return user;
-	}
-
-	public String getCategoria() {
-		return category;
 	}
 
 	public List<Comment> getComments() {
@@ -93,11 +89,11 @@ public class Announcement {
 		this.id = id;
 	}
 
-	public String getCategory() {
+	public Category getCategory() {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(Category category) {
 		this.category = category;
 	}
 

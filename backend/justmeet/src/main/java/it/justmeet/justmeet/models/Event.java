@@ -57,7 +57,7 @@ public class Event {
 	@Column(name = "cancelled")
 	private boolean cancelled = false;
 	@Column(name = "category")
-	private String category;
+	private Category category;
 	@Column(name = "maxNumber")
 	private int maxNumber;
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -81,7 +81,7 @@ public class Event {
 	protected Event() {
 	}
 
-	public Event(String name, String location, String description, Date date, boolean isFree, String category,
+	public Event(String name, String location, String description, Date date, boolean isFree, Category category,
 			int maxNumber) {
 		this.name = name;
 		this.location = location;
@@ -159,7 +159,7 @@ public class Event {
 		return isFree;
 	}
 
-	public String getCategory() {
+	public Category getCategory() {
 		return category;
 	}
 
@@ -176,7 +176,7 @@ public class Event {
 		this.reviews = reviews;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(Category category) {
 		this.category = category;
 	}
 

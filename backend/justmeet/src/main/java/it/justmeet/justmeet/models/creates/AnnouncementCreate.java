@@ -1,5 +1,7 @@
 package it.justmeet.justmeet.models.creates;
 
+import it.justmeet.justmeet.models.Category;
+
 /**
  * Responsabilità: si occupa della creazione di un annuncio
  * 
@@ -10,9 +12,9 @@ package it.justmeet.justmeet.models.creates;
  */
 public class AnnouncementCreate {
     private String name;
-    private String category;
+    private Category category;
 
-    public AnnouncementCreate(String name, String category) {
+    public AnnouncementCreate(String name, Category category) {
         this.name = name;
         this.category = category;
     }
@@ -25,11 +27,11 @@ public class AnnouncementCreate {
         this.name = name;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

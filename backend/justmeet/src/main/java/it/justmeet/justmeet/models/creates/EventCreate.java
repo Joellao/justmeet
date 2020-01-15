@@ -1,5 +1,6 @@
 package it.justmeet.justmeet.models.creates;
 
+import it.justmeet.justmeet.models.Category;
 
 /**
  * Responsabilità: si occupa della creazione di un evento
@@ -16,10 +17,10 @@ public class EventCreate {
     private String description;
     private String date;
     private boolean isFree;
-    private String category;
+    private Category category;
     private int maxPersons;
 
-    public EventCreate(String name, String location, String description, String date, boolean isFree, String category,
+    public EventCreate(String name, String location, String description, String date, boolean isFree, Category category,
             int maxPersons) {
         this.name = name;
         this.location = location;
@@ -70,11 +71,11 @@ public class EventCreate {
         this.isFree = isFree;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

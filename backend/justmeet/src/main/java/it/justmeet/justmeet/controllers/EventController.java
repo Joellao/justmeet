@@ -138,8 +138,8 @@ public class EventController {
 	public Event getEvent(@PathVariable("eventId") Long eventId) {
 		// Chiamata al databse con eventId per avere le info dell'evento
 		// return new Event(eventId, null, eventId, eventId, false, eventId, 0);
-		Event event = eventRepo.findById(eventId).get();
-		return event;
+		return eventRepo.findById(eventId).get();
+	
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class EventController {
 			return false;
 		}
 		event.addPartecipant(user);
-		user.removePartecipateEvent(event);
+		user.addPartecipateEvent(event);
 		userRepo.save(user);
 		eventRepo.save(event);
 		return true;

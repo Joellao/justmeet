@@ -55,8 +55,7 @@ public class AnnouncementController {
 	@PostMapping("/announcement")
 	public Announcement createAnnouncement(@RequestBody AnnouncementCreate annuncio,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		FirebaseToken check = FirebaseAuth.getInstance().verifyIdToken(token);
-		String userId = check.getUid();
+		String userId = WoWoUtility.getInstance().getUid(token);
 		if(!userRepo.findByUid(userId).isCanCreateAnnouncement())
 			return null;
 		Announcement announce = new Announcement(annuncio.getName(), userRepo.findByUid(userId), annuncio.getCategory(), new Date());
@@ -70,9 +69,11 @@ public class AnnouncementController {
 	 * 
 	 * @param announceId
 	 * @return l'id dell'annuncio selezionato
+	 * @throws FirebaseAuthException 
 	 */
 	@GetMapping("/announcement/{announcementId}")
-	public Announcement getAnnouncement(@PathVariable("announcementId") Long announceId) {
+	public Announcement getAnnouncement(@PathVariable("announcementId") Long announceId,@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+		WoWoUtility.getInstance().getUid(token);
 		return announcementRepo.findById(announceId).get();
 	}
 
