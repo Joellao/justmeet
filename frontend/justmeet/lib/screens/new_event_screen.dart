@@ -17,7 +17,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
       _location,
       _description,
       _date,
-      _category = 'Cinema e Video';
+      _category = 'Cinema';
   bool _isFree = true;
   int _maxPersons;
 
@@ -196,14 +196,15 @@ class _NewEventScreenState extends State<NewEventScreen> {
                       ),
                     ),
                     items: <String>[
-                      'Cinema e Video',
+                      'Cinema',
                       'Fiere',
-                      'Mercati',
+                      'Conferenze',
                       'Mostre',
                       'Sport',
                       'Musica',
                       'Sagre',
-                      'Teatro'
+                      'Teatro',
+                      'Feste'
                     ].map((String value) {
                       return new DropdownMenuItem<String>(
                         value: value,

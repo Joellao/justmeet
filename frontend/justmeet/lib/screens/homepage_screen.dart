@@ -17,6 +17,8 @@ class _HomePageScreenState extends State<HomePageScreen>
     with AutomaticKeepAliveClientMixin {
   PageController _pageController;
   User user;
+  // pagina con stato index =0 mi permette di cambiare lo stato interno della classe e quindi se cambio pagina ridipingo tutto. 
+  // se cambio stato vado ad un altra pagina e mi ricarica una nuova pagine con nuove cose e fa tutto lui
   int index = 0;
   @override
   void initState() {
