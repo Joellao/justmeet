@@ -43,6 +43,7 @@ public class User extends AbstractUser {
 	@OrderBy("date DESC")
 	private List<Announcement> announcements = new ArrayList<Announcement>();
 
+	@JsonIgnoreProperties({ "user" })
 	public List<Announcement> getAnnouncements() {
 		return announcements;
 	}
