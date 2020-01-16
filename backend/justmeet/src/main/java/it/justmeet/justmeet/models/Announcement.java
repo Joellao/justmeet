@@ -44,7 +44,7 @@ public class Announcement {
 	private String description;
 	@Column(name = "category")
 	private Category category;
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private AbstractUser user;
@@ -65,7 +65,7 @@ public class Announcement {
 		this.user = user;
 		this.category = categoria;
 		this.date = date;
-		this.description=description;
+		this.description = description;
 	}
 
 	public String getDescription() {

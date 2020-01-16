@@ -14,6 +14,8 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * Responsabilità: definisce un utente auteticato base
@@ -36,7 +38,8 @@ public class User extends AbstractUser {
 	@OneToMany(fetch = FetchType.LAZY)
 	@OrderBy("date DESC")
 	private List<Event> partecipatedEvents = new ArrayList<Event>();
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OrderBy("date DESC")
 	private List<Announcement> announcements = new ArrayList<Announcement>();
 
@@ -61,7 +64,7 @@ public class User extends AbstractUser {
 	public void addPartecipateEvent(Event e) {
 		this.partecipatedEvents.add(e);
 	}
-	
+
 	public void removePartecipateEvent(Event e) {
 		this.partecipatedEvents.remove(e);
 	}
