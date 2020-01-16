@@ -1,6 +1,9 @@
 package it.justmeet.justmeet.config;
 
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -10,6 +13,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.cloud.StorageClient;
+
+import it.justmeet.justmeet.exceptions.InvalidDataException;
 
 public class WoWoUtility {
 
@@ -37,5 +42,20 @@ public class WoWoUtility {
 		Blob blob = bucket.create(random.concat(fileName), bytes);
 		URL url = blob.signUrl(12312312, TimeUnit.DAYS);
 		return url.toString();
+	}
+	
+	public void validateBirthdate(Date data) throws InvalidDataException, ParseException {
+		SimpleDateFormat sdf= new SimpleDateFormat("dd-M-yyyy");
+		String d="01-01-1920";
+		Date data2= sdf.parse(d);
+		if(data.after(new Date(System.currentTimeMillis())) || data.before(data2)){
+			throw new InvalidDataException("Data non valida");
+		}
+	}
+	public void validateDateEvent(Date data) throws InvalidDataException {
+		if(data.before(new Date(System.currentTimeMillis()))){
+			throw new InvalidDataException("Data non valida");
+		}
+		
 	}
 }

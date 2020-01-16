@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import it.justmeet.justmeet.config.WoWoUtility;
 import it.justmeet.justmeet.exceptions.EmailAlreadyExistsException;
+import it.justmeet.justmeet.exceptions.InvalidDataException;
 import it.justmeet.justmeet.exceptions.WrongPasswordException;
 import it.justmeet.justmeet.models.Institution;
 import it.justmeet.justmeet.models.User;
@@ -110,10 +112,11 @@ public class AuthController {
 	 * @throws URISyntaxException
 	 * @throws WrongPasswordException
 	 * @throws ParseException
+	 * @throws InvalidDataException 
 	 */
 	@PostMapping("/signupUser")
 	public UserRecord signupUser(@RequestBody SignupModelUser user) throws EmailAlreadyExistsException, SQLException,
-			URISyntaxException, WrongPasswordException, ParseException {
+			URISyntaxException, WrongPasswordException, ParseException, InvalidDataException {
 		CreateRequest request = new CreateRequest().setEmail(user.getEmail()).setEmailVerified(false)
 				.setPassword(user.getPassword()).setDisplayName(user.getFirstName() + " " + user.getLastName())
 				.setDisabled(false);
@@ -131,9 +134,9 @@ public class AuthController {
 		if (user.getPassword().length() < 8)
 			throw new WrongPasswordException("Password troppo corta");
 		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(user.getBirthDate());
+		WoWoUtility.getInstance().validateBirthdate(date);
 		userRepo.save(new User(userRecord.getUid(), user.getUserName(), user.getFirstName(), user.getLastName(),
 				user.getEmail(), date));
-
 		return userRecord;
 	}
 

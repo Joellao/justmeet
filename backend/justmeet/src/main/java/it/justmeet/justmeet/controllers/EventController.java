@@ -37,6 +37,7 @@ import it.justmeet.justmeet.models.repositories.PhotoRepository;
 import it.justmeet.justmeet.models.repositories.ReviewRepository;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.config.WoWoUtility;
+import it.justmeet.justmeet.exceptions.InvalidDataException;
 import it.justmeet.justmeet.models.AbstractUser;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 import it.justmeet.justmeet.models.Comment;
@@ -93,14 +94,16 @@ public class EventController {
 	 * @throws RestClientException
 	 * @throws JsonProcessingException
 	 * @throws JsonMappingException
+	 * @throws InvalidDataException 
 	 */
 	@PostMapping("/event")
 	public Event createEvent(@RequestBody EventCreate event, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException, ParseException, RestClientException, UnsupportedEncodingException,
-			JsonMappingException, JsonProcessingException {
+			JsonMappingException, JsonProcessingException, InvalidDataException {
 		String userId = WoWoUtility.getInstance().getUid(token);
 		AbstractUser user = userRepo.findByUid(userId);
 		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(event.getDate());
+		WoWoUtility.getInstance().validateDateEvent(date);
 		Event evento = new Event(event.getName(), event.getLocation(), event.getDescription(), date, event.isFree(),
 				event.getCategory(), event.getMaxPersons());
 		if (user.isCanCreatePublicEvent()) {
@@ -150,10 +153,11 @@ public class EventController {
 	 * @return l'evento modificato
 	 * @throws FirebaseAuthException
 	 * @throws ParseException
+	 * @throws InvalidDataException 
 	 */
 	@PutMapping(value = "/event/{eventId}")
 	public Event modifyEvent(@PathVariable("eventId") Long eventId, @RequestBody EventCreate event,
-			@RequestHeader("Authorization") String token) throws FirebaseAuthException, ParseException {
+			@RequestHeader("Authorization") String token) throws FirebaseAuthException, ParseException, InvalidDataException {
 		// Chiamata al database per aggiornare l'evento con i nuovi dati
 		// return new Event(eventId, null, eventId, eventId, false, eventId, 0);
 		Event evento = eventRepo.findById(eventId).get();
@@ -161,6 +165,7 @@ public class EventController {
 			return null;
 		}
 		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(event.getDate());
+		WoWoUtility.getInstance().validateDateEvent(date);
 		evento.setName(event.getName());
 		evento.setDate(date);
 		evento.setLocation(event.getLocation());
@@ -261,6 +266,8 @@ public class EventController {
 		String userId = WoWoUtility.getInstance().getUid(token);
 		User user = (User) userRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
+		if(event.getDate().before(new Date(System.currentTimeMillis())))
+			return false;
 		if (event.getPartecipants().size() == event.getMaxNumber()) {
 			return false;
 		}
@@ -285,6 +292,8 @@ public class EventController {
 		String userId = WoWoUtility.getInstance().getUid(token);
 		User user = (User) userRepo.findByUid(userId);
 		Event evento = eventRepo.findById(eventId).get();
+		if(evento.getDate().before(new Date(System.currentTimeMillis())))
+			return false;
 		if (user.getPartecipatedEvents().contains(evento)) {
 			user.removePartecipateEvent(evento);
 			evento.removePartecipant(user);
