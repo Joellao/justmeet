@@ -72,15 +72,7 @@ public class EventController {
 	@Autowired
 	PhotoRepository photoRepo;
 
-	/**
-	 * Metodo che mi permette di avere tutti gli eventi
-	 * 
-	 * @return
-	 */
-	@GetMapping("event")
-	public List<Event> getEvents() {
-		return eventRepo.findAll();
-	}
+	
 
 	/**
 	 * metodo che mi permette di creare un nuovo evento

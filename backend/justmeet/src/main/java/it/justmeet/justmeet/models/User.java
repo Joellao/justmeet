@@ -36,6 +36,17 @@ public class User extends AbstractUser {
 	@OneToMany(fetch = FetchType.LAZY)
 	@OrderBy("date DESC")
 	private List<Event> partecipatedEvents = new ArrayList<Event>();
+	@OneToMany(fetch = FetchType.LAZY)
+	@OrderBy("date DESC")
+	private List<Announcement> announcements = new ArrayList<Announcement>();
+
+	public List<Announcement> getAnnouncements() {
+		return announcements;
+	}
+
+	public void setAnnouncements(List<Announcement> announcements) {
+		this.announcements = announcements;
+	}
 
 	protected User() {
 	}

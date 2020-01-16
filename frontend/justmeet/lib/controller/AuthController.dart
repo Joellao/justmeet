@@ -32,6 +32,8 @@ class AuthController {
         ),
       );
       if (response.statusCode == 200) {
+        if(response.data=="")
+        return null;
         return User.fromJson(response.data);
       }
       if (response.statusCode == 500) {

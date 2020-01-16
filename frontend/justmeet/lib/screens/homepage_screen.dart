@@ -2,6 +2,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/user.dart';
+import 'package:justmeet/screens/create_screen.dart';
 import 'package:justmeet/screens/feed_screen.dart';
 import 'package:justmeet/screens/new_event_screen.dart';
 import 'package:justmeet/screens/search_screen.dart';
@@ -81,7 +82,7 @@ class _HomePageScreenState extends State<HomePageScreen>
               controller: _pageController,
               children: [
                 FeedScreen(),
-                NewEventScreen(),
+                CreateScreen(),
                 SearchScreen(),
               ],
             ),
