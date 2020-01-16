@@ -58,7 +58,7 @@ public class AnnouncementController {
 		String userId = WoWoUtility.getInstance().getUid(token);
 		if(!userRepo.findByUid(userId).isCanCreateAnnouncement())
 			return null;
-		Announcement announce = new Announcement(annuncio.getName(), userRepo.findByUid(userId), annuncio.getCategory(), new Date());
+		Announcement announce = new Announcement(annuncio.getName(), annuncio.getDescription(), userRepo.findByUid(userId), annuncio.getCategory(), new Date());
 		announcementRepo.save(announce);
 		return announce;
 	}
@@ -96,6 +96,7 @@ public class AnnouncementController {
 		}
 		announcement.setName(announce.getName());
 		announcement.setCategory(announce.getCategory());
+		announcement.setDescription(announce.getDescription());
 		announcementRepo.save(announcement);
 		return announcement;
 	}

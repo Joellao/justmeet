@@ -40,6 +40,8 @@ public class Announcement {
 	private Long id;
 	@Column(name = "name")
 	private String name;
+	@Column(name = "description")
+	private String description;
 	@Column(name = "category")
 	private Category category;
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -58,11 +60,20 @@ public class Announcement {
 
 	}
 
-	public Announcement(String name, AbstractUser user, Category categoria, Date date) {
+	public Announcement(String name, String description, AbstractUser user, Category categoria, Date date) {
 		this.name = name;
 		this.user = user;
 		this.category = categoria;
 		this.date = date;
+		this.description=description;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getName() {
