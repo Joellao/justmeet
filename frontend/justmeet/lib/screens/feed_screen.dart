@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/announcement.dart';
 import 'package:justmeet/components/models/event.dart';
+import 'package:justmeet/components/models/user.dart';
+import 'package:justmeet/components/widgets/announcement_widget.dart';
 import 'package:justmeet/components/widgets/event_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -14,8 +16,7 @@ class FeedScreen extends StatefulWidget {
 
 class _FeedScreenState extends State<FeedScreen> {
   Dio dio = new Dio();
-  Future<List<Announcement>> announcements;
-  Future<List<Event>> events;
+  Future<List<dynamic>> robe;
   @override
   void initState() {
     super.initState();
@@ -24,51 +25,34 @@ class _FeedScreenState extends State<FeedScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    events = getDataEvent();
-    announcements = getDataAnnouncement();
+    robe = getDataEvent();
       }
     
-      Future<List<Event>> getDataEvent() async {
+      Future<List<dynamic>> getDataEvent() async {
         String token = Provider.of<String>(context);
         Response response = await dio.get(
-          "https://justmeetgjj.herokuapp.com/event/",
+          "https://justmeetgjj.herokuapp.com/feed/",
           options: Options(
             headers: {
               "Authorization": token,
             },
           ),
         );  
-  
+      
         if (response.statusCode == 200) {
-          List<Event> events = [];
-          List events2 = response.data;
-          events2.forEach((event) {
-            events.add(Event.fromJson(event));
+          List<dynamic> robe = [];
+          List robe2 = response.data;
+          print(await Provider.of<User>(context).uid);
+          robe2.forEach((robbo) {
+            if(robbo['location']!= null){
+robe.add(Event.fromJson(robbo));
+            }
+            
+            else {robe.add(Announcement.fromJson(robbo));};
           });
-          return events;
-        } else {
-          return null;
-        }
-      }
-
-      Future<List<Announcement>> getDataAnnouncement() async {
-        String token = Provider.of<String>(context);
-        Response response = await dio.get(
-          "https://justmeetgjj.herokuapp.com/announcement/",
-          options: Options(
-            headers: {
-              "Authorization": token,
-            },
-          ),
-        );  
-  
-        if (response.statusCode == 200) {
-          List<Announcement> announcement = [];
-          List announcement2 = response.data;
-          announcement2.forEach((announce) {
-            announcement.add(Announcement.fromJson(announce));
-          });
-          return announcement;
+      
+          
+          return robe;
         } else {
           return null;
         }
@@ -78,7 +62,7 @@ class _FeedScreenState extends State<FeedScreen> {
       Widget build(BuildContext context) {
         return Container(
           color: Colori.bluScuro,
-          child: FutureBuilder<List<Event>>(
+          child: FutureBuilder<List<dynamic>>(
             initialData: [],
             builder: (context, snapshot) {
               if (snapshot.hasData) {
@@ -86,11 +70,13 @@ class _FeedScreenState extends State<FeedScreen> {
                   shrinkWrap: true,
                   itemCount: snapshot.data.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Event event = snapshot.data.elementAt(index);
+                    var event = snapshot.data.elementAt(index);
+                    if(event is Event)
                     return EventWidget(
                       event: event,
                       profileWidget: getProfileWidget(event),
                     );
+                    else return AnnouncementWidget(announcement: event,);
                   },
                 );
               } else if (snapshot.hasError) {
@@ -98,7 +84,7 @@ class _FeedScreenState extends State<FeedScreen> {
               }
               return Center(child: CircularProgressIndicator());
             },
-            future: events,
+            future: robe,
           ),
         );
       }
