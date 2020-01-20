@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -27,7 +28,7 @@ import org.hibernate.annotations.OnDeleteAction;
  */
 
 @Entity(name = "User")
-@Table(name = "users")
+@Table(name = "user")
 @DiscriminatorValue("1")
 public class User extends AbstractUser {
 
@@ -42,6 +43,10 @@ public class User extends AbstractUser {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OrderBy("date DESC")
 	private List<Announcement> announcements = new ArrayList<Announcement>();
+	@OneToMany(fetch = FetchType.LAZY)
+	protected List<User> requestFriends = new ArrayList<User>();
+	@ManyToMany(fetch = FetchType.LAZY)
+	protected List<User> friends = new ArrayList<User>();
 
 	public List<Announcement> getAnnouncements() {
 		return announcements;
@@ -54,11 +59,11 @@ public class User extends AbstractUser {
 	protected User() {
 	}
 
-	public User(String uid, String username, String firstName, String lastName, String email, Date birthDate) {
-		super(uid, username, firstName, email);
+	public User(String uid, String username, String firstName, String lastName, String email, Date birthDate,
+			int type) {
+		super(uid, username, firstName, email, type);
 		this.lastName = lastName;
 		this.birthDate = birthDate;
-		canCreatePublicEvent = false;
 	}
 
 	public void addPartecipateEvent(Event e) {
@@ -149,6 +154,23 @@ public class User extends AbstractUser {
 
 	public void setPartecipatedEvents(List<Event> partecipatedEvents) {
 		this.partecipatedEvents = partecipatedEvents;
+	}
+
+	@JsonIgnoreProperties({ "friends", "requestFriends", "partecipatedEvents", "events" })
+	public List<User> getFriends() {
+		return friends;
+	}
+
+	public void setFriends(List<User> friends) {
+		this.friends = friends;
+	}
+
+	public List<User> getRequestFriends() {
+		return requestFriends;
+	}
+
+	public void setRequestFriends(List<User> requestFriends) {
+		this.requestFriends = requestFriends;
 	}
 
 }

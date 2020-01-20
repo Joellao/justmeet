@@ -22,7 +22,10 @@ import org.springframework.web.multipart.MultipartFile;
 import it.justmeet.justmeet.config.WoWoUtility;
 import it.justmeet.justmeet.models.AbstractUser;
 import it.justmeet.justmeet.models.Event;
+import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.creates.UserCreate;
+import it.justmeet.justmeet.models.repositories.AbstractUserRepository;
+import it.justmeet.justmeet.models.repositories.InstitutionRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 
 /**
@@ -37,6 +40,10 @@ import it.justmeet.justmeet.models.repositories.UserRepository;
 public class UserController {
 	@Autowired
 	UserRepository userRepo;
+	@Autowired
+	AbstractUserRepository abstractRepo;
+	@Autowired
+	InstitutionRepository instRepo;
 
 	/**
 	 * metodo che mi permette di visualizzare il profilo dell'utente in base al suo
@@ -50,7 +57,8 @@ public class UserController {
 	@GetMapping("/user")
 	public AbstractUser getProfile(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		String userId = WoWoUtility.getInstance().getUid(token);
-		AbstractUser user = userRepo.findByUid(userId);
+		System.out.println("GET" + userId);
+		AbstractUser user = abstractRepo.findByUid(userId);
 		return user;
 	}
 
@@ -64,15 +72,11 @@ public class UserController {
 	 * @throws FirebaseAuthException
 	 */
 	@GetMapping("/user/{userId}")
-	public AbstractUser getOtherProfile(@PathVariable("userId") String otherId,
-			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		String userId = WoWoUtility.getInstance().getUid(token);
-		AbstractUser me = userRepo.findByUid(userId);
-		if (me.isCanSeeOthersProfile()) {
-			AbstractUser other = userRepo.findByUid(otherId);
-			return other;
-		}
-		return null;
+	public User getOtherProfile(@PathVariable("userId") String otherId, @RequestHeader("Authorization") String token)
+			throws FirebaseAuthException {
+		WoWoUtility.getInstance().getUid(token);
+		User other = userRepo.findByUid(otherId);
+		return other;
 	}
 
 	/**
@@ -87,7 +91,7 @@ public class UserController {
 	public AbstractUser modifyUser(@PathVariable("userId") String userId, @RequestBody UserCreate user,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		// Modifica al database con le nuove cose
-		AbstractUser me = userRepo.findByUid(userId);
+		AbstractUser me = abstractRepo.findByUid(userId);
 		if (!me.getUid().equals(WoWoUtility.getInstance().getUid(token))) {
 			return null;
 		}
@@ -95,7 +99,7 @@ public class UserController {
 		me.setProfileImage(user.getProfilePhoto());
 		me.setUsername(user.getUsername());
 		me.setEmail(user.getEmail());
-		userRepo.save(me);
+		abstractRepo.save(me);
 		return me;
 	}
 
@@ -108,27 +112,26 @@ public class UserController {
 	@DeleteMapping("/user/{userId}") // PORTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 	public void deleteUser(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
-		AbstractUser me = userRepo.findByUid(userId);
+		AbstractUser me = abstractRepo.findByUid(userId);
 		if (!me.getUid().equals(WoWoUtility.getInstance().getUid(token))) {
+			return;
 		}
-		userRepo.delete(me);
+		abstractRepo.delete(me);
 	}
 
 	@GetMapping("/user/{userId}/event")
 	public List<Event> getEvents(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
 		WoWoUtility.getInstance().getUid(token);
-		AbstractUser user = userRepo.findByUid(userId);
+		AbstractUser user = abstractRepo.findByUid(userId);
 		return user.getEvents();
 	}
 
 	@GetMapping("/user/{userName}/find")
-	public List<AbstractUser> findProfile(@PathVariable("userName") String userName,
+	public List<User> findProfile(@PathVariable("userName") String userName,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		WoWoUtility.getInstance().getUid(token);
-		if (!getProfile(token).isCanSeeOthersProfile())
-			return null;
-		List<AbstractUser> result = userRepo.findAll().stream().filter(user -> userName.equals(user.getUsername()))
+		List<User> result = userRepo.findAll().stream().filter(user -> userName.equals(user.getUsername()))
 				.collect(Collectors.toList());
 		return result;
 
@@ -137,11 +140,10 @@ public class UserController {
 	@PatchMapping("/user/{userId}")
 	public void requestFriend(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
-		WoWoUtility.getInstance().getUid(token);
-		AbstractUser user = getOtherProfile(userId, token);
-		AbstractUser me = getProfile(token);
-		if (!user.isCanBeFriend() || !me.isCanBeFriend())
-			return;
+		String myId = WoWoUtility.getInstance().getUid(token);
+		User user = getOtherProfile(userId, token);
+		User me = userRepo.findByUid(myId);
+
 		user.getRequestFriends().add(me);
 		userRepo.save(user);
 	}
@@ -149,9 +151,9 @@ public class UserController {
 	@PatchMapping("/user/{userId}/{answer}")
 	public void answerFriend(@PathVariable("userId") String userId, @PathVariable("answer") Boolean answer,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		WoWoUtility.getInstance().getUid(token);
-		AbstractUser user = getOtherProfile(userId, token);
-		AbstractUser me = getProfile(token);
+		String myId = WoWoUtility.getInstance().getUid(token);
+		User user = getOtherProfile(userId, token);
+		User me = userRepo.findByUid(myId);
 		if (answer) {
 			me.getFriends().add(user);
 			user.getFriends().add(me);
@@ -165,28 +167,28 @@ public class UserController {
 	}
 
 	@GetMapping("/user/friends")
-	public List<AbstractUser> getFriends(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+	public List<User> getFriends(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		WoWoUtility.getInstance().getUid(token);
-		if (!getProfile(token).isCanBeFriend())
-			return null;
-		return getProfile(token).getFriends();
+		String myId = WoWoUtility.getInstance().getUid(token);
+		User me = userRepo.findByUid(myId);
+		return me.getFriends();
 	}
 
 	@GetMapping("/user/requestFriends")
-	public List<AbstractUser> getRequestFriends(@RequestHeader("Authorization") String token)
-			throws FirebaseAuthException {
-		WoWoUtility.getInstance().getUid(token);
-		if (!getProfile(token).isCanBeFriend())
-			return null;
-		return getProfile(token).getRequestFriends();
+	public List<User> getRequestFriends(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+
+		String myId = WoWoUtility.getInstance().getUid(token);
+		User me = userRepo.findByUid(myId);
+		return me.getRequestFriends();
 	}
 
 	@PutMapping("/user/{userId}/removeFriend")
 	public void removeFriend(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
-		WoWoUtility.getInstance().getUid(token);
-		AbstractUser user = getOtherProfile(userId, token);
-		AbstractUser me = getProfile(token);
+		String myId = WoWoUtility.getInstance().getUid(token);
+		User me = userRepo.findByUid(myId);
+		User user = getOtherProfile(userId, token);
+
 		me.getFriends().remove(user);
 		user.getFriends().remove(me);
 		userRepo.save(me);

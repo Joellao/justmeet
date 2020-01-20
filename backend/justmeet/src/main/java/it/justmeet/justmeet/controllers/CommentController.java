@@ -18,10 +18,9 @@ import it.justmeet.justmeet.config.WoWoUtility;
 import it.justmeet.justmeet.models.Comment;
 import it.justmeet.justmeet.models.SegnalazioneCommento;
 import it.justmeet.justmeet.models.creates.CommentCreate;
+import it.justmeet.justmeet.models.repositories.AbstractUserRepository;
 import it.justmeet.justmeet.models.repositories.CommentRepository;
-import it.justmeet.justmeet.models.repositories.EventRepository;
 import it.justmeet.justmeet.models.repositories.SegnalazioneCommentoRepository;
-import it.justmeet.justmeet.models.repositories.UserRepository;
 
 /**
  * Responsabilità: coordina le azioni che si possono eseguire sui commenti
@@ -35,9 +34,7 @@ import it.justmeet.justmeet.models.repositories.UserRepository;
 public class CommentController {
 
 	@Autowired
-	UserRepository userRepo; // jpa è una libreria
-	@Autowired
-	EventRepository eventRepo;
+	AbstractUserRepository absRepo; // jpa è una libreria
 	@Autowired
 	CommentRepository commentRepo; // jpa è una libreria
 	@Autowired
@@ -54,7 +51,7 @@ public class CommentController {
 	@PutMapping("/comment/{commentId}")
 	public Comment modifyComment(@PathVariable("commentId") Long commentId, @RequestBody CommentCreate comment,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		
+
 		Comment c = commentRepo.findById(commentId).get();
 		if (!c.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
 			return null;
@@ -85,7 +82,7 @@ public class CommentController {
 	public void segnala(@PathVariable("commentId") Long commentId, @RequestHeader("Authorization") String token,
 			@RequestParam("body") String body) throws FirebaseAuthException {
 		String uid = WoWoUtility.getInstance().getUid(token);
-		SegnalazioneCommento sc = new SegnalazioneCommento(userRepo.findByUid(uid),
+		SegnalazioneCommento sc = new SegnalazioneCommento(absRepo.findByUid(uid),
 				commentRepo.findById(commentId).get(), body);
 		scRepo.save(sc);
 	}

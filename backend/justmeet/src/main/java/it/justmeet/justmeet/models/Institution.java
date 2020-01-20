@@ -14,26 +14,24 @@ import javax.persistence.Table;
  */
 
 @Entity(name = "Institution")
-@Table(name = "users")
+@Table(name = "institution")
 @DiscriminatorValue("2")
 public class Institution extends AbstractUser {
 
     public Institution() {
     }
 
-    public Institution(String uid, String username, String name, String email) {
-        super(uid, username,name, email);
-        canSeeOthersProfile = false;
-        canBeFriend=false;
-        canCreateAnnouncement=false;
+    public Institution(String uid, String username, String name, String email, int type) {
+        super(uid, username, name, email, type);
     }
-    
+
     public String getUsername() {
-  		return userName;
-  	}
+        return userName;
+    }
+
     public String getName() {
-		return firstName;
-	}
+        return firstName;
+    }
 
     public String getEmail() {
         return email;

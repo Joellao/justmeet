@@ -2,9 +2,7 @@ package it.justmeet.justmeet.controllers;
 
 import java.util.Date;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -56,9 +54,9 @@ public class AnnouncementController {
 	public Announcement createAnnouncement(@RequestBody AnnouncementCreate annuncio,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		String userId = WoWoUtility.getInstance().getUid(token);
-		if(!userRepo.findByUid(userId).isCanCreateAnnouncement())
-			return null;
-		Announcement announce = new Announcement(annuncio.getName(), annuncio.getDescription(), userRepo.findByUid(userId), annuncio.getCategory(), new Date());
+
+		Announcement announce = new Announcement(annuncio.getName(), annuncio.getDescription(),
+				userRepo.findByUid(userId), annuncio.getCategory(), new Date());
 		announcementRepo.save(announce);
 		return announce;
 	}
@@ -69,10 +67,11 @@ public class AnnouncementController {
 	 * 
 	 * @param announceId
 	 * @return l'id dell'annuncio selezionato
-	 * @throws FirebaseAuthException 
+	 * @throws FirebaseAuthException
 	 */
 	@GetMapping("/announcement/{announcementId}")
-	public Announcement getAnnouncement(@PathVariable("announcementId") Long announceId,@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+	public Announcement getAnnouncement(@PathVariable("announcementId") Long announceId,
+			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		WoWoUtility.getInstance().getUid(token);
 		return announcementRepo.findById(announceId).get();
 	}
@@ -131,8 +130,6 @@ public class AnnouncementController {
 	public Comment addComment(@RequestBody CommentCreate comment, @RequestHeader("Authorization") String token,
 			@PathVariable("announcementId") Long announcementId) throws FirebaseAuthException {
 		String userId = WoWoUtility.getInstance().getUid(token);
-		if(!userRepo.findByUid(userId).isCanCreateAnnouncement())
-			return null;
 		Announcement announcement = announcementRepo.findById(announcementId).get();
 		Comment c = new Comment(comment.getBody(), userRepo.findByUid(userId), new Date(), false);
 		announcement.addComment(c);

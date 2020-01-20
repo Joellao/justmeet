@@ -4,15 +4,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -31,9 +28,8 @@ import java.util.ArrayList;
  */
 
 @Entity(name = "AbstractUser")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "users")
-@DiscriminatorColumn(discriminatorType = DiscriminatorType.INTEGER, name = "userType", columnDefinition = "SMALLINT")
 public abstract class AbstractUser {
 	@Id
 	@Column(name = "uid")
@@ -52,42 +48,27 @@ public abstract class AbstractUser {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OrderBy("date DESC")
 	protected List<Event> events = new ArrayList<>();
-	@Column(name = "userType", insertable = false, updatable = false)
+	@Column(name = "userType", insertable = true, updatable = false)
 	protected int type;
-	@OneToMany(fetch = FetchType.LAZY)
-	protected List<AbstractUser> requestFriends = new ArrayList<AbstractUser>();
-	@ManyToMany(fetch = FetchType.LAZY)
-	protected List<AbstractUser> friends = new ArrayList<AbstractUser>();
+
 	@Column(name = "longitude")
 	protected double longitude;
 	@Column(name = "latitude")
 	private double latitude;
 
-	protected boolean canCreatePublicEvent = true;
-	protected boolean canSeeOthersProfile = true;
-	protected boolean canBeFriend = true;
-	protected boolean canCreateAnnouncement = true;
-
 	public AbstractUser() {
 	}
 
-	public AbstractUser(String uid, String userName, String firstName, String email) {
+	public AbstractUser(String uid, String userName, String firstName, String email, int type) {
 		this.uid = uid;
 		this.userName = userName;
 		this.firstName = firstName;
 		this.email = email;
+		this.type = type;
 	}
 
 	public void addEvent(Event e) {
 		this.events.add(e);
-	}
-
-	public boolean isCanCreateAnnouncement() {
-		return canCreateAnnouncement;
-	}
-
-	public void setCanCreateAnnouncement(boolean canCreateAnnouncement) {
-		this.canCreateAnnouncement = canCreateAnnouncement;
 	}
 
 	public String getUserName() {
@@ -96,22 +77,6 @@ public abstract class AbstractUser {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
-	}
-
-	public boolean isCanBeFriend() {
-		return canBeFriend;
-	}
-
-	public void setCanBeFriend(boolean canBeFriend) {
-		this.canBeFriend = canBeFriend;
-	}
-
-	public boolean isCanCreatePublicEvent() {
-		return canCreatePublicEvent;
-	}
-
-	public void setCanCreatePublicEvent(boolean canCreatePublicEvent) {
-		this.canCreatePublicEvent = canCreatePublicEvent;
 	}
 
 	public String getUsername() {
@@ -176,31 +141,6 @@ public abstract class AbstractUser {
 
 	public void setType(int type) {
 		this.type = type;
-	}
-
-	public boolean isCanSeeOthersProfile() {
-		return canSeeOthersProfile;
-	}
-
-	public void setCanSeeOthersProfile(boolean canSeeOthersProfile) {
-		this.canSeeOthersProfile = canSeeOthersProfile;
-	}
-
-	@JsonIgnoreProperties({ "friends", "requestFriends", "partecipatedEvents", "events" })
-	public List<AbstractUser> getFriends() {
-		return friends;
-	}
-
-	public void setFriends(List<AbstractUser> friends) {
-		this.friends = friends;
-	}
-
-	public List<AbstractUser> getRequestFriends() {
-		return requestFriends;
-	}
-
-	public void setRequestFriends(List<AbstractUser> requestFriends) {
-		this.requestFriends = requestFriends;
 	}
 
 	public double getLongitude() {

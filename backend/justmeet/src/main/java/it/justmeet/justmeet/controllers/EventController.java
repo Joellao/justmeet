@@ -33,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import it.justmeet.justmeet.models.creates.EventCreate;
 import it.justmeet.justmeet.models.creates.ReviewCreate;
 import it.justmeet.justmeet.models.repositories.EventRepository;
+import it.justmeet.justmeet.models.repositories.InstitutionRepository;
 import it.justmeet.justmeet.models.repositories.PhotoRepository;
 import it.justmeet.justmeet.models.repositories.ReviewRepository;
 import it.justmeet.justmeet.models.User;
@@ -42,6 +43,7 @@ import it.justmeet.justmeet.models.AbstractUser;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 import it.justmeet.justmeet.models.Comment;
 import it.justmeet.justmeet.models.creates.CommentCreate;
+import it.justmeet.justmeet.models.repositories.AbstractUserRepository;
 import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.Photo;
@@ -61,7 +63,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 public class EventController {
 	@Autowired
+	AbstractUserRepository abstractRepo; // jpa è una libreria
+	@Autowired
 	UserRepository userRepo; // jpa è una libreria
+	@Autowired
+	InstitutionRepository instRepo; // jpa è una libreria
 	@Autowired
 	EventRepository eventRepo; // per collegare il database con il codice
 	@Autowired
@@ -71,8 +77,6 @@ public class EventController {
 
 	@Autowired
 	PhotoRepository photoRepo;
-
-	
 
 	/**
 	 * metodo che mi permette di creare un nuovo evento
@@ -86,19 +90,19 @@ public class EventController {
 	 * @throws RestClientException
 	 * @throws JsonProcessingException
 	 * @throws JsonMappingException
-	 * @throws InvalidDataException 
+	 * @throws InvalidDataException
 	 */
 	@PostMapping("/event")
 	public Event createEvent(@RequestBody EventCreate event, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException, ParseException, RestClientException, UnsupportedEncodingException,
 			JsonMappingException, JsonProcessingException, InvalidDataException {
 		String userId = WoWoUtility.getInstance().getUid(token);
-		AbstractUser user = userRepo.findByUid(userId);
+		AbstractUser user = abstractRepo.findByUid(userId);
 		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(event.getDate());
 		WoWoUtility.getInstance().validateDateEvent(date);
 		Event evento = new Event(event.getName(), event.getLocation(), event.getDescription(), date, event.isFree(),
 				event.getCategory(), event.getMaxPersons());
-		if (user.isCanCreatePublicEvent()) {
+		if (user.getType() == 2) {
 			evento.setPublicEvent(true);
 		} else {
 			evento.setPublicEvent(false);
@@ -117,7 +121,7 @@ public class EventController {
 		evento.setUser(user);
 		eventRepo.save(evento);
 		user.addEvent(evento);
-		userRepo.save(user);
+		abstractRepo.save(user);
 
 		return evento;
 	}
@@ -134,7 +138,7 @@ public class EventController {
 		// Chiamata al databse con eventId per avere le info dell'evento
 		// return new Event(eventId, null, eventId, eventId, false, eventId, 0);
 		return eventRepo.findById(eventId).get();
-	
+
 	}
 
 	/**
@@ -145,11 +149,12 @@ public class EventController {
 	 * @return l'evento modificato
 	 * @throws FirebaseAuthException
 	 * @throws ParseException
-	 * @throws InvalidDataException 
+	 * @throws InvalidDataException
 	 */
 	@PutMapping(value = "/event/{eventId}")
 	public Event modifyEvent(@PathVariable("eventId") Long eventId, @RequestBody EventCreate event,
-			@RequestHeader("Authorization") String token) throws FirebaseAuthException, ParseException, InvalidDataException {
+			@RequestHeader("Authorization") String token)
+			throws FirebaseAuthException, ParseException, InvalidDataException {
 		// Chiamata al database per aggiornare l'evento con i nuovi dati
 		// return new Event(eventId, null, eventId, eventId, false, eventId, 0);
 		Event evento = eventRepo.findById(eventId).get();
@@ -214,7 +219,7 @@ public class EventController {
 	public Comment addComment(@RequestBody CommentCreate comment, @PathVariable("eventId") Long eventId,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		String userId = WoWoUtility.getInstance().getUid(token);
-		AbstractUser user = userRepo.findByUid(userId);
+		AbstractUser user = abstractRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
 		Comment c = new Comment(comment.getBody(), user, new Date(), false);
 		event.addComment(c);
@@ -236,7 +241,7 @@ public class EventController {
 	public Review addReview(@RequestBody ReviewCreate review, @PathVariable("eventId") Long eventId,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		String userId = WoWoUtility.getInstance().getUid(token);
-		User user = (User) userRepo.findByUid(userId);
+		User user = userRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
 		Review r = new Review(user, event, review.getBody(), review.getStars(), new Date());
 		event.addReview(r);
@@ -256,16 +261,16 @@ public class EventController {
 	public boolean prenote(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
 		String userId = WoWoUtility.getInstance().getUid(token);
-		User user = (User) userRepo.findByUid(userId);
+		User user = userRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
-		if(event.getDate().before(new Date(System.currentTimeMillis())))
+		if (event.getDate().before(new Date(System.currentTimeMillis())))
 			return false;
 		if (event.getPartecipants().size() == event.getMaxNumber()) {
 			return false;
 		}
 		event.addPartecipant(user);
 		user.addPartecipateEvent(event);
-		userRepo.save(user);
+		abstractRepo.save(user);
 		eventRepo.save(event);
 		return true;
 	}
@@ -282,14 +287,14 @@ public class EventController {
 	public boolean cancelPrenote(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
 		String userId = WoWoUtility.getInstance().getUid(token);
-		User user = (User) userRepo.findByUid(userId);
+		User user = userRepo.findByUid(userId);
 		Event evento = eventRepo.findById(eventId).get();
-		if(evento.getDate().before(new Date(System.currentTimeMillis())))
+		if (evento.getDate().before(new Date(System.currentTimeMillis())))
 			return false;
 		if (user.getPartecipatedEvents().contains(evento)) {
 			user.removePartecipateEvent(evento);
 			evento.removePartecipant(user);
-			userRepo.save(user);
+			abstractRepo.save(user);
 			eventRepo.save(evento);
 			return true;
 		}
@@ -317,7 +322,7 @@ public class EventController {
 			byte[] bytes = file.getBytes();
 			String url = WoWoUtility.getPhotoUrl(file.getOriginalFilename(), bytes);
 			Event event = eventRepo.findById(eventId).get();
-			Photo photo = new Photo(url, userRepo.findByUid(userId), new Date());
+			Photo photo = new Photo(url, abstractRepo.findByUid(userId), new Date());
 			event.addPhoto(photo);
 			photoRepo.save(photo);
 			eventRepo.save(event);

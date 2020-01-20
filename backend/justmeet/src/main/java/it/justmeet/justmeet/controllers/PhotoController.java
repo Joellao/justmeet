@@ -10,9 +10,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 
 import it.justmeet.justmeet.config.WoWoUtility;
 import it.justmeet.justmeet.models.Photo;
-import it.justmeet.justmeet.models.repositories.EventRepository;
 import it.justmeet.justmeet.models.repositories.PhotoRepository;
-import it.justmeet.justmeet.models.repositories.UserRepository;
 
 /**
  * Responsabilità: coordina le azioni che si possono eseguire sulle recensioni
@@ -25,10 +23,6 @@ import it.justmeet.justmeet.models.repositories.UserRepository;
 @RestController
 public class PhotoController {
 
-	@Autowired
-	UserRepository userRepo; // jpa è una libreria
-	@Autowired
-	EventRepository eventRepo;
 	@Autowired
 	PhotoRepository photoRepo; // jpa è una libreria
 

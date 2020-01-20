@@ -49,7 +49,7 @@ public class Announcement {
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "user_id", referencedColumnName = "uid", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	private AbstractUser user;
+	private User user;
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "announcements_comments", referencedColumnName = "id")
@@ -62,7 +62,7 @@ public class Announcement {
 
 	}
 
-	public Announcement(String name, String description, AbstractUser user, Category categoria, Date date) {
+	public Announcement(String name, String description, User user, Category categoria, Date date) {
 		this.name = name;
 		this.user = user;
 		this.category = categoria;
@@ -83,7 +83,7 @@ public class Announcement {
 	}
 
 	@JsonIgnoreProperties({ "events", "friends", "announcements" })
-	public AbstractUser getUser() {
+	public User getUser() {
 		return user;
 	}
 
@@ -121,10 +121,6 @@ public class Announcement {
 
 	public boolean addComment(Comment comment) {
 		return this.comments.add(comment);
-	}
-
-	public void setUser(AbstractUser user) {
-		this.user = user;
 	}
 
 	public Date getDate() {

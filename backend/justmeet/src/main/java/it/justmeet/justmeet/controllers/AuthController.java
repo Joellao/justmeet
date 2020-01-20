@@ -30,6 +30,7 @@ import it.justmeet.justmeet.exceptions.InvalidDataException;
 import it.justmeet.justmeet.exceptions.WrongPasswordException;
 import it.justmeet.justmeet.models.Institution;
 import it.justmeet.justmeet.models.User;
+import it.justmeet.justmeet.models.repositories.InstitutionRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 import it.justmeet.justmeet.models.auth.LoginModel;
 import it.justmeet.justmeet.models.auth.SignupModelInstitution;
@@ -47,6 +48,8 @@ import it.justmeet.justmeet.models.auth.SignupModelUser;
 public class AuthController {
 	@Autowired
 	UserRepository userRepo;
+	@Autowired
+	InstitutionRepository instRepo;
 
 	/**
 	 * metodo che mi permette di fare il login all'interno del sistema
@@ -97,8 +100,8 @@ public class AuthController {
 			throw new IllegalArgumentException("Email non valida");
 		if (institution.getPassword().length() < 8)
 			throw new WrongPasswordException("Password troppo corta");
-		userRepo.save(new Institution(userRecord.getUid(), institution.getUserName(), userRecord.getDisplayName(),
-				userRecord.getEmail()));
+		instRepo.save(new Institution(userRecord.getUid(), institution.getUserName(), userRecord.getDisplayName(),
+				userRecord.getEmail(), 2));
 		return userRecord;
 	}
 
@@ -112,7 +115,7 @@ public class AuthController {
 	 * @throws URISyntaxException
 	 * @throws WrongPasswordException
 	 * @throws ParseException
-	 * @throws InvalidDataException 
+	 * @throws InvalidDataException
 	 */
 	@PostMapping("/signupUser")
 	public UserRecord signupUser(@RequestBody SignupModelUser user) throws EmailAlreadyExistsException, SQLException,
@@ -136,7 +139,7 @@ public class AuthController {
 		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(user.getBirthDate());
 		WoWoUtility.getInstance().validateBirthdate(date);
 		userRepo.save(new User(userRecord.getUid(), user.getUserName(), user.getFirstName(), user.getLastName(),
-				user.getEmail(), date));
+				user.getEmail(), date, 1));
 		return userRecord;
 	}
 
