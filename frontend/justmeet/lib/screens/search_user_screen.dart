@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
 import 'package:justmeet/components/models/user.dart';
+import 'package:justmeet/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 class SearchUserScreen extends StatefulWidget {
@@ -17,7 +18,6 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
   List<User> _users = [];
 
   _submit() async {
-    print("Entrato");
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       try {
@@ -33,9 +33,10 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
           ),
         );
         if (response.statusCode == 200) {
-          print(response.data);
-
           List users2 = response.data;
+          setState(() {
+            this._users = [];
+          });
           users2.forEach((user) {
             setState(() {
               _users.add(User.fromJson(user));
@@ -65,7 +66,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                 CustomField(
                   icon: Icons.edit,
                   label: 'Cerca utente',
-                  hint: "Inserisci il nome dell'utente",
+                  hint: "Inserisci il nome utente",
                   validator: (name) =>
                       name.length <= 0 ? 'Il nome non può essere vuoto' : null,
                   onSaved: (name) => this._userName =
@@ -99,45 +100,52 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              CircleAvatar(
-                backgroundImage: user.profileImage != ""
-                    ? NetworkImage(user.profileImage)
-                    : null,
-                child: user.profileImage == ""
-                    ? Icon(Icons.person, size: 25, color: Colori.grigio)
-                    : null,
-              ),
-              SizedBox(
-                width: 7.0,
-              ),
-              Text(
-                user.firstName,
-                textAlign: TextAlign.left,
-                style: GoogleFonts.roboto(
-                  textStyle: TextStyle(
-                    color: Colori.grigio,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+          InkWell(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProfileScreen(user: user)),
+            ),
+            child: Row(
+              children: <Widget>[
+                CircleAvatar(
+                  backgroundImage: user.profileImage != ""
+                      ? NetworkImage(user.profileImage)
+                      : null,
+                  child: user.profileImage == ""
+                      ? Icon(Icons.person, size: 25, color: Colori.grigio)
+                      : null,
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(" "),
-              Text(
-                user.lastName,
-                textAlign: TextAlign.left,
-                style: GoogleFonts.roboto(
-                  textStyle: TextStyle(
-                    color: Colori.grigio,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                SizedBox(
+                  width: 7.0,
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+                Text(
+                  user.firstName,
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.roboto(
+                    textStyle: TextStyle(
+                      color: Colori.grigio,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(" "),
+                Text(
+                  user.lastName,
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.roboto(
+                    textStyle: TextStyle(
+                      color: Colori.grigio,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
           InkWell(
             onTap: () => print("More premuto"),

@@ -4,9 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/announcement.dart';
 import 'package:justmeet/components/models/event.dart';
-import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/announcement_widget.dart';
 import 'package:justmeet/components/widgets/event_widget.dart';
+import 'package:justmeet/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 class FeedScreen extends StatefulWidget {
@@ -97,43 +97,50 @@ class _FeedScreenState extends State<FeedScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              CircleAvatar(
-                backgroundImage: event.user.profileImage != ""
-                    ? NetworkImage(event.user.profileImage)
-                    : null,
-                child: event.user.profileImage == ""
-                    ? Icon(Icons.person, size: 25)
-                    : null,
-              ),
-              SizedBox(
-                width: 7.0,
-              ),
-              Text(
-                event.user.firstName,
-                textAlign: TextAlign.left,
-                style: GoogleFonts.roboto(
-                  textStyle: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+          InkWell(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProfileScreen(user: event.user)),
+            ),
+            child: Row(
+              children: <Widget>[
+                CircleAvatar(
+                  backgroundImage: event.user.profileImage != ""
+                      ? NetworkImage(event.user.profileImage)
+                      : null,
+                  child: event.user.profileImage == ""
+                      ? Icon(Icons.person, size: 25)
+                      : null,
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(" "),
-              Text(
-                event.user.lastName,
-                textAlign: TextAlign.left,
-                style: GoogleFonts.roboto(
-                  textStyle: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                SizedBox(
+                  width: 7.0,
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+                Text(
+                  event.user.firstName,
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.roboto(
+                    textStyle: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(" "),
+                Text(
+                  event.user.lastName,
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.roboto(
+                    textStyle: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
           InkWell(
             onTap: () => print("More premuto"),

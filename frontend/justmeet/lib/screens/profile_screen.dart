@@ -1,98 +1,108 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:justmeet/components/colori.dart';
-import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/user.dart';
-import 'package:justmeet/components/widgets/event_widget.dart';
+import 'package:justmeet/screens/profile_announcement_screen.dart';
+import 'package:justmeet/screens/profile_event_screen.dart';
 import 'package:justmeet/screens/profile_settings_screen.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
+  final User user;
+
+  const ProfileScreen({Key key, this.user}) : super(key: key);
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   Dio dio = new Dio();
-  User user;
+
+  TabController controller;
+
   @override
   void initState() {
     super.initState();
+    controller = new TabController(length: 2, vsync: this);
   }
 
   @override
   bool get wantKeepAlive => true;
 
-  User getUser() {
-    User user = Provider.of<User>(context);
-    return user;
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    this.user = getUser();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colori.bluScuro,
-        elevation: 1,
-        title: Text(user.firstName + " " + user.lastName),
-        centerTitle: true,
-        actions: <Widget>[
-          Provider.of<User>(context).uid == user.uid
-              ? InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              ProfileSettingsScreen(user: user)),
-                    );
-                  },
-                  child: Icon(
-                    Icons.settings,
-                    size: 30.0,
-                  ),
-                )
-              : null,
-          SizedBox(width: 10)
-        ],
-      ),
-      body: Container(
-        color: Colori.bluScuro,
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              CircleAvatar(
-                radius: 70,
-                backgroundImage: user.profileImage != ""
-                    ? NetworkImage(user.profileImage)
-                    : null,
-                child: user.profileImage == ""
-                    ? Icon(Icons.person, size: 70)
-                    : null,
+    return DefaultTabController(
+      length: 2, // This is the number of tabs.
+      child: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          // These are the slivers that show up in the "outer" scroll view.
+          return <Widget>[
+            SliverOverlapAbsorber(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              child: SliverAppBar(
+                backgroundColor: Colori.bluScuro,
+                pinned: true,
+                title: Text(this.widget.user.username),
+                centerTitle: true,
+                actions: <Widget>[
+                  Provider.of<User>(context).uid == this.widget.user.uid
+                      ? InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfileSettingsScreen(
+                                      user: this.widget.user)),
+                            );
+                          },
+                          child: Icon(
+                            Icons.settings,
+                            size: 30.0,
+                          ),
+                        )
+                      : null,
+                  SizedBox(width: 10)
+                ],
+                flexibleSpace: FlexibleSpaceBar(
+                  background: this.widget.user.profileImage != ""
+                      ? Image.network(
+                          this.widget.user.profileImage,
+                          fit: BoxFit.cover,
+                        )
+                      : Icon(
+                          Icons.person_outline,
+                          color: Colori.grigio,
+                          size: 135,
+                        ),
+                ),
+                expandedHeight: 250.0,
+                forceElevated: innerBoxIsScrolled,
+                bottom: TabBar(
+                  tabs: [
+                    Tab(child: Text("Eventi")),
+                    Tab(child: Text("Annunci"))
+                  ],
+                ),
               ),
-              ListView.builder(
-                primary: false,
-                shrinkWrap: true,
-                itemCount: user.events.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Event event = Event.fromJson(user.events.elementAt(index));
-                  return EventWidget(
-                    event: event,
-                  );
-                },
-              )
-            ],
-          ),
-        ),
+            ),
+          ];
+        },
+        body: TabBarView(
+            // These are the contents of the tab views, below the tabs.
+            children: [
+              ProfileEventScreen(
+                events: this.widget.user.events,
+              ),
+              ProfileAnnouncementScreen(
+                announcements: this.widget.user.announcements,
+              ),
+            ]),
       ),
     );
   }

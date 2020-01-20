@@ -4,7 +4,7 @@ import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/screens/create_screen.dart';
 import 'package:justmeet/screens/feed_screen.dart';
-import 'package:justmeet/screens/new_event_screen.dart';
+import 'package:justmeet/screens/profile_screen.dart';
 import 'package:justmeet/screens/search_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +18,7 @@ class _HomePageScreenState extends State<HomePageScreen>
     with AutomaticKeepAliveClientMixin {
   PageController _pageController;
   User user;
-  // pagina con stato index =0 mi permette di cambiare lo stato interno della classe e quindi se cambio pagina ridipingo tutto. 
+  // pagina con stato index =0 mi permette di cambiare lo stato interno della classe e quindi se cambio pagina ridipingo tutto.
   // se cambio stato vado ad un altra pagina e mi ricarica una nuova pagine con nuove cose e fa tutto lui
   int index = 0;
   @override
@@ -54,7 +54,11 @@ class _HomePageScreenState extends State<HomePageScreen>
               backgroundColor: Colori.bluScuro,
               actions: <Widget>[
                 InkWell(
-                  onTap: () => Navigator.pushNamed(context, "ProfileScreen"),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProfileScreen(user: this.user)),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: CircleAvatar(

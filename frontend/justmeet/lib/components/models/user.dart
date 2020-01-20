@@ -10,6 +10,7 @@ class User {
   final String bio;
   final List events;
   final String username;
+  final List announcements;
 
   const User({
     Key key,
@@ -22,6 +23,7 @@ class User {
     @required this.events,
     @required this.profileImage,
     @required this.username,
+    @required this.announcements,
   });
 
   User.fromJson(Map<String, dynamic> json)
@@ -34,5 +36,6 @@ class User {
         this.events = json['events'],
         this.profileImage =
             json['profileImage'] == null ? "" : json['profileImage'],
-        this.username = json['userName'] == null ? "" : json['userName'];
+        this.username = json['userName'] == null ? "" : json['userName'],
+        this.announcements = json['announcements'];
 }

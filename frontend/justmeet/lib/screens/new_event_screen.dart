@@ -167,23 +167,48 @@ class _NewEventScreenState extends State<NewEventScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text('Categoria',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w600,
-                        color: Colori.grigio,
-                        shadows: [
-                          Shadow(
-                            color: Colori.grigio,
-                            offset: Offset(0, 0),
-                          ),
-                        ],
-                      )),
+                  Text(
+                    'Categoria',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w600,
+                      color: Colori.grigio,
+                      shadows: [
+                        Shadow(
+                          color: Colori.grigio,
+                          offset: Offset(0, 0),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   DropdownButtonFormField<String>(
                     style: new TextStyle(
                       color: Colors.black,
                     ),
                     isExpanded: true,
+                    iconEnabledColor: Colori.grigio,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide(
+                          color: Colori.grigio,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide(
+                          color: Colori.grigio,
+                        ),
+                      ),
+                      prefixIcon: Icon(Icons.category, color: Colori.grigio),
+                      focusColor: Colori.grigio,
+                    ),
                     hint: new Text(
                       _category,
                       style: GoogleFonts.roboto(
