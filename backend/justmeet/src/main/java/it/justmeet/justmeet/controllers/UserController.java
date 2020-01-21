@@ -25,7 +25,6 @@ import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.creates.UserCreate;
 import it.justmeet.justmeet.models.repositories.AbstractUserRepository;
-import it.justmeet.justmeet.models.repositories.InstitutionRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 
 /**
@@ -42,9 +41,7 @@ public class UserController {
 	UserRepository userRepo;
 	@Autowired
 	AbstractUserRepository abstractRepo;
-	@Autowired
-	InstitutionRepository instRepo;
-
+	
 	/**
 	 * metodo che mi permette di visualizzare il profilo dell'utente in base al suo
 	 * id
@@ -90,7 +87,6 @@ public class UserController {
 	@PutMapping("/user/{userId}")
 	public AbstractUser modifyUser(@PathVariable("userId") String userId, @RequestBody UserCreate user,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
-		// Modifica al database con le nuove cose
 		AbstractUser me = abstractRepo.findByUid(userId);
 		if (!me.getUid().equals(WoWoUtility.getInstance().getUid(token))) {
 			return null;

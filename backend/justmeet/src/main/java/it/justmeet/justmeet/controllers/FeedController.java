@@ -13,7 +13,9 @@ import com.google.firebase.auth.FirebaseAuthException;
 import it.justmeet.justmeet.config.WoWoUtility;
 import it.justmeet.justmeet.models.Announcement;
 import it.justmeet.justmeet.models.Event;
+import it.justmeet.justmeet.models.Institution;
 import it.justmeet.justmeet.models.User;
+import it.justmeet.justmeet.models.repositories.InstitutionRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 
 @RestController
@@ -21,6 +23,8 @@ public class FeedController {
 
 	@Autowired
 	UserRepository userRepo; // jpa è una libreria
+	@Autowired
+	InstitutionRepository instRepo;
 
 	@GetMapping("/getAllEvents")
 	private List<Event> getEvents(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
@@ -30,7 +34,7 @@ public class FeedController {
 		List<Event> events = new ArrayList<Event>();
 		friends.forEach(friend -> events.addAll(friend.getEvents()));
 		return events;
-	}
+		}
 
 	@GetMapping("/getAllAnnouncements")
 	private List<Announcement> getAnnouncement(@RequestHeader("Authorization") String token)

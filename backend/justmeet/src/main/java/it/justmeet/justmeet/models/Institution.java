@@ -36,5 +36,6 @@ public class Institution extends AbstractUser {
     public String getEmail() {
         return email;
     }
+    
 
 }

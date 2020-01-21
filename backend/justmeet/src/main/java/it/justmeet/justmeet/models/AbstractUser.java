@@ -12,8 +12,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.FetchType;
 import java.util.List;
 import java.util.ArrayList;
@@ -34,7 +32,7 @@ public abstract class AbstractUser {
 	@Id
 	@Column(name = "uid")
 	protected String uid;
-	@Column(name = "userName")
+	@Column(name = "userName", unique=true)
 	protected String userName;
 	@Column(name = "firstName")
 	protected String firstName;
@@ -50,7 +48,6 @@ public abstract class AbstractUser {
 	protected List<Event> events = new ArrayList<>();
 	@Column(name = "userType", insertable = true, updatable = false)
 	protected int type;
-
 	@Column(name = "longitude")
 	protected double longitude;
 	@Column(name = "latitude")
