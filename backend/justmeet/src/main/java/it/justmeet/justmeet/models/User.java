@@ -28,7 +28,7 @@ import org.hibernate.annotations.OnDeleteAction;
  */
 
 @Entity(name = "User")
-@Table(name = "user")
+@Table(name = "users")
 @DiscriminatorValue("1")
 public class User extends AbstractUser {
 
