@@ -34,13 +34,18 @@ public class ReviewController {
 	 * @throws FirebaseAuthException
 	 */
 	@DeleteMapping("/review/{reviewId}")
-	public void deleteReview(@PathVariable("reviewId") Long reviewId, @RequestHeader("Authorization") String token)
+	public boolean deleteReview(@PathVariable("reviewId") Long reviewId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
 		// Cancella dal database
 		Review r = reviewRepo.findById(reviewId).get();
 		if (!r.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			return;
+			throw new IllegalAccessError();
 		}
-		reviewRepo.delete(r);
+		try {
+			reviewRepo.delete(r);
+			return true;
+		} catch (Exception e) {
+		}
+		return false;
 	}
 }

@@ -69,22 +69,32 @@ public class CommentController {
 	 * @throws FirebaseAuthException
 	 */
 	@DeleteMapping("/comment/{commentId}")
-	public void deleteComment(@PathVariable("commentId") Long commentId, @RequestHeader("Authorization") String token)
-			throws FirebaseAuthException {
+	public boolean deleteComment(@PathVariable("commentId") Long commentId,
+			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		Comment c = commentRepo.findById(commentId).get();
 		if (!c.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			return;
+			throw new IllegalAccessError();
 		}
-		commentRepo.delete(c);
+		try {
+			commentRepo.delete(c);
+			return true;
+		} catch (IllegalArgumentException e) {
+		}
+		return false;
 	}
 
 	@PostMapping("/comment/{commentId}")
-	public void segnala(@PathVariable("commentId") Long commentId, @RequestHeader("Authorization") String token,
+	public boolean segnala(@PathVariable("commentId") Long commentId, @RequestHeader("Authorization") String token,
 			@RequestParam("body") String body) throws FirebaseAuthException {
 		String uid = WoWoUtility.getInstance().getUid(token);
 		SegnalazioneCommento sc = new SegnalazioneCommento(absRepo.findByUid(uid),
 				commentRepo.findById(commentId).get(), body);
-		scRepo.save(sc);
+		try {
+			scRepo.save(sc);
+			return true;
+		} catch (IllegalArgumentException e) {
+		}
+		return true;
 	}
 
 }

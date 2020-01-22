@@ -41,7 +41,7 @@ public class UserController {
 	UserRepository userRepo;
 	@Autowired
 	AbstractUserRepository abstractRepo;
-	
+
 	/**
 	 * metodo che mi permette di visualizzare il profilo dell'utente in base al suo
 	 * id
@@ -106,13 +106,18 @@ public class UserController {
 	 * @throws FirebaseAuthException
 	 */
 	@DeleteMapping("/user/{userId}") // PORTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-	public void deleteUser(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
+	public boolean deleteUser(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
 		AbstractUser me = abstractRepo.findByUid(userId);
 		if (!me.getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			return;
+			throw new IllegalAccessError();
 		}
-		abstractRepo.delete(me);
+		try {
+			abstractRepo.delete(me);
+			return true;
+		} catch (Exception e) {
+		}
+		return false;
 	}
 
 	@GetMapping("/user/{userId}/event")
@@ -134,18 +139,21 @@ public class UserController {
 	}
 
 	@PatchMapping("/user/{userId}")
-	public void requestFriend(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
+	public boolean requestFriend(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
 		String myId = WoWoUtility.getInstance().getUid(token);
 		User user = getOtherProfile(userId, token);
 		User me = userRepo.findByUid(myId);
 
 		user.getRequestFriends().add(me);
-		userRepo.save(user);
+		if (userRepo.save(user) != null) {
+			return true;
+		}
+		return false;
 	}
 
 	@PatchMapping("/user/{userId}/{answer}")
-	public void answerFriend(@PathVariable("userId") String userId, @PathVariable("answer") Boolean answer,
+	public boolean answerFriend(@PathVariable("userId") String userId, @PathVariable("answer") Boolean answer,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		String myId = WoWoUtility.getInstance().getUid(token);
 		User user = getOtherProfile(userId, token);
@@ -157,9 +165,10 @@ public class UserController {
 		} else {
 			me.getRequestFriends().remove(user);
 		}
-		userRepo.save(user);
-		userRepo.save(me);
-
+		if (userRepo.save(user) != null && userRepo.save(me) != null) {
+			return true;
+		}
+		return false;
 	}
 
 	@GetMapping("/user/friends")
@@ -179,7 +188,7 @@ public class UserController {
 	}
 
 	@PutMapping("/user/{userId}/removeFriend")
-	public void removeFriend(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
+	public boolean removeFriend(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
 		String myId = WoWoUtility.getInstance().getUid(token);
 		User me = userRepo.findByUid(myId);
@@ -187,8 +196,10 @@ public class UserController {
 
 		me.getFriends().remove(user);
 		user.getFriends().remove(me);
-		userRepo.save(me);
-		userRepo.save(user);
+		if (userRepo.save(me) != null && userRepo.save(user) != null) {
+			return true;
+		}
+		return false;
 	}
 
 	@PostMapping("/user/{userId}/uploadProfilePicutre")

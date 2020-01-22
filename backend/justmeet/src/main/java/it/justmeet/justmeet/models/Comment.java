@@ -51,8 +51,6 @@ public class Comment {
     @Column(name = "date")
     @Temporal(TemporalType.TIMESTAMP)
     public Date date;
-    @Column(name = "state")
-    public boolean state;
 
     protected Comment() {
     }
@@ -61,7 +59,6 @@ public class Comment {
         this.body = body;
         this.user = user;
         this.date = date;
-        this.state = state;
     }
 
     public String getBody() {
@@ -75,10 +72,6 @@ public class Comment {
 
     public Date getDate() {
         return date;
-    }
-
-    public boolean isState() {
-        return state;
     }
 
     public Long getId() {
@@ -99,10 +92,6 @@ public class Comment {
 
     public void setDate(Date date) {
         this.date = date;
-    }
-
-    public void setState(boolean state) {
-        this.state = state;
     }
 
 }

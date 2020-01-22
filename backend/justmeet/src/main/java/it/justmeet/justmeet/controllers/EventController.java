@@ -180,14 +180,19 @@ public class EventController {
 	 * @throws FirebaseAuthException
 	 */
 	@DeleteMapping("/event/{eventId}")
-	public void deleteEvent(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token)
+	public boolean deleteEvent(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
 		// Cancella dal databse eventId
 		Event evento = eventRepo.findById(eventId).get();
 		if (!evento.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			return;
+			throw new IllegalAccessError();
 		}
-		eventRepo.delete(evento);
+		try {
+			eventRepo.delete(evento);
+			return true;
+		} catch (IllegalArgumentException e) {
+		}
+		return false;
 	}
 
 	/**
@@ -196,14 +201,19 @@ public class EventController {
 	 * @param eventId
 	 */
 	@PatchMapping("/event/{eventId}")
-	public void cancelEvent(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token)
+	public boolean cancelEvent(@PathVariable("eventId") Long eventId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
 		Event evento = eventRepo.findById(eventId).get();
 		if (!evento.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			return;
+			throw new IllegalAccessError();
 		}
-		evento.setCancelled(true);
-		eventRepo.save(evento);
+		try {
+			evento.setCancelled(true);
+			eventRepo.save(evento);
+			return true;
+		} catch (Exception e) {
+		}
+		return false;
 	}
 
 	/**

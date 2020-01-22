@@ -34,13 +34,18 @@ public class PhotoController {
 	 * @throws FirebaseAuthException
 	 */
 	@DeleteMapping("/photo/{photoId}")
-	public void deletePhoto(@PathVariable("photoId") Long photoId, @RequestHeader("Authorization") String token)
+	public boolean deletePhoto(@PathVariable("photoId") Long photoId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
 		// Cancella dal database
 		Photo p = photoRepo.findById(photoId).get();
 		if (!p.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			return;
+			throw new IllegalAccessError();
 		}
-		photoRepo.delete(p);
+		try {
+			photoRepo.delete(p);
+			return true;
+		} catch (Exception e) {
+		}
+		return false;
 	}
 }

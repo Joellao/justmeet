@@ -107,13 +107,18 @@ public class AnnouncementController {
 	 * @throws FirebaseAuthException
 	 */
 	@DeleteMapping("/announcement/{announcementId}")
-	public void deleteAnnouncement(@PathVariable("announcementId") Long announcementId,
+	public boolean deleteAnnouncement(@PathVariable("announcementId") Long announcementId,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		Announcement announce = announcementRepo.findById(announcementId).get();
 		if (!announce.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			return;
+			throw new IllegalAccessError();
 		}
-		announcementRepo.delete(announce);
+		try {
+			announcementRepo.delete(announce);
+			return true;
+		} catch (IllegalArgumentException e) {
+		}
+		return false;
 	}
 
 	/**

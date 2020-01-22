@@ -14,7 +14,6 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.google.firebase.auth.UserRecord.CreateRequest;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -139,9 +138,9 @@ public class AuthController {
 			throw new WrongPasswordException("Password troppo corta");
 		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(user.getBirthDate());
 		WoWoUtility.getInstance().validateBirthdate(date);
-			userRepo.save(new User(userRecord.getUid(), user.getUserName(), user.getFirstName(), user.getLastName(),
-					user.getEmail(), date, 1));
-			return userRecord;
+		userRepo.save(new User(userRecord.getUid(), user.getUserName(), user.getFirstName(), user.getLastName(),
+				user.getEmail(), date, 1));
+		return userRecord;
 	}
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Email already exists")
