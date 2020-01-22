@@ -16,7 +16,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen>
-    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   Dio dio = new Dio();
 
   TabController controller;
@@ -26,9 +26,6 @@ class _ProfileScreenState extends State<ProfileScreen>
     super.initState();
     controller = new TabController(length: 2, vsync: this);
   }
-
-  @override
-  bool get wantKeepAlive => true;
 
   @override
   void didChangeDependencies() {

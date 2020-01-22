@@ -263,7 +263,13 @@ class _NewEventScreenState extends State<NewEventScreen> {
               FlatButton(
                 color: Colori.viola,
                 child: Text('Crea Evento'),
-                onPressed: _submit,
+                onPressed: (){
+                  _submit();
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                                  content: Text("Evento creato"),
+                                ));
+                }
+                ,
               )
             ],
           ),

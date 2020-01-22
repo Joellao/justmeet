@@ -116,7 +116,12 @@ class _SignupScreenInstitutionState extends State<SignupScreenInstitution> {
                         padding: EdgeInsets.symmetric(
                           horizontal: 70.0,
                         ),
-                        onPressed: _submit,
+                        onPressed: ()
+                        {
+                          _submit();
+                        Navigator.pop(
+                          context
+                        );},
                         child: Text(
                           "Registrati",
                           style: TextStyle(

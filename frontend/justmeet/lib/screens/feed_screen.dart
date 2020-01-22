@@ -32,6 +32,7 @@ class _FeedScreenState extends State<FeedScreen> {
     String token = Provider.of<String>(context);
     Response response = await dio.get(
       "https://justmeetgjj.herokuapp.com/feed/",
+      queryParameters: {"latitude": 0.0, "longitude": 0.0, "raggio":0},
       options: Options(
         headers: {
           "Authorization": token,

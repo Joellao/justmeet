@@ -154,7 +154,12 @@ class _NewEventScreenState extends State<NewAnnouncementScreen> {
               FlatButton(
                 color: Colori.viola,
                 child: Text('Crea Annuncio'),
-                onPressed: _submit,
+                onPressed: (){
+                  _submit();
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                                  content: Text("Annuncio creato"),
+                                ));
+                },
               )
             ],
           ),
