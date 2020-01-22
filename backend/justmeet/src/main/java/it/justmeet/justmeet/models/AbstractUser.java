@@ -27,12 +27,12 @@ import java.util.ArrayList;
 
 @Entity(name = "AbstractUser")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@Table(name = "users")
+@Table(name = "abstract_user")
 public abstract class AbstractUser {
 	@Id
 	@Column(name = "uid")
 	protected String uid;
-	@Column(name = "userName", unique=true)
+	@Column(name = "userName", unique = true)
 	protected String userName;
 	@Column(name = "firstName")
 	protected String firstName;
