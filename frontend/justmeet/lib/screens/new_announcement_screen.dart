@@ -13,15 +13,15 @@ class NewAnnouncementScreen extends StatefulWidget {
 class _NewEventScreenState extends State<NewAnnouncementScreen> {
   final _formKey = GlobalKey<FormState>();
   String _announcementName, _description, _category = 'Cinema';
-  
+
   _submit() async {
     print("Entrato");
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       print(_announcementName);
-      
+
       print(_category);
-      
+
       try {
         Dio dio = new Dio();
         String token = Provider.of<String>(context);
@@ -31,7 +31,6 @@ class _NewEventScreenState extends State<NewAnnouncementScreen> {
             "name": _announcementName,
             "description": _description,
             "category": _category.toUpperCase(),
-            
           },
           options: Options(
             headers: {
@@ -75,7 +74,6 @@ class _NewEventScreenState extends State<NewAnnouncementScreen> {
               SizedBox(
                 height: 15.0,
               ),
-              
               CustomField(
                 icon: Icons.dehaze,
                 label: 'Descrizione',
@@ -88,7 +86,6 @@ class _NewEventScreenState extends State<NewAnnouncementScreen> {
               SizedBox(
                 height: 15.0,
               ),
-              
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -150,15 +147,14 @@ class _NewEventScreenState extends State<NewAnnouncementScreen> {
               SizedBox(
                 height: 15.0,
               ),
-              
               FlatButton(
                 color: Colori.viola,
                 child: Text('Crea Annuncio'),
-                onPressed: (){
+                onPressed: () {
                   _submit();
                   Scaffold.of(context).showSnackBar(SnackBar(
-                                  content: Text("Annuncio creato"),
-                                ));
+                    content: Text("Annuncio creato"),
+                  ));
                 },
               )
             ],

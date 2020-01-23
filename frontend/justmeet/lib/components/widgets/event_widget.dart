@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/models/event.dart';
+import 'package:justmeet/screens/event_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EventWidget extends StatefulWidget {
@@ -28,7 +29,14 @@ class _EventWidgetState extends State<EventWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => print("Click on the event"),
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EventScreen(
+            event: this.widget.event,
+          ),
+        ),
+      ),
       child: Padding(
         padding: EdgeInsets.all(12.0),
         child: Card(

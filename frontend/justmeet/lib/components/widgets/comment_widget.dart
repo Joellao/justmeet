@@ -1,30 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:justmeet/components/models/announcement.dart';
-import 'package:justmeet/screens/announcement_screen.dart';
+import 'package:justmeet/components/models/comment.dart';
 
-class AnnouncementWidget extends StatefulWidget {
-  final Announcement announcement;
+class CommentWidget extends StatefulWidget {
+  final Comment comment;
   final Widget profileWidget;
 
-  const AnnouncementWidget({Key key, this.announcement, this.profileWidget})
+  const CommentWidget({Key key, this.comment, this.profileWidget})
       : super(key: key);
   @override
-  _AnnouncementWidgetState createState() => _AnnouncementWidgetState();
+  _CommentWidgetState createState() => _CommentWidgetState();
 }
 
-class _AnnouncementWidgetState extends State<AnnouncementWidget> {
+class _CommentWidgetState extends State<CommentWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AnnouncementScreen(
-            announce: this.widget.announcement,
-          ),
-        ),
-      ),
       child: Padding(
         padding: EdgeInsets.all(12.0),
         child: Card(
@@ -62,7 +54,7 @@ class _AnnouncementWidgetState extends State<AnnouncementWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            widget.announcement.name,
+                            widget.comment.body,
                             textAlign: TextAlign.left,
                             style: GoogleFonts.roboto(
                               textStyle: TextStyle(
@@ -72,18 +64,6 @@ class _AnnouncementWidgetState extends State<AnnouncementWidget> {
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                          widget.announcement.description != ""
-                              ? Text(
-                                  widget.announcement.description,
-                                  textAlign: TextAlign.left,
-                                  style: GoogleFonts.roboto(
-                                    textStyle: TextStyle(
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                )
-                              : SizedBox(),
                         ]),
                   )
                 ],

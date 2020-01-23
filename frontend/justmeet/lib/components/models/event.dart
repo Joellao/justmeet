@@ -3,33 +3,40 @@ import 'package:intl/intl.dart';
 import 'package:justmeet/components/models/user.dart';
 
 class Event {
+  final int id;
   final String name;
   final String location;
   final String category;
   final String date;
   final String description;
   final int maxNumber;
-  final User user;
+  User user;
   final List comments;
   final List reviews;
   final List partecipants;
+  final List photo;
   final bool cancelled;
-  const Event({
+  final bool isFree;
+  Event({
     Key key,
     @required this.name,
     @required this.location,
     @required this.category,
     @required this.maxNumber,
     this.date,
+    this.id,
     this.description,
     this.comments,
     this.reviews,
     this.partecipants,
     this.cancelled,
     this.user,
+    this.isFree,
+    this.photo,
   });
   Event.fromJson(Map<String, dynamic> json)
-      : this.name = json['name'],
+      : this.id = json['id'],
+        this.name = json['name'],
         this.location = json['location'],
         this.category = json['category'],
         this.date =
@@ -41,5 +48,7 @@ class Event {
         this.comments = json['comments'],
         this.reviews = json['reviews'],
         this.partecipants = json['partecipants'],
-        this.cancelled = json['cancelled'];
+        this.cancelled = json['cancelled'],
+        this.isFree = json['free'],
+        this.photo = json['photoUrls'];
 }
