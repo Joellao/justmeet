@@ -53,7 +53,7 @@ public class Photo {
 		this.id = id;
 	}
 
-	@JsonIgnoreProperties({ "photoUrls", "events", "partecipatedEvents" })
+	@JsonIgnoreProperties({ "photoUrls", "events", "partecipatedEvents", "announcements", "requestFriends", "friends" })
 	public AbstractUser getUser() {
 		return user;
 	}

@@ -11,8 +11,9 @@ class User {
   final List events;
   final String username;
   final List announcements;
-
-  const User({
+  List friends;
+  List friendRequests;
+  User({
     Key key,
     @required this.uid,
     @required this.firstName,
@@ -37,5 +38,8 @@ class User {
         this.profileImage =
             json['profileImage'] == null ? "" : json['profileImage'],
         this.username = json['userName'] == null ? "" : json['userName'],
-        this.announcements = json['announcements'];
+        this.announcements = json['announcements'],
+        this.friends = json['friends'] == null ? [] : json['friends'],
+        this.friendRequests =
+            json['requestFriends'] == null ? [] : json['requestFriends'];
 }

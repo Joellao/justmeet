@@ -165,6 +165,7 @@ class _EventScreenState extends State<EventScreen> {
                 ),
                 SizedBox(height: 20),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.all(6.0),

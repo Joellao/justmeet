@@ -21,6 +21,54 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   TabController controller;
 
+  _sendFriendRequest() async {
+    try {
+      String token = Provider.of<String>(context);
+      Response response = await dio.patch(
+        "https://justmeetgjj.herokuapp.com/user/${this.widget.user.uid}",
+        options: Options(
+          headers: {
+            "Authorization": token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        if (response.data) {
+          print("Richiesta mandata con successo");
+        } else {
+          print("Richiesta non mandata con successo");
+        }
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+  }
+
+  _removeFriend() async {
+    try {
+      String token = Provider.of<String>(context);
+      Response response = await dio.put(
+        "https://justmeetgjj.herokuapp.com/user/${this.widget.user.uid}/removeFriend",
+        options: Options(
+          headers: {
+            "Authorization": token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        if (response.data) {
+          print("Richiesta mandata con successo");
+        } else {
+          print("Richiesta non mandata con successo");
+        }
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -30,6 +78,17 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+  }
+
+  bool getFriendRequest() {
+    List friendRequests = this.widget.user.friendRequests;
+    List<dynamic> robe = [];
+    print(friendRequests);
+    friendRequests.forEach((robbo) {
+      User user = User.fromJson(robbo);
+      robe.add(user.uid);
+    });
+    return robe.contains(Provider.of<User>(context).uid);
   }
 
   @override
@@ -63,7 +122,25 @@ class _ProfileScreenState extends State<ProfileScreen>
                             size: 30.0,
                           ),
                         )
-                      : null,
+                      : !getFriendRequest()
+                          ? InkWell(
+                              onTap: () {
+                                _sendFriendRequest();
+                              },
+                              child: Icon(
+                                Icons.person_add,
+                                size: 30.0,
+                              ),
+                            )
+                          : InkWell(
+                              onTap: () {
+                                _sendFriendRequest();
+                              },
+                              child: Icon(
+                                Icons.remove_circle,
+                                size: 30.0,
+                              ),
+                            ),
                   SizedBox(width: 10)
                 ],
                 flexibleSpace: FlexibleSpaceBar(

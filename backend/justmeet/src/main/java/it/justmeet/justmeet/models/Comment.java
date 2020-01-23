@@ -65,7 +65,7 @@ public class Comment {
         return body;
     }
 
-    @JsonIgnoreProperties({ "events", "partecipatedEvents", "reviews" })
+    @JsonIgnoreProperties({ "events", "partecipatedEvents", "reviews", "requestFriends", "announcements", "friends" })
     public AbstractUser getUser() {
         return user;
     }

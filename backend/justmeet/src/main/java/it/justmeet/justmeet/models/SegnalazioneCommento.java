@@ -59,7 +59,7 @@ public class SegnalazioneCommento {
         this.body = body;
     }
 
-    @JsonIgnoreProperties({ "reviews", "events", "partecipatedEvents" })
+    @JsonIgnoreProperties({ "reviews", "events", "partecipatedEvents", "announcements", "friends", "requestFriends" })
     public AbstractUser getUser() {
         return user;
     }

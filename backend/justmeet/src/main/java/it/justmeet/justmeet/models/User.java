@@ -156,7 +156,7 @@ public class User extends AbstractUser {
 		this.partecipatedEvents = partecipatedEvents;
 	}
 
-	@JsonIgnoreProperties({ "friends", "requestFriends", "partecipatedEvents", "events" })
+	@JsonIgnoreProperties({ "friends", "requestFriends", "partecipatedEvents", "events", "announcements", "comments" })
 	public List<User> getFriends() {
 		return friends;
 	}
@@ -165,6 +165,7 @@ public class User extends AbstractUser {
 		this.friends = friends;
 	}
 
+	@JsonIgnoreProperties({ "friends", "requestFriends", "partecipatedEvents", "events", "announcements", "comments" })
 	public List<User> getRequestFriends() {
 		return requestFriends;
 	}

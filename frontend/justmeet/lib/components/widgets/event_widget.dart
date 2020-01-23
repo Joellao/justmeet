@@ -93,18 +93,6 @@ class _EventWidgetState extends State<EventWidget> {
                             ),
                           ),
                         ),
-                        widget.event.description != ""
-                            ? Text(
-                                widget.event.description,
-                                textAlign: TextAlign.left,
-                                style: GoogleFonts.roboto(
-                                  textStyle: TextStyle(
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              )
-                            : SizedBox(),
                         Text(
                           widget.event.date,
                           textAlign: TextAlign.left,

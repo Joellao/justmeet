@@ -79,7 +79,8 @@ public class Review {
         this.date = date;
     }
 
-    @JsonIgnoreProperties({ "reviews", "events", "partecipatedEvents" })
+    @JsonIgnoreProperties({ "reviews", "events", "partecipatedEvents", "partecipatedEvents", "friends",
+            "requestFriends" })
     public User getUser() {
         return user;
     }

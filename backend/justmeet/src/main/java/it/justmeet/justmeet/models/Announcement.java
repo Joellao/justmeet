@@ -82,7 +82,8 @@ public class Announcement {
 		return name;
 	}
 
-	@JsonIgnoreProperties({ "events", "friends", "announcements" })
+	@JsonIgnoreProperties({ "events", "friends", "announcements", "requestFriends", "reviews", "friends",
+			"partecipatedEvents" })
 	public User getUser() {
 		return user;
 	}
