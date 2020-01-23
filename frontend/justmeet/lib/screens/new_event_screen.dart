@@ -50,6 +50,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
           ),
         );
         if (response.statusCode == 200) {
+          print(response.data);
           print("Evento creato con successo");
         }
       } on DioError catch (e) {

@@ -85,6 +85,7 @@ public class Event {
 			int maxNumber) {
 		this.name = name;
 		this.location = location;
+		this.description = description;
 		this.date = date;
 		this.isFree = isFree;
 		this.category = category;
@@ -102,7 +103,7 @@ public class Event {
 	public void addPartecipant(User user) {
 		this.partecipants.add(user);
 	}
-	
+
 	public void removePartecipant(User user) {
 		this.partecipants.remove(user);
 	}
