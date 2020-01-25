@@ -1,19 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:justmeet/components/models/comment.dart';
+import 'package:justmeet/components/models/review.dart';
+import 'package:justmeet/components/widgets/star_rating.dart';
 
-class CommentWidget extends StatefulWidget {
-  final Comment comment;
+class ReviewWidget extends StatefulWidget {
+  final Review review;
   final Widget profileWidget;
 
-  const CommentWidget({Key key, this.comment, this.profileWidget})
+  const ReviewWidget({Key key, this.review, this.profileWidget})
       : super(key: key);
   @override
-  _CommentWidgetState createState() => _CommentWidgetState();
+  _ReviewWidgetState createState() => _ReviewWidgetState();
 }
 
-class _CommentWidgetState extends State<CommentWidget> {
+class _ReviewWidgetState extends State<ReviewWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -45,11 +46,18 @@ class _CommentWidgetState extends State<CommentWidget> {
                         children: <Widget>[
                           SizedBox(width: 10),
                           Text(
-                            this.widget.comment.date,
+                            this.widget.review.date,
                           ),
                           SizedBox(height: 10),
+                          IconTheme(
+                            data: IconThemeData(
+                              color: Colors.amber,
+                              size: 40,
+                            ),
+                            child: StarDisplay(value: this.widget.review.stars),
+                          ),
                           Text(
-                            widget.comment.body,
+                            widget.review.body,
                             textAlign: TextAlign.left,
                             style: GoogleFonts.roboto(
                               textStyle: TextStyle(

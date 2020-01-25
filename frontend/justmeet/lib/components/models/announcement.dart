@@ -3,12 +3,14 @@ import 'package:intl/intl.dart';
 import 'package:justmeet/components/models/user.dart';
 
 class Announcement {
+  final int id;
   final String name;
   final String category;
   final String date;
   final String description;
   final User user;
   final List comments;
+
   const Announcement({
     Key key,
     @required this.name,
@@ -17,10 +19,13 @@ class Announcement {
     this.description,
     this.comments,
     this.user,
+    this.id,
   });
+
   Announcement.fromJson(Map<String, dynamic> json)
       : this.name = json['name'],
         this.category = json['category'],
+        this.id = json['id'],
         this.date =
             DateFormat("dd/MM/yyyy").format(DateTime.parse(json['date'])),
         this.description =

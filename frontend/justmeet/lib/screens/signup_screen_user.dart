@@ -4,10 +4,7 @@ import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
 import 'package:justmeet/components/models/creates/SignupUser.dart';
 import 'package:justmeet/controller/AuthController.dart';
-import 'package:justmeet/screens/homepage_screen.dart';
 import 'package:provider/provider.dart';
-
-import 'login_screen.dart';
 
 class SignupScreenUser extends StatefulWidget {
   @override
@@ -172,13 +169,10 @@ class _SignupScreenUserState extends State<SignupScreenUser> {
                         padding: EdgeInsets.symmetric(
                           horizontal: 70.0,
                         ),
-                        onPressed: ()
-                        {
+                        onPressed: () {
                           _submit();
-                        Navigator.pop(
-                          context
-                        );
-                      },
+                          Navigator.pop(context);
+                        },
                         child: Text(
                           "Registrati",
                           style: TextStyle(
