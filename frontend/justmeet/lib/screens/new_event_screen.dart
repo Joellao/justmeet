@@ -30,7 +30,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
       print(_maxPersons);
       try {
         Dio dio = new Dio();
-        String token = Provider.of<String>(context);
+        String token = Provider.of<String>(context, listen: false);
         Response response = await dio.post(
           "https://justmeetgjj.herokuapp.com/event",
           data: {

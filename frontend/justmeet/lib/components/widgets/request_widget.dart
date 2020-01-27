@@ -24,7 +24,7 @@ class _RequestWidgetState extends State<RequestWidget> {
 
   _accept() async {
     try {
-      String token = Provider.of<String>(context);
+      String token = Provider.of<String>(context, listen: false);
       Response response = await dio.patch(
         "https://justmeetgjj.herokuapp.com/user/${this.widget.user.uid}/true",
         options: Options(
@@ -48,7 +48,7 @@ class _RequestWidgetState extends State<RequestWidget> {
 
   _refuse() async {
     try {
-      String token = Provider.of<String>(context);
+      String token = Provider.of<String>(context, listen: false);
       Response response = await dio.patch(
         "https://justmeetgjj.herokuapp.com/user/${this.widget.user.uid}/false",
         options: Options(

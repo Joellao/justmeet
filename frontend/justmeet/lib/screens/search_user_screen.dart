@@ -22,7 +22,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
       _formKey.currentState.save();
       try {
         Dio dio = new Dio();
-        String token = Provider.of<String>(context);
+        String token = Provider.of<String>(context, listen: false);
         Response response = await dio.get(
           "https://justmeetgjj.herokuapp.com/user/$_userName/find",
           options: Options(

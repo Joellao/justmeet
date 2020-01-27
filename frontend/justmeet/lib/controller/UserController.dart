@@ -7,7 +7,7 @@ class UserController {
 
   Future<User> modifyUser(context, String username, String profileImage,
       String bio, String email, String uid) async {
-    String token = Provider.of<String>(context);
+    String token = Provider.of<String>(context, listen: false);
     Response response = await dio.put(
       "https://justmeetgjj.herokuapp.com/user/$uid",
       data: {

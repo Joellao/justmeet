@@ -32,7 +32,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
       });
       try {
         Dio dio = new Dio();
-        String token = Provider.of<String>(context);
+        String token = Provider.of<String>(context, listen: false);
         Response response = await dio.post(
           "https://justmeetgjj.herokuapp.com/event/${widget.event.id}/photo",
           data: formData,

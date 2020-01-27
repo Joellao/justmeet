@@ -27,7 +27,7 @@ class _EditAnnouncementScreenState extends State<EditAnnouncementScreen> {
       _formKey.currentState.save();
       try {
         Dio dio = new Dio();
-        String token = Provider.of<String>(context);
+        String token = Provider.of<String>(context, listen: false);
         print(_description);
         Response response = await dio.put(
           "https://justmeetgjj.herokuapp.com/event/${this.widget.announce.id}",

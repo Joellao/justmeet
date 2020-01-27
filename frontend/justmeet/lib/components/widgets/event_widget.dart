@@ -22,7 +22,7 @@ class _EventWidgetState extends State<EventWidget> {
 
   _partecipate() async {
     try {
-      String token = Provider.of<String>(context);
+      String token = Provider.of<String>(context, listen: false);
       Response response = await dio.post(
         "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}/prenote",
         options: Options(
@@ -46,7 +46,7 @@ class _EventWidgetState extends State<EventWidget> {
 
   _cancelpartecipate() async {
     try {
-      String token = Provider.of<String>(context);
+      String token = Provider.of<String>(context, listen: false);
       Response response = await dio.patch(
         "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}/cancelPrenote",
         options: Options(
@@ -77,6 +77,17 @@ class _EventWidgetState extends State<EventWidget> {
     } else {
       throw 'Could not open the map.';
     }
+  }
+
+  bool isPrenoted() {
+    bool found = false;
+    this.widget.event.partecipants.forEach((value) {
+      User user = User.fromJson(value);
+      if (user.uid == Provider.of<User>(context).uid) {
+        found = true;
+      }
+    });
+    return found;
   }
 
   @override
@@ -268,14 +279,9 @@ class _EventWidgetState extends State<EventWidget> {
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Provider.of<User>(context).uid !=
                               this.widget.event.user.uid
-                          ? Provider.of<User>(context).uid ==
-                                  this
-                                      .widget
-                                      .event
-                                      .partecipants
-                                      .contains(this.widget.event.user.uid)
+                          ? isPrenoted()
                               ? RaisedButton(
-                                  color: Color(0xFF5257f2),
+                                  color: Colors.red,
                                   elevation: 4,
                                   disabledColor: Colors.red,
                                   child: Text(

@@ -25,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   _sendFriendRequest() async {
     try {
-      String token = Provider.of<String>(context);
+      String token = Provider.of<String>(context, listen: false);
       Response response = await dio.patch(
         "https://justmeetgjj.herokuapp.com/user/${this.widget.user.uid}",
         options: Options(
@@ -49,7 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   _removeFriend() async {
     try {
-      String token = Provider.of<String>(context);
+      String token = Provider.of<String>(context, listen: false);
       Response response = await dio.put(
         "https://justmeetgjj.herokuapp.com/user/${this.widget.user.uid}/removeFriend",
         options: Options(

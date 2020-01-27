@@ -38,6 +38,7 @@ import it.justmeet.justmeet.models.repositories.PhotoRepository;
 import it.justmeet.justmeet.models.repositories.ReviewRepository;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.config.WoWoUtility;
+import it.justmeet.justmeet.exceptions.ForbiddenAccess;
 import it.justmeet.justmeet.exceptions.InvalidDataException;
 import it.justmeet.justmeet.models.AbstractUser;
 import it.justmeet.justmeet.models.repositories.UserRepository;
@@ -159,12 +160,13 @@ public class EventController {
 		// return new Event(eventId, null, eventId, eventId, false, eventId, 0);
 		Event evento = eventRepo.findById(eventId).get();
 		if (!evento.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			return null;
+			throw new ForbiddenAccess("Stai cercando di modificare un evento non tuo");
 		}
 		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(event.getDate());
 		WoWoUtility.getInstance().validateDateEvent(date);
 		evento.setName(event.getName());
 		evento.setDate(date);
+		evento.setDescription(event.getDescription());
 		evento.setLocation(event.getLocation());
 		evento.setFree(event.isFree());
 		evento.setCategory(event.getCategory());

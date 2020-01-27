@@ -30,7 +30,7 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   Future<List<dynamic>> getDataEvent() async {
-    String token = Provider.of<String>(context);
+    String token = Provider.of<String>(context, listen: false);
     Response response = await dio.get(
       "https://justmeetgjj.herokuapp.com/feed/",
       queryParameters: {"latitude": 0.0, "longitude": 0.0, "raggio": 0},

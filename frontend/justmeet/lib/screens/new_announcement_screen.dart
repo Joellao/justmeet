@@ -24,7 +24,7 @@ class _NewEventScreenState extends State<NewAnnouncementScreen> {
 
       try {
         Dio dio = new Dio();
-        String token = Provider.of<String>(context);
+        String token = Provider.of<String>(context, listen: false);
         Response response = await dio.post(
           "https://justmeetgjj.herokuapp.com/announcement",
           data: {

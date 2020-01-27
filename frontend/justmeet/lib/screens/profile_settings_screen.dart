@@ -52,7 +52,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       });
       try {
         Dio dio = new Dio();
-        String token = Provider.of<String>(context);
+        String token = Provider.of<String>(context, listen: false);
         Response response = await dio.post(
           "https://justmeetgjj.herokuapp.com/user/${widget.user.uid}/uploadProfilePicutre",
           data: formData,

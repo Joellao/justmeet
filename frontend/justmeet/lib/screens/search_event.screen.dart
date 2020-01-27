@@ -23,7 +23,7 @@ class _SearchEventScreenState extends State<SearchEventScreen> {
       _formKey.currentState.save();
       try {
         Dio dio = new Dio();
-        String token = Provider.of<String>(context);
+        String token = Provider.of<String>(context, listen: false);
         Response response = await dio.get(
           "https://justmeetgjj.herokuapp.com/event/$_eventName/find",
           options: Options(

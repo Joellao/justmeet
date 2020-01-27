@@ -45,7 +45,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
       print(_body);
       try {
         Dio dio = new Dio();
-        String token = Provider.of<String>(context);
+        String token = Provider.of<String>(context, listen: false);
         Response response = await dio.post(
           "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}/review",
           data: {

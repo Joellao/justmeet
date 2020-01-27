@@ -28,7 +28,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
     print("Entrato");
     try {
       Dio dio = new Dio();
-      String token = Provider.of<String>(context);
+      String token = Provider.of<String>(context, listen: false);
       Response response = await dio.delete(
         "https://justmeetgjj.herokuapp.com/event/${this.widget.announce.id}",
         options: Options(
@@ -54,7 +54,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
       print(_body);
       try {
         Dio dio = new Dio();
-        String token = Provider.of<String>(context);
+        String token = Provider.of<String>(context, listen: false);
         Response response = await dio.post(
           "https://justmeetgjj.herokuapp.com/announcement/${this.widget.announce.id}/comment",
           data: {

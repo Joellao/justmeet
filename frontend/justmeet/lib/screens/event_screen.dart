@@ -41,7 +41,7 @@ class _EventScreenState extends State<EventScreen> {
     print("Entrato");
     try {
       Dio dio = new Dio();
-      String token = Provider.of<String>(context);
+      String token = Provider.of<String>(context, listen: false);
       Response response = await dio.delete(
         "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}",
         options: Options(
@@ -64,7 +64,7 @@ class _EventScreenState extends State<EventScreen> {
     print("Entrato");
     try {
       Dio dio = new Dio();
-      String token = Provider.of<String>(context);
+      String token = Provider.of<String>(context, listen: false);
       Response response = await dio.patch(
         "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}",
         options: Options(
@@ -90,7 +90,7 @@ class _EventScreenState extends State<EventScreen> {
       print(_body);
       try {
         Dio dio = new Dio();
-        String token = Provider.of<String>(context);
+        String token = Provider.of<String>(context, listen: false);
         Response response = await dio.post(
           "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}/comment",
           data: {
