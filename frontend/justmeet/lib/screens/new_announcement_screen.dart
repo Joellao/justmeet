@@ -151,10 +151,11 @@ class _NewEventScreenState extends State<NewAnnouncementScreen> {
                 color: Colori.viola,
                 child: Text('Crea Annuncio'),
                 onPressed: () {
-                  _submit();
-                  Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text("Annuncio creato"),
-                  ));
+                  if (_submit() != null) {
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text("Annuncio creato"),
+                    ));
+                  }
                 },
               )
             ],

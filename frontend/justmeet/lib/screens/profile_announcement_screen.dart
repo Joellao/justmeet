@@ -35,7 +35,9 @@ class ProfileAnnouncementScreen extends StatelessWidget {
                         announcement: announcement,
                       );
                     },
-                    childCount: this.announcements.length,
+                    childCount: this.announcements != null
+                        ? this.announcements.length
+                        : 0,
                   ),
                 ),
               ),

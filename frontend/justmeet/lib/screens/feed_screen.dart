@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/announcement.dart';
 import 'package:justmeet/components/models/event.dart';
+import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/announcement_widget.dart';
 import 'package:justmeet/components/widgets/event_widget.dart';
 import 'package:justmeet/screens/profile_screen.dart';
@@ -32,7 +33,7 @@ class _FeedScreenState extends State<FeedScreen> {
     String token = Provider.of<String>(context);
     Response response = await dio.get(
       "https://justmeetgjj.herokuapp.com/feed/",
-      queryParameters: {"latitude": 0.0, "longitude": 0.0, "raggio":0},
+      queryParameters: {"latitude": 0.0, "longitude": 0.0, "raggio": 0},
       options: Options(
         headers: {
           "Authorization": token,
@@ -49,7 +50,6 @@ class _FeedScreenState extends State<FeedScreen> {
         } else {
           robe.add(Announcement.fromJson(robbo));
         }
-        ;
       });
 
       return robe;
@@ -74,11 +74,12 @@ class _FeedScreenState extends State<FeedScreen> {
                 if (event is Event)
                   return EventWidget(
                     event: event,
-                    profileWidget: getProfileWidget(event),
+                    profileWidget: getProfileWidget(event.user),
                   );
                 else
                   return AnnouncementWidget(
                     announcement: event,
+                    profileWidget: getProfileWidget(event.user),
                   );
               },
             );
@@ -92,7 +93,7 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 
-  Widget getProfileWidget(Event event) {
+  Widget getProfileWidget(User u) {
     return Container(
       padding: EdgeInsets.all(8.0),
       child: Row(
@@ -101,16 +102,15 @@ class _FeedScreenState extends State<FeedScreen> {
           InkWell(
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => ProfileScreen(user: event.user)),
+              MaterialPageRoute(builder: (context) => ProfileScreen(user: u)),
             ),
             child: Row(
               children: <Widget>[
                 CircleAvatar(
-                  backgroundImage: event.user.profileImage != ""
-                      ? NetworkImage(event.user.profileImage)
+                  backgroundImage: u.profileImage != ""
+                      ? NetworkImage(u.profileImage)
                       : null,
-                  child: event.user.profileImage == ""
+                  child: u.profileImage == ""
                       ? Icon(Icons.person, size: 25)
                       : null,
                 ),
@@ -118,7 +118,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   width: 7.0,
                 ),
                 Text(
-                  event.user.firstName,
+                  u.firstName,
                   textAlign: TextAlign.left,
                   style: GoogleFonts.roboto(
                     textStyle: TextStyle(
@@ -130,7 +130,7 @@ class _FeedScreenState extends State<FeedScreen> {
                 ),
                 Text(" "),
                 Text(
-                  event.user.lastName,
+                  u.lastName,
                   textAlign: TextAlign.left,
                   style: GoogleFonts.roboto(
                     textStyle: TextStyle(

@@ -37,7 +37,7 @@ class ProfileEventScreen extends StatelessWidget {
                         event: event,
                       );
                     },
-                    childCount: this.events.length,
+                    childCount: this.events != null ? this.events.length : 0,
                   ),
                 ),
               ),

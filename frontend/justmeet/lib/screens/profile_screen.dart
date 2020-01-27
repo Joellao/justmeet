@@ -2,9 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/user.dart';
+import 'package:justmeet/screens/my_friends.dart';
 import 'package:justmeet/screens/profile_announcement_screen.dart';
 import 'package:justmeet/screens/profile_event_screen.dart';
 import 'package:justmeet/screens/profile_settings_screen.dart';
+import 'package:justmeet/screens/request_friends.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -94,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2, // This is the number of tabs.
+      length: 4, // This is the number of tabs.
       child: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           // These are the slivers that show up in the "outer" scroll view.
@@ -160,7 +162,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                 bottom: TabBar(
                   tabs: [
                     Tab(child: Text("Eventi")),
-                    Tab(child: Text("Annunci"))
+                    Tab(child: Text("Annunci")),
+                    Tab(child: Text("Amici")),
+                    Tab(child: Text("Richieste"))
                   ],
                 ),
               ),
@@ -176,6 +180,8 @@ class _ProfileScreenState extends State<ProfileScreen>
               ProfileAnnouncementScreen(
                 announcements: this.widget.user.announcements,
               ),
+              MyFriendsScreen(friends: this.widget.user.friends),
+              RequestFriendsScreen(requests: this.widget.user.friendRequests),
             ]),
       ),
     );

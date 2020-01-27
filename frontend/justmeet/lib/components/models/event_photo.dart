@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:justmeet/components/models/user.dart';
 
 class EventPhoto {
   final int id;

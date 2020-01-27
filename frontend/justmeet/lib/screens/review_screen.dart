@@ -1,27 +1,42 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
-import 'package:justmeet/components/models/announcement.dart';
-import 'package:justmeet/components/models/comment.dart';
+import 'package:justmeet/components/models/event.dart';
+import 'package:justmeet/components/models/review.dart';
 import 'package:justmeet/components/models/user.dart';
-import 'package:justmeet/components/widgets/comment_widget.dart';
+import 'package:justmeet/components/widgets/review_widget.dart';
+import 'package:justmeet/components/widgets/star_rating.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class AnnouncementScreen extends StatefulWidget {
-  final Announcement announce;
+class ReviewScreen extends StatefulWidget {
+  final Event event;
 
-  const AnnouncementScreen({Key key, this.announce}) : super(key: key);
+  const ReviewScreen({Key key, this.event}) : super(key: key);
 
   @override
-  _AnnouncementScreenState createState() => _AnnouncementScreenState();
+  _ReviewScreenState createState() => _ReviewScreenState();
 }
 
-class _AnnouncementScreenState extends State<AnnouncementScreen> {
+class _ReviewScreenState extends State<ReviewScreen> {
+  static Future<void> openMap(String location) async {
+    String result = location.replaceAll(RegExp(' '), '+');
+    String googleUrl =
+        'https://www.google.com/maps/search/?api=1&query=$result';
+    if (await canLaunch(googleUrl)) {
+      await launch(googleUrl);
+    } else {
+      throw 'Could not open the map.';
+    }
+  }
+
   final _formKey = GlobalKey<FormState>();
   String _body;
+  int _stars;
 
   _submit() async {
     print("Entrato");
@@ -32,9 +47,10 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
         Dio dio = new Dio();
         String token = Provider.of<String>(context);
         Response response = await dio.post(
-          "https://justmeetgjj.herokuapp.com/announcement/${this.widget.announce.id}/comment",
+          "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}/review",
           data: {
             "body": _body,
+            "stars": _stars,
           },
           options: Options(
             headers: {
@@ -45,7 +61,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
         );
         if (response.statusCode == 200) {
           print(response.data);
-          print("Evento commentato");
+          print("Recensione aggiunta");
         }
       } on DioError catch (e) {
         print(e.response);
@@ -58,9 +74,10 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
     User user = Provider.of<User>(context);
     return Scaffold(
       appBar: AppBar(
+        title: Text(this.widget.event.name),
         backgroundColor: Colori.bluScuro,
         actions: <Widget>[
-          user.uid == this.widget.announce.user.uid
+          user.uid == this.widget.event.user.uid
               ? InkWell(
                   onTap: () {
                     Navigator.push(
@@ -71,9 +88,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                     size: 30.0,
                   ),
                 )
-              : Text(
-                  "",
-                ),
+              : null,
           SizedBox(width: 10)
         ],
       ),
@@ -90,66 +105,39 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Text(
-                  this.widget.announce.name,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.roboto(
-                    textStyle: TextStyle(
-                      fontSize: 25,
-                      color: Colori.grigio,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  this.widget.announce.description,
-                  textAlign: TextAlign.left,
-                  style: GoogleFonts.roboto(
-                    textStyle: TextStyle(
-                      fontSize: 25,
-                      color: Colori.grigio,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.category,
-                      color: Colori.grigio,
-                      size: 40,
-                    ),
-                    SizedBox(width: 20),
-                    Text(
-                      this.widget.announce.category,
-                      textAlign: TextAlign.left,
-                      style: GoogleFonts.roboto(
-                        textStyle: TextStyle(
-                          fontSize: 25,
-                          color: Colori.grigio,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
                 Form(
                   key: _formKey,
-                  child: CustomField(
-                    icon: Icons.comment,
-                    label: '',
-                    hint: "Commenta l'evento",
-                    validator: (name) => name.length <= 0
-                        ? 'Il commento non può essere vuoto'
-                        : null,
-                    onSaved: (name) => this._body = name,
-                    obscureText: false,
+                  child: Column(
+                    children: <Widget>[
+                      FormField<int>(
+                        initialValue: 1,
+                        autovalidate: true,
+                        builder: (state) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              StarRating(
+                                onChanged: state.didChange,
+                                value: state.value,
+                              ),
+                            ],
+                          );
+                        },
+                        validator: (value) =>
+                            value < 1 ? 'Voto troppo basso' : null,
+                        onSaved: (value) => this._stars = value,
+                      ),
+                      CustomField(
+                        icon: Icons.comment,
+                        label: '',
+                        hint: "Aggiungi recensione",
+                        validator: (name) => name.length <= 0
+                            ? 'La recensione non può essere vuota'
+                            : null,
+                        onSaved: (name) => this._body = name,
+                        obscureText: false,
+                      ),
+                    ],
                   ),
                 ),
                 InkWell(
@@ -161,13 +149,13 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                   ),
                 ),
                 Column(
-                  children: List.generate(this.widget.announce.comments.length,
-                      (index) {
-                    Comment com = Comment.fromJson(
-                        this.widget.announce.comments.elementAt(index));
-                    return CommentWidget(
-                      comment: com,
-                      profileWidget: getProfileWidget(this.widget.announce),
+                  children:
+                      List.generate(this.widget.event.reviews.length, (index) {
+                    Review r = Review.fromJson(
+                        this.widget.event.reviews.elementAt(index));
+                    return ReviewWidget(
+                      review: r,
+                      profileWidget: getProfileWidget(this.widget.event),
                     );
                   }),
                 ),
@@ -180,7 +168,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
     );
   }
 
-  Widget getProfileWidget(Announcement announce) {
+  Widget getProfileWidget(Event event) {
     return Container(
       padding: EdgeInsets.all(8.0),
       child: Row(
@@ -190,15 +178,15 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProfileScreen(user: announce.user)),
+                  builder: (context) => ProfileScreen(user: event.user)),
             ),
             child: Row(
               children: <Widget>[
                 CircleAvatar(
-                  backgroundImage: announce.user.profileImage != ""
-                      ? NetworkImage(announce.user.profileImage)
+                  backgroundImage: event.user.profileImage != ""
+                      ? NetworkImage(event.user.profileImage)
                       : null,
-                  child: announce.user.profileImage == ""
+                  child: event.user.profileImage == ""
                       ? Icon(Icons.person, size: 25)
                       : null,
                 ),
@@ -206,7 +194,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                   width: 7.0,
                 ),
                 Text(
-                  announce.user.firstName,
+                  event.user.firstName,
                   textAlign: TextAlign.left,
                   style: GoogleFonts.roboto(
                     textStyle: TextStyle(
@@ -218,7 +206,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                 ),
                 Text(" "),
                 Text(
-                  announce.user.lastName,
+                  event.user.lastName,
                   textAlign: TextAlign.left,
                   style: GoogleFonts.roboto(
                     textStyle: TextStyle(
