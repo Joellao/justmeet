@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import it.justmeet.justmeet.config.WoWoUtility;
+import it.justmeet.justmeet.exceptions.ForbiddenAccess;
+import it.justmeet.justmeet.exceptions.ResourceNotFoundException;
 import it.justmeet.justmeet.models.AbstractUser;
 import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.User;
@@ -54,7 +56,6 @@ public class UserController {
 	@GetMapping("/user")
 	public AbstractUser getProfile(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		String userId = WoWoUtility.getInstance().getUid(token);
-		System.out.println("GET" + userId);
 		AbstractUser user = abstractRepo.findByUid(userId);
 		return user;
 	}
@@ -73,6 +74,9 @@ public class UserController {
 			throws FirebaseAuthException {
 		WoWoUtility.getInstance().getUid(token);
 		User other = userRepo.findByUid(otherId);
+		if (other == null) {
+			throw new ResourceNotFoundException("Questo utente non è stato trovato");
+		}
 		return other;
 	}
 
@@ -88,8 +92,11 @@ public class UserController {
 	public AbstractUser modifyUser(@PathVariable("userId") String userId, @RequestBody UserCreate user,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		AbstractUser me = abstractRepo.findByUid(userId);
+		if (me == null) {
+			throw new ResourceNotFoundException();
+		}
 		if (!me.getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			return null;
+			throw new ForbiddenAccess("Questo account non è tuo");
 		}
 		me.setBio(user.getBio());
 		me.setProfileImage(user.getProfilePhoto());
@@ -109,8 +116,11 @@ public class UserController {
 	public boolean deleteUser(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
 		AbstractUser me = abstractRepo.findByUid(userId);
+		if (me == null) {
+			throw new ResourceNotFoundException();
+		}
 		if (!me.getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			throw new IllegalAccessError();
+			throw new ForbiddenAccess("Questo account non è tuo");
 		}
 		try {
 			abstractRepo.delete(me);
@@ -135,7 +145,6 @@ public class UserController {
 		List<User> result = userRepo.findAll().stream().filter(user -> userName.equals(user.getUsername()))
 				.collect(Collectors.toList());
 		return result;
-
 	}
 
 	@PatchMapping("/user/{userId}")

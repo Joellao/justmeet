@@ -1,6 +1,5 @@
 package it.justmeet.justmeet.models.creates;
 
-
 /**
  * Responsabilità: si occupa della creazione di un commento
  * 
@@ -12,27 +11,12 @@ package it.justmeet.justmeet.models.creates;
 public class CommentCreate {
     public String body;
 
-    public boolean state;
-
-    public CommentCreate(String body, boolean state) {
-        this.body = body;
-        this.state = state;
-    }
-
     public String getBody() {
         return body;
     }
 
-    public boolean isState() {
-        return state;
-    }
-
     public void setBody(String body) {
         this.body = body;
-    }
-
-    public void setState(boolean state) {
-        this.state = state;
     }
 
 }
