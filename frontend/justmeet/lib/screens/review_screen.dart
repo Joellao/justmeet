@@ -123,7 +123,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
                             ],
                           );
                         },
-                        onSaved: (name) => this._stars = name,
+                        validator: (value) =>
+                            value < 1 ? 'Voto troppo basso' : null,
+                        onSaved: (value) => this._stars = value,
                       ),
                       CustomField(
                         icon: Icons.comment,

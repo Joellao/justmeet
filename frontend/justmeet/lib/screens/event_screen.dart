@@ -85,7 +85,7 @@ class _EventScreenState extends State<EventScreen> {
                     size: 30.0,
                   ),
                 )
-              : null,
+              : Text(""),
           SizedBox(width: 10)
         ],
       ),
@@ -140,15 +140,15 @@ class _EventScreenState extends State<EventScreen> {
                         size: 40,
                       ),
                     ),
-                    SizedBox(width: 20),
+                    SizedBox(width: 10),
                     Text(
                       this.widget.event.location,
+                      overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.left,
                       style: GoogleFonts.roboto(
                         textStyle: TextStyle(
-                          fontSize: 25,
+                          fontSize: 20,
                           color: Colori.grigio,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -387,7 +387,6 @@ class _EventScreenState extends State<EventScreen> {
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
-                Text(" "),
                 Text(
                   event.user.lastName,
                   textAlign: TextAlign.left,

@@ -71,7 +71,9 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                     size: 30.0,
                   ),
                 )
-              : null,
+              : Text(
+                  "",
+                ),
           SizedBox(width: 10)
         ],
       ),

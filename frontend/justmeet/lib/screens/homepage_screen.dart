@@ -4,6 +4,7 @@ import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/screens/create_screen.dart';
 import 'package:justmeet/screens/feed_screen.dart';
+import 'package:justmeet/screens/friends_screen.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:justmeet/screens/search_screen.dart';
 import 'package:provider/provider.dart';

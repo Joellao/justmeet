@@ -87,7 +87,10 @@ class _AnnouncementWidgetState extends State<AnnouncementWidget> {
                         ]),
                   )
                 ],
-              )
+              ),
+              SizedBox(
+                height: 10,
+              ),
             ],
           ),
         ),
