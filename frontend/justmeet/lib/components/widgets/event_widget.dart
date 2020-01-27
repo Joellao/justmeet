@@ -1,7 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/models/event.dart';
+import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/screens/event_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EventWidget extends StatefulWidget {
@@ -15,6 +18,56 @@ class EventWidget extends StatefulWidget {
 }
 
 class _EventWidgetState extends State<EventWidget> {
+  Dio dio = new Dio();
+
+  _partecipate() async {
+    try {
+      String token = Provider.of<String>(context);
+      Response response = await dio.post(
+        "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}/prenote",
+        options: Options(
+          headers: {
+            "Authorization": token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        if (response.data) {
+          print("Prenotazione effettuata con successo");
+        } else {
+          print("errore");
+        }
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+  }
+
+  _cancelpartecipate() async {
+    try {
+      String token = Provider.of<String>(context);
+      Response response = await dio.patch(
+        "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}/cancelPrenote",
+        options: Options(
+          headers: {
+            "Authorization": token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        if (response.data) {
+          print("Sprenotazione effettuata");
+        } else {
+          print("errore");
+        }
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+  }
+
   static Future<void> openMap(String location) async {
     String result = location.replaceAll(RegExp(' '), '+');
     String googleUrl =
@@ -213,26 +266,65 @@ class _EventWidgetState extends State<EventWidget> {
                     fit: FlexFit.tight,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                      child: RaisedButton(
-                        color: Color(0xFF5257f2),
-                        elevation: 4,
-                        disabledColor: Colors.red,
-                        child: Text(
-                          "Prenotati",
-                          style: GoogleFonts.roboto(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        onPressed: ((widget.event.maxNumber -
-                                    widget.event.partecipants.length) >
-                                0)
-                            ? () => Scaffold.of(context).showSnackBar(SnackBar(
-                                  content: Text("Prenotazione effettuata"),
-                                ))
-                            : null,
-                      ),
+                      child: Provider.of<User>(context).uid !=
+                              this.widget.event.user.uid
+                          ? Provider.of<User>(context).uid ==
+                                  this
+                                      .widget
+                                      .event
+                                      .partecipants
+                                      .contains(this.widget.event.user.uid)
+                              ? RaisedButton(
+                                  color: Color(0xFF5257f2),
+                                  elevation: 4,
+                                  disabledColor: Colors.red,
+                                  child: Text(
+                                    "Sprenotati",
+                                    style: GoogleFonts.roboto(
+                                      textStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  onPressed: () => {
+                                        if (_cancelpartecipate() != null)
+                                          {
+                                            Scaffold.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  "Sprenotazione effettuata"),
+                                            ))
+                                          }
+                                      })
+                              : RaisedButton(
+                                  color: Color(0xFF5257f2),
+                                  elevation: 4,
+                                  disabledColor: Colors.red,
+                                  child: Text(
+                                    "Prenotati",
+                                    style: GoogleFonts.roboto(
+                                      textStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  onPressed: ((widget.event.maxNumber -
+                                              widget
+                                                  .event.partecipants.length) >
+                                          0)
+                                      ? () => {
+                                            if (_partecipate() != null)
+                                              {
+                                                Scaffold.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      "Prenotazione effettuata"),
+                                                ))
+                                              }
+                                          }
+                                      : null,
+                                )
+                          : Text(""),
                     ),
                   )
                 ],

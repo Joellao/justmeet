@@ -1,46 +1,40 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
+import 'package:justmeet/components/models/announcement.dart';
 import 'package:provider/provider.dart';
 
-class NewEventScreen extends StatefulWidget {
+class EditAnnouncementScreen extends StatefulWidget {
+  @required
+  final Announcement announce;
+
+  EditAnnouncementScreen({Key key, this.announce}) : super(key: key);
   @override
-  _NewEventScreenState createState() => _NewEventScreenState();
+  _EditAnnouncementScreenState createState() => _EditAnnouncementScreenState();
 }
 
-class _NewEventScreenState extends State<NewEventScreen> {
+class _EditAnnouncementScreenState extends State<EditAnnouncementScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _eventName, _location, _description, _date, _category = 'Cinema';
+  String _announceName, _description, _category = 'Cinema';
   bool _isFree = true;
-  int _maxPersons;
 
-  _submit() async {
+  _editEvent() async {
     print("Entrato");
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      print(_eventName);
-      print(_location);
-      print(_description);
-      print(_date);
-      print(_category);
-      print(_isFree);
-      print(_maxPersons);
       try {
         Dio dio = new Dio();
         String token = Provider.of<String>(context);
-        Response response = await dio.post(
-          "https://justmeetgjj.herokuapp.com/event",
+        print(_description);
+        Response response = await dio.put(
+          "https://justmeetgjj.herokuapp.com/event/${this.widget.announce.id}",
           data: {
-            "name": _eventName,
-            "location": _location,
+            "name": _announceName,
             "description": _description,
-            "isFree": _isFree,
             "category": _category.toUpperCase(),
-            "maxPersons": _maxPersons,
-            'date': _date
           },
           options: Options(
             headers: {
@@ -51,7 +45,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
         );
         if (response.statusCode == 200) {
           print(response.data);
-          print("Evento creato con successo");
+          print("Evento modificato");
         }
       } on DioError catch (e) {
         print(e.response);
@@ -61,8 +55,14 @@ class _NewEventScreenState extends State<NewEventScreen> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = new TextEditingController();
-    return Container(
+    TextEditingController controller1 = new TextEditingController();
+    TextEditingController controller3 = new TextEditingController();
+
+    controller1.text = this.widget.announce.name;
+    controller3.text = this.widget.announce.description;
+
+    return Scaffold(
+        body: Container(
       color: Color(0xFF05204a),
       child: SingleChildScrollView(
           child: Padding(
@@ -74,93 +74,43 @@ class _NewEventScreenState extends State<NewEventScreen> {
           key: _formKey,
           child: Column(
             children: <Widget>[
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                "Modifica Evento",
+                style: GoogleFonts.roboto(
+                  textStyle: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colori.grigio),
+                ),
+              ),
+              SizedBox(height: 10),
               CustomField(
+                initialValue: this.widget.announce.name,
                 icon: Icons.edit,
-                label: 'Nome evento',
-                hint: "Inserisci il nome dell'evento",
+                label: 'Nome annuncio',
+                hint: "Inserisci il nome dell'annuncio",
                 validator: (name) =>
                     name.length <= 0 ? 'Il nome non può essere vuoto' : null,
-                onSaved: (name) => this._eventName = name,
+                onSaved: (name) => this._announceName = name,
                 obscureText: false,
+                controller: controller1,
               ),
               SizedBox(
                 height: 15.0,
               ),
               CustomField(
-                icon: Icons.location_on,
-                label: 'Indirizzo',
-                hint: "Inserisci l'indirizzo dell'evento",
-                validator: (name) =>
-                    name.length <= 0 ? 'Il nome non può essere vuoto' : null,
-                onSaved: (name) => this._location = name,
-                obscureText: false,
-              ),
-              SizedBox(
-                height: 15.0,
-              ),
-              CustomField(
+                initialValue: this.widget.announce.description,
                 icon: Icons.dehaze,
                 label: 'Descrizione',
-                hint: "Inserisci la descrizione dell'evento",
+                hint: "Inserisci la descrizione dell'annuncio",
                 validator: (name) =>
                     name.length <= 0 ? 'Il nome non può essere vuoto' : null,
                 onSaved: (name) => this._description = name,
                 obscureText: false,
-              ),
-              SizedBox(
-                height: 15.0,
-              ),
-              CustomField(
-                icon: Icons.date_range,
-                label: 'Data evento',
-                hint: "Inserisci la data dell'evento",
-                validator: (birthDate) => birthDate.length < 6
-                    ? 'Seleziona la data di nascita'
-                    : null,
-                onSaved: (birthDate) {
-                  this._date = birthDate;
-                },
-                obscureText: false,
-                initialValue: this._date,
-                onTap: () async {
-                  DateTime now = DateTime.now();
-                  DateTime initial = DateTime(now.year, now.month, now.day + 1);
-                  DateTime last = DateTime(now.year + 2, now.month, now.day);
-                  Future<DateTime> future = showDatePicker(
-                    context: context,
-                    initialDate: initial,
-                    firstDate: initial,
-                    lastDate: last,
-                  );
-                  await future.then((date) {
-                    String formatted = DateFormat('dd/MM/yyyy').format(date);
-                    controller.text = formatted;
-                    this._date = formatted;
-                  });
-                },
-                controller: controller,
-              ),
-              SizedBox(
-                height: 15.0,
-              ),
-              SwitchListTile(
-                title: Text(
-                  'Evento gratuito?',
-                  style: GoogleFonts.roboto(
-                    textStyle: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colori.grigio),
-                  ),
-                ),
-                value: this._isFree,
-                onChanged: (bool value) {
-                  setState(() {
-                    this._isFree = value;
-                  });
-                },
-                secondary: const Icon(
-                  Icons.attach_money,
-                  color: Colori.grigio,
-                ),
+                controller: controller3,
               ),
               SizedBox(
                 height: 15.0,
@@ -251,23 +201,13 @@ class _NewEventScreenState extends State<NewEventScreen> {
               SizedBox(
                 height: 15.0,
               ),
-              CustomField(
-                icon: Icons.supervisor_account,
-                label: 'Massimo numero partecipanti',
-                hint:
-                    "Inserisci il massimo numero dei partecipanti dell'evento",
-                validator: (name) =>
-                    name.length <= 0 ? 'Il nome non può essere vuoto' : null,
-                onSaved: (name) => this._maxPersons = int.parse(name),
-                obscureText: false,
-              ),
               FlatButton(
                 color: Colori.viola,
-                child: Text('Crea Evento'),
+                child: Text('Modifica Annuncio'),
                 onPressed: () {
-                  if (_submit() != null) {
+                  if (_editEvent() != null) {
                     Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text("Evento creato"),
+                      content: Text("Annuncio Modificato"),
                     ));
                   }
                 },
@@ -276,6 +216,6 @@ class _NewEventScreenState extends State<NewEventScreen> {
           ),
         ),
       )),
-    );
+    ));
   }
 }

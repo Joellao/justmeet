@@ -7,6 +7,7 @@ import 'package:justmeet/components/models/announcement.dart';
 import 'package:justmeet/components/models/comment.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/comment_widget.dart';
+import 'package:justmeet/screens/edit_annnouncement_screen.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +23,29 @@ class AnnouncementScreen extends StatefulWidget {
 class _AnnouncementScreenState extends State<AnnouncementScreen> {
   final _formKey = GlobalKey<FormState>();
   String _body;
+
+  _deleteAnnounce() async {
+    print("Entrato");
+    try {
+      Dio dio = new Dio();
+      String token = Provider.of<String>(context);
+      Response response = await dio.delete(
+        "https://justmeetgjj.herokuapp.com/event/${this.widget.announce.id}",
+        options: Options(
+          headers: {
+            "Authorization": token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        print(response.data);
+        print("Evento cancellato");
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+  }
 
   _submit() async {
     print("Entrato");
@@ -61,15 +85,39 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
         backgroundColor: Colori.bluScuro,
         actions: <Widget>[
           user.uid == this.widget.announce.user.uid
-              ? InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => null));
-                  },
-                  child: Icon(
+              ? PopupMenuButton<int>(
+                  icon: Icon(
                     Icons.settings,
                     size: 30.0,
                   ),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 1,
+                      child: InkWell(
+                        child: Text("Modifica Annuncio"),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditAnnouncementScreen(
+                                      announce: this.widget.announce)));
+                        },
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 2,
+                      child: InkWell(
+                        child: Text("Cancella Annuncio"),
+                        onTap: () {
+                          if (_deleteAnnounce() != null) {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Annuncio cancellato"),
+                            ));
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 )
               : Text(
                   "",

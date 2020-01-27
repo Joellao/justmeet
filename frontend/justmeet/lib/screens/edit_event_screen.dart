@@ -4,35 +4,34 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
+import 'package:justmeet/components/models/event.dart';
 import 'package:provider/provider.dart';
 
-class NewEventScreen extends StatefulWidget {
+class EditEventScreen extends StatefulWidget {
+  @required
+  final Event event;
+
+  EditEventScreen({Key key, this.event}) : super(key: key);
   @override
-  _NewEventScreenState createState() => _NewEventScreenState();
+  _EditEventScreenState createState() => _EditEventScreenState();
 }
 
-class _NewEventScreenState extends State<NewEventScreen> {
+class _EditEventScreenState extends State<EditEventScreen> {
   final _formKey = GlobalKey<FormState>();
   String _eventName, _location, _description, _date, _category = 'Cinema';
   bool _isFree = true;
   int _maxPersons;
 
-  _submit() async {
+  _editEvent() async {
     print("Entrato");
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      print(_eventName);
-      print(_location);
-      print(_description);
-      print(_date);
-      print(_category);
-      print(_isFree);
-      print(_maxPersons);
       try {
         Dio dio = new Dio();
         String token = Provider.of<String>(context);
-        Response response = await dio.post(
-          "https://justmeetgjj.herokuapp.com/event",
+        print(_description);
+        Response response = await dio.put(
+          "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}",
           data: {
             "name": _eventName,
             "location": _location,
@@ -51,7 +50,7 @@ class _NewEventScreenState extends State<NewEventScreen> {
         );
         if (response.statusCode == 200) {
           print(response.data);
-          print("Evento creato con successo");
+          print("Evento modificato");
         }
       } on DioError catch (e) {
         print(e.response);
@@ -61,8 +60,18 @@ class _NewEventScreenState extends State<NewEventScreen> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = new TextEditingController();
-    return Container(
+    TextEditingController controller1 = new TextEditingController();
+    TextEditingController controller2 = new TextEditingController();
+    TextEditingController controller3 = new TextEditingController();
+    TextEditingController controller4 = new TextEditingController();
+
+    controller1.text = this.widget.event.name;
+    controller2.text = this.widget.event.location;
+    controller3.text = this.widget.event.description;
+    controller4.text = this.widget.event.date;
+
+    return Scaffold(
+        body: Container(
       color: Color(0xFF05204a),
       child: SingleChildScrollView(
           child: Padding(
@@ -74,7 +83,21 @@ class _NewEventScreenState extends State<NewEventScreen> {
           key: _formKey,
           child: Column(
             children: <Widget>[
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                "Modifica Evento",
+                style: GoogleFonts.roboto(
+                  textStyle: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colori.grigio),
+                ),
+              ),
+              SizedBox(height: 10),
               CustomField(
+                initialValue: this.widget.event.name,
                 icon: Icons.edit,
                 label: 'Nome evento',
                 hint: "Inserisci il nome dell'evento",
@@ -82,11 +105,13 @@ class _NewEventScreenState extends State<NewEventScreen> {
                     name.length <= 0 ? 'Il nome non può essere vuoto' : null,
                 onSaved: (name) => this._eventName = name,
                 obscureText: false,
+                controller: controller1,
               ),
               SizedBox(
                 height: 15.0,
               ),
               CustomField(
+                initialValue: this.widget.event.location,
                 icon: Icons.location_on,
                 label: 'Indirizzo',
                 hint: "Inserisci l'indirizzo dell'evento",
@@ -94,11 +119,13 @@ class _NewEventScreenState extends State<NewEventScreen> {
                     name.length <= 0 ? 'Il nome non può essere vuoto' : null,
                 onSaved: (name) => this._location = name,
                 obscureText: false,
+                controller: controller2,
               ),
               SizedBox(
                 height: 15.0,
               ),
               CustomField(
+                initialValue: this.widget.event.description,
                 icon: Icons.dehaze,
                 label: 'Descrizione',
                 hint: "Inserisci la descrizione dell'evento",
@@ -106,11 +133,13 @@ class _NewEventScreenState extends State<NewEventScreen> {
                     name.length <= 0 ? 'Il nome non può essere vuoto' : null,
                 onSaved: (name) => this._description = name,
                 obscureText: false,
+                controller: controller3,
               ),
               SizedBox(
                 height: 15.0,
               ),
               CustomField(
+                initialValue: this.widget.event.date,
                 icon: Icons.date_range,
                 label: 'Data evento',
                 hint: "Inserisci la data dell'evento",
@@ -121,7 +150,6 @@ class _NewEventScreenState extends State<NewEventScreen> {
                   this._date = birthDate;
                 },
                 obscureText: false,
-                initialValue: this._date,
                 onTap: () async {
                   DateTime now = DateTime.now();
                   DateTime initial = DateTime(now.year, now.month, now.day + 1);
@@ -134,11 +162,11 @@ class _NewEventScreenState extends State<NewEventScreen> {
                   );
                   await future.then((date) {
                     String formatted = DateFormat('dd/MM/yyyy').format(date);
-                    controller.text = formatted;
+                    controller4.text = formatted;
                     this._date = formatted;
                   });
                 },
-                controller: controller,
+                controller: controller4,
               ),
               SizedBox(
                 height: 15.0,
@@ -263,11 +291,11 @@ class _NewEventScreenState extends State<NewEventScreen> {
               ),
               FlatButton(
                 color: Colori.viola,
-                child: Text('Crea Evento'),
+                child: Text('Modifica Evento'),
                 onPressed: () {
-                  if (_submit() != null) {
+                  if (_editEvent() != null) {
                     Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text("Evento creato"),
+                      content: Text("Evento Modificato"),
                     ));
                   }
                 },
@@ -276,6 +304,6 @@ class _NewEventScreenState extends State<NewEventScreen> {
           ),
         ),
       )),
-    );
+    ));
   }
 }

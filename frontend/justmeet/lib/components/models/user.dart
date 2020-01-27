@@ -13,6 +13,7 @@ class User {
   final List announcements;
   List friends;
   List friendRequests;
+  List partecipatedEvents;
   User({
     Key key,
     @required this.uid,
@@ -25,6 +26,7 @@ class User {
     @required this.profileImage,
     @required this.username,
     @required this.announcements,
+    @required this.partecipatedEvents,
   });
 
   User.fromJson(Map<String, dynamic> json)
@@ -41,5 +43,8 @@ class User {
         this.announcements = json['announcements'],
         this.friends = json['friends'] == null ? [] : json['friends'],
         this.friendRequests =
-            json['requestFriends'] == null ? [] : json['requestFriends'];
+            json['requestFriends'] == null ? [] : json['requestFriends'],
+        this.partecipatedEvents = json['partecipatedEvents'] == null
+            ? []
+            : json['partecipatedEvents'];
 }

@@ -7,6 +7,7 @@ import 'package:justmeet/components/models/comment.dart';
 import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/comment_widget.dart';
+import 'package:justmeet/screens/edit_event_screen.dart';
 import 'package:justmeet/screens/photo_screen.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:justmeet/screens/review_screen.dart';
@@ -36,6 +37,51 @@ class _EventScreenState extends State<EventScreen> {
 
   final _formKey = GlobalKey<FormState>();
   String _body;
+  _deleteEvent() async {
+    print("Entrato");
+    try {
+      Dio dio = new Dio();
+      String token = Provider.of<String>(context);
+      Response response = await dio.delete(
+        "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}",
+        options: Options(
+          headers: {
+            "Authorization": token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        print(response.data);
+        print("Evento cancellato");
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+  }
+
+  _cancelEvent() async {
+    print("Entrato");
+    try {
+      Dio dio = new Dio();
+      String token = Provider.of<String>(context);
+      Response response = await dio.patch(
+        "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}",
+        options: Options(
+          headers: {
+            "Authorization": token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        print(response.data);
+        print("Evento annullato");
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+  }
 
   _submit() async {
     print("Entrato");
@@ -75,15 +121,52 @@ class _EventScreenState extends State<EventScreen> {
         backgroundColor: Colori.bluScuro,
         actions: <Widget>[
           user.uid == this.widget.event.user.uid
-              ? InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => null));
-                  },
-                  child: Icon(
+              ? PopupMenuButton<int>(
+                  icon: Icon(
                     Icons.settings,
                     size: 30.0,
                   ),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 1,
+                      child: InkWell(
+                        child: Text("Modifica Evento"),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditEventScreen(
+                                      event: this.widget.event)));
+                        },
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 2,
+                      child: InkWell(
+                        child: Text("Cancella Evento"),
+                        onTap: () {
+                          if (_deleteEvent() != null) {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Evento cancellato"),
+                            ));
+                          }
+                        },
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 3,
+                      child: InkWell(
+                        child: Text("Annulla Evento"),
+                        onTap: () {
+                          if (_cancelEvent() != null) {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Evento annullato"),
+                            ));
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 )
               : Text(""),
           SizedBox(width: 10)
@@ -102,6 +185,21 @@ class _EventScreenState extends State<EventScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                this.widget.event.cancelled
+                    ? Text(
+                        "EVENTO ANNULLATO!",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.roboto(
+                          textStyle: TextStyle(
+                            fontSize: 25,
+                            color: Colors.amber,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+                    : SizedBox(
+                        height: 1,
+                      ),
                 Text(
                   this.widget.event.name,
                   textAlign: TextAlign.center,
