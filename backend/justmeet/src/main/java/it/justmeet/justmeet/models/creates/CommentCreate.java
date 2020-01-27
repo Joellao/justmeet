@@ -11,10 +11,6 @@ package it.justmeet.justmeet.models.creates;
 public class CommentCreate {
     public String body;
 
-    public CommentCreate(String body) {
-        this.body = body;
-    }
-
     public String getBody() {
         return body;
     }

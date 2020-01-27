@@ -56,7 +56,6 @@ public class UserController {
 	@GetMapping("/user")
 	public AbstractUser getProfile(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		String userId = WoWoUtility.getInstance().getUid(token);
-		System.out.println("GET" + userId);
 		AbstractUser user = abstractRepo.findByUid(userId);
 		return user;
 	}

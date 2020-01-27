@@ -1,42 +1,29 @@
 package it.justmeet.justmeet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
-
-import antlr.debug.Event;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.hasSize;
 
 import it.justmeet.justmeet.models.AbstractUser;
+import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.repositories.AbstractUserRepository;
 import it.justmeet.justmeet.models.repositories.AnnouncementRepository;
@@ -49,6 +36,8 @@ import it.justmeet.justmeet.models.repositories.SegnalazioneCommentoRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 
 @WebMvcTest
+@ExtendWith({ Extension.class })
+
 public class UserControllerTest {
 
     @Autowired
@@ -72,37 +61,7 @@ public class UserControllerTest {
     @MockBean
     ReviewRepository revRepo;
 
-    static String idToken;
-
-    @org.junit.jupiter.api.BeforeAll
-    public static void beforeAllTestMethods() throws Exception {
-        try {
-            FirebaseOptions options = new FirebaseOptions.Builder().setCredentials(GoogleCredentials.fromStream(
-                    new ClassPathResource("/justmeet-ea052-firebase-adminsdk-hqpog-acfd828f0b.json").getInputStream()))
-                    .setStorageBucket("justmeet-ea052.appspot.com")
-                    .setDatabaseUrl("https://justmeet-ea052.firebaseio.com/").build();
-            FirebaseApp.initializeApp(options);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String token = FirebaseAuth.getInstance().createCustomToken("DhSAxAaAMXZgmZyLrT96tgSDObD3");
-        RestTemplate t = new RestTemplate();
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("token", token);
-        map.put("returnSecureToken", "true");
-        try {
-            ResponseEntity<String> response = t.postForEntity(
-                    "https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=AIzaSyDF0V8-WK52yY_HKsoar4D0NBkY2zvn-pQ",
-                    map, String.class);
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(response.getBody());
-            JsonNode name = root.path("idToken");
-            String nameText = name.asText();
-            idToken = nameText.substring(0, nameText.length());
-        } catch (HttpClientErrorException e) {
-            System.out.println(e.getResponseBodyAsString());
-        }
-    }
+    static String idToken = Extension.idToken;
 
     @Test
     public void getUserWithoutToken() throws Exception {
