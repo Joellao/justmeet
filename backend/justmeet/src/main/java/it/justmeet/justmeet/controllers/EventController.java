@@ -231,7 +231,7 @@ public class EventController {
 		String userId = WoWoUtility.getInstance().getUid(token);
 		AbstractUser user = abstractRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
-		Comment c = new Comment(comment.getBody(), user, new Date(), false);
+		Comment c = new Comment(comment.getBody(), user, new Date());
 		event.addComment(c);
 		eventRepo.save(event);
 		return c;

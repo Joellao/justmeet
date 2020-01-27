@@ -136,7 +136,7 @@ public class AnnouncementController {
 			@PathVariable("announcementId") Long announcementId) throws FirebaseAuthException {
 		String userId = WoWoUtility.getInstance().getUid(token);
 		Announcement announcement = announcementRepo.findById(announcementId).get();
-		Comment c = new Comment(comment.getBody(), userRepo.findByUid(userId), new Date(), false);
+		Comment c = new Comment(comment.getBody(), userRepo.findByUid(userId), new Date());
 		announcement.addComment(c);
 		announcementRepo.save(announcement);
 		return c;

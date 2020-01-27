@@ -55,7 +55,7 @@ public class Comment {
     protected Comment() {
     }
 
-    public Comment(String body, AbstractUser user, Date date, boolean state) {
+    public Comment(String body, AbstractUser user, Date date) {
         this.body = body;
         this.user = user;
         this.date = date;

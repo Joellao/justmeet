@@ -1,7 +1,7 @@
 package it.justmeet.justmeet.models.creates;
 
 public class UserCreate {
-	public String username;
+    public String username;
     public String email;
     public String profileImage;
     public String bio;
