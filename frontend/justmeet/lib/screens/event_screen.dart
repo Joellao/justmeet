@@ -326,7 +326,10 @@ class _EventScreenState extends State<EventScreen> {
                             ),
                             FittedBox(
                               child: Text(
-                                widget.event.partecipants.length.toString(),
+                                widget.event.partecipants == null
+                                    ? 0.toString()
+                                    : widget.event.partecipants.length
+                                        .toString(),
                                 style: TextStyle(
                                   color: Colori.grigio,
                                   fontSize: 22.0,
@@ -364,7 +367,9 @@ class _EventScreenState extends State<EventScreen> {
                             FittedBox(
                               child: Text(
                                 (widget.event.maxNumber -
-                                        widget.event.partecipants.length)
+                                        (widget.event.partecipants == null
+                                            ? 0
+                                            : widget.event.partecipants.length))
                                     .toString(),
                                 style: TextStyle(
                                   color: Colori.grigio,

@@ -81,6 +81,7 @@ class _EventWidgetState extends State<EventWidget> {
 
   bool isPrenoted() {
     bool found = false;
+    if (this.widget.event.partecipants == null) return found;
     this.widget.event.partecipants.forEach((value) {
       User user = User.fromJson(value);
       if (user.uid == Provider.of<User>(context).uid) {
@@ -260,7 +261,9 @@ class _EventWidgetState extends State<EventWidget> {
                           FittedBox(
                             child: Text(
                               (widget.event.maxNumber -
-                                      widget.event.partecipants.length)
+                                      (widget.event.partecipants != null
+                                          ? widget.event.partecipants.length
+                                          : 0))
                                   .toString(),
                               style: TextStyle(
                                 fontSize: 22.0,
@@ -315,8 +318,14 @@ class _EventWidgetState extends State<EventWidget> {
                                     ),
                                   ),
                                   onPressed: ((widget.event.maxNumber -
-                                              widget
-                                                  .event.partecipants.length) >
+                                              (this.widget.event.partecipants ==
+                                                      null
+                                                  ? 0
+                                                  : this
+                                                      .widget
+                                                      .event
+                                                      .partecipants
+                                                      .length)) >
                                           0)
                                       ? () => {
                                             if (_partecipate() != null)

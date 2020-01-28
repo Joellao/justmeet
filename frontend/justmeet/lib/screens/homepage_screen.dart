@@ -5,6 +5,7 @@ import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/screens/create_screen.dart';
 import 'package:justmeet/screens/feed_screen.dart';
 import 'package:justmeet/screens/friends_screen.dart';
+import 'package:justmeet/screens/partecipated_events_screen.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:justmeet/screens/search_screen.dart';
 import 'package:provider/provider.dart';
@@ -89,6 +90,7 @@ class _HomePageScreenState extends State<HomePageScreen>
                 FeedScreen(),
                 CreateScreen(),
                 SearchScreen(),
+                PartecipatedEventsScreen(events: getUser().partecipatedEvents),
               ],
             ),
             bottomNavigationBar: CurvedNavigationBar(
@@ -101,6 +103,7 @@ class _HomePageScreenState extends State<HomePageScreen>
                 Icon(Icons.art_track, size: 30),
                 Icon(Icons.add_box, size: 30),
                 Icon(Icons.search, size: 30),
+                Icon(Icons.event, size: 30),
               ],
               onTap: (index) {
                 setState(() {
