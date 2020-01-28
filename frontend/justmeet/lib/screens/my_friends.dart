@@ -94,14 +94,6 @@ class MyFriendsScreen extends StatelessWidget {
               ],
             ),
           ),
-          InkWell(
-            onTap: () => print("More premuto"),
-            child: Icon(
-              Icons.more_vert,
-              color: Colori.grigio,
-              size: 30.0,
-            ),
-          ),
         ],
       ),
     );

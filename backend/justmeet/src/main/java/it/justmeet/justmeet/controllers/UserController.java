@@ -139,10 +139,10 @@ public class UserController {
 	}
 
 	@GetMapping("/user/{userName}/find")
-	public List<User> findProfile(@PathVariable("userName") String userName,
+	public List<AbstractUser> findProfile(@PathVariable("userName") String userName,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		WoWoUtility.getInstance().getUid(token);
-		List<User> result = userRepo.findAll().stream().filter(user -> userName.equals(user.getUsername()))
+		List<AbstractUser> result = abstractRepo.findAll().stream().filter(user -> userName.equals(user.getUsername()))
 				.collect(Collectors.toList());
 		return result;
 	}

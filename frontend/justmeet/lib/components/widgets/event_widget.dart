@@ -177,19 +177,6 @@ class _EventWidgetState extends State<EventWidget> {
                                 color: Color(0xFF02020a),
                               ),
                             ),
-                            InkWell(
-                              onTap: () =>
-                                  Scaffold.of(context).showSnackBar(SnackBar(
-                                content: Text("Aggiungi ai preferiti"),
-                              )),
-                              child: Icon(
-                                Icons.star,
-                                size: 45,
-                                color: "ciao" != "ciao"
-                                    ? Color(0xFF695E6C)
-                                    : Color(0xFFbfacc8),
-                              ),
-                            )
                           ],
                         )
                       ],

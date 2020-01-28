@@ -89,13 +89,6 @@ class PartecipatedEventsScreen extends StatelessWidget {
               ],
             ),
           ),
-          InkWell(
-            onTap: () => print("More premuto"),
-            child: Icon(
-              Icons.more_vert,
-              size: 30.0,
-            ),
-          ),
         ],
       ),
     );

@@ -159,7 +159,6 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                     textStyle: TextStyle(
                       fontSize: 25,
                       color: Colori.grigio,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
