@@ -19,7 +19,6 @@ class HomePageScreen extends StatefulWidget {
 class _HomePageScreenState extends State<HomePageScreen>
     with AutomaticKeepAliveClientMixin {
   PageController _pageController;
-  User user;
   // pagina con stato index =0 mi permette di cambiare lo stato interno della classe e quindi se cambio pagina ridipingo tutto.
   // se cambio stato vado ad un altra pagina e mi ricarica una nuova pagine con nuove cose e fa tutto lui
   int index = 0;
@@ -31,12 +30,6 @@ class _HomePageScreenState extends State<HomePageScreen>
 
   void didChangeDependencies() {
     super.didChangeDependencies();
-    this.user = getUser();
-  }
-
-  User getUser() {
-    User user = Provider.of<User>(context);
-    return user;
   }
 
   @override
@@ -47,7 +40,7 @@ class _HomePageScreenState extends State<HomePageScreen>
 
   @override
   Widget build(BuildContext context) {
-    return user != null
+    return Provider.of<User>(context) != null
         ? Scaffold(
             appBar: AppBar(
               elevation: 1,
@@ -59,16 +52,19 @@ class _HomePageScreenState extends State<HomePageScreen>
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ProfileScreen(user: this.user)),
+                        builder: (context) =>
+                            ProfileScreen(user: Provider.of<User>(context))),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: CircleAvatar(
                       radius: 20,
-                      backgroundImage: user.profileImage != ""
-                          ? NetworkImage(user.profileImage)
-                          : null,
-                      child: user.profileImage == ""
+                      backgroundImage:
+                          Provider.of<User>(context).profileImage != ""
+                              ? NetworkImage(
+                                  Provider.of<User>(context).profileImage)
+                              : null,
+                      child: Provider.of<User>(context).profileImage == ""
                           ? Icon(Icons.person, size: 25)
                           : null,
                     ),

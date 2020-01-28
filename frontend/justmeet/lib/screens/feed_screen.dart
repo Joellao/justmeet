@@ -15,7 +15,8 @@ class FeedScreen extends StatefulWidget {
   _FeedScreenState createState() => _FeedScreenState();
 }
 
-class _FeedScreenState extends State<FeedScreen> {
+class _FeedScreenState extends State<FeedScreen>
+    with AutomaticKeepAliveClientMixin {
   Dio dio = new Dio();
   Future<List<dynamic>> robe;
   @override
@@ -62,33 +63,35 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget build(BuildContext context) {
     return Container(
       color: Colori.bluScuro,
-      child: FutureBuilder<List<dynamic>>(
-        initialData: [],
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              shrinkWrap: true,
-              itemCount: snapshot.data.length,
-              itemBuilder: (BuildContext context, int index) {
-                var event = snapshot.data.elementAt(index);
-                if (event is Event)
-                  return EventWidget(
-                    event: event,
-                    profileWidget: getProfileWidget(event.user),
-                  );
-                else
-                  return AnnouncementWidget(
-                    announcement: event,
-                    profileWidget: getProfileWidget(event.user),
-                  );
-              },
-            );
-          } else if (snapshot.hasError) {
-            return Text("${snapshot.error}");
-          }
-          return Center(child: CircularProgressIndicator());
-        },
-        future: robe,
+      child: RefreshIndicator(
+        onRefresh: getDataEvent,
+        child: FutureBuilder<List<dynamic>>(
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  var event = snapshot.data.elementAt(index);
+                  if (event is Event)
+                    return EventWidget(
+                      event: event,
+                      profileWidget: getProfileWidget(event.user),
+                    );
+                  else
+                    return AnnouncementWidget(
+                      announcement: event,
+                      profileWidget: getProfileWidget(event.user),
+                    );
+                },
+              );
+            } else if (snapshot.hasError) {
+              return Text("${snapshot.error}");
+            }
+            return Center(child: CircularProgressIndicator());
+          },
+          future: robe,
+        ),
       ),
     );
   }
@@ -154,4 +157,8 @@ class _FeedScreenState extends State<FeedScreen> {
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
