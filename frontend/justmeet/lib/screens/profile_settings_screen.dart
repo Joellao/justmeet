@@ -99,7 +99,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   }
 
   void signOut() async {
-    final auth = Provider.of<AuthController>(context);
+    final auth = Provider.of<AuthController>(context, listen: false);
     await auth.signOut();
     Navigator.popUntil(context, (asd) => true);
   }

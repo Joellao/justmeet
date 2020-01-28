@@ -50,7 +50,7 @@ class Event {
         this.user = json['user'] != null ? User.fromJson(json['user']) : null,
         this.comments = json['comments'],
         this.reviews = json['reviews'],
-        this.partecipants = json['partecipants'],
+        this.partecipants = json['participants'],
         this.cancelled = json['cancelled'],
         this.isFree = json['free'],
         this.photo = json['photoUrls'],

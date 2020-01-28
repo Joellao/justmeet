@@ -39,7 +39,7 @@ class MapScreenState extends State<MapScreen>
       queryParameters: {
         "latitude": 43.616943,
         "longitude": 13.516667,
-        "raggio": 150
+        "raggio": 30
       },
       options: Options(
         headers: {
@@ -54,12 +54,14 @@ class MapScreenState extends State<MapScreen>
         Marker marker = Marker(
           markerId: MarkerId(event.id.toString()),
           position: LatLng(event.latitude, event.longitude),
-          infoWindow: InfoWindow(title: event.name),
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EventScreen(
-                event: event,
+          infoWindow: InfoWindow(
+            title: event.name,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EventScreen(
+                  event: event,
+                ),
               ),
             ),
           ),

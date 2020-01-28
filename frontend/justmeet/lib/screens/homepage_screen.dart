@@ -86,7 +86,8 @@ class _HomePageScreenState extends State<HomePageScreen>
                 FeedScreen(),
                 CreateScreen(),
                 SearchScreen(),
-                PartecipatedEventsScreen(events: getUser().partecipatedEvents),
+                PartecipatedEventsScreen(
+                    events: Provider.of<User>(context).partecipatedEvents),
               ],
             ),
             bottomNavigationBar: CurvedNavigationBar(

@@ -22,7 +22,8 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       _formKey.currentState.save();
       try {
-        await Provider.of<AuthController>(context).signIn(_email, _password);
+        await Provider.of<AuthController>(context, listen: false)
+            .signIn(_email, _password);
       } on AuthException catch (error) {
         print(error);
       } on Exception catch (error) {

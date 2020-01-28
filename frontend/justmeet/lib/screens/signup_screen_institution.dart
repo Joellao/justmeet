@@ -20,7 +20,8 @@ class _SignupScreenInstitutionState extends State<SignupScreenInstitution> {
       _formKey.currentState.save();
       SignupInstitution form = SignupInstitution(
           email: _email, password: _password, name: _name, userName: _userName);
-      await Provider.of<AuthController>(context).signUpInstitution(form);
+      await Provider.of<AuthController>(context, listen: false)
+          .signUpInstitution(form);
     }
   }
 
@@ -116,12 +117,10 @@ class _SignupScreenInstitutionState extends State<SignupScreenInstitution> {
                         padding: EdgeInsets.symmetric(
                           horizontal: 70.0,
                         ),
-                        onPressed: ()
-                        {
+                        onPressed: () {
                           _submit();
-                        Navigator.pop(
-                          context
-                        );},
+                          Navigator.pop(context);
+                        },
                         child: Text(
                           "Registrati",
                           style: TextStyle(

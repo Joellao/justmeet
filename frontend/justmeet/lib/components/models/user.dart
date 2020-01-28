@@ -14,6 +14,7 @@ class User extends ChangeNotifier {
   List friends;
   List friendRequests;
   List partecipatedEvents;
+  int type;
   User({
     Key key,
     @required this.uid,
@@ -27,6 +28,7 @@ class User extends ChangeNotifier {
     @required this.username,
     @required this.announcements,
     @required this.partecipatedEvents,
+    @required this.type,
   });
 
   User.fromJson(Map<String, dynamic> json)
@@ -46,7 +48,8 @@ class User extends ChangeNotifier {
             json['requestFriends'] == null ? [] : json['requestFriends'],
         this.partecipatedEvents = json['partecipatedEvents'] == null
             ? []
-            : json['partecipatedEvents'];
+            : json['partecipatedEvents'],
+        this.type = json['type'];
 
   void update(
       uid,

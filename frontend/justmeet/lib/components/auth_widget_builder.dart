@@ -35,7 +35,14 @@ class AuthWidgetBuilder extends StatelessWidget {
             child: builder(context, snapshot),
           );
         }
-        return builder(context, snapshot);
+        return FutureProvider<User>.value(
+          value: AuthController().getUser(),
+          child: builder(context, snapshot),
+          catchError: (context, e) {
+            print(e);
+            return null;
+          },
+        );
       },
     );
   }
