@@ -187,7 +187,7 @@ public class EventController {
 		// Cancella dal databse eventId
 		Event evento = eventRepo.findById(eventId).get();
 		if (!evento.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			throw new IllegalAccessError();
+			throw new ForbiddenAccess("Stai cercando di eliminare un evento non tuo");
 		}
 		try {
 			eventRepo.delete(evento);
@@ -207,7 +207,7 @@ public class EventController {
 			throws FirebaseAuthException {
 		Event evento = eventRepo.findById(eventId).get();
 		if (!evento.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			throw new IllegalAccessError();
+			throw new ForbiddenAccess("Non puoi annullare un evento non tuo");
 		}
 		try {
 			evento.setCancelled(true);

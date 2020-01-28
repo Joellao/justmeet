@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.firebase.auth.FirebaseAuthException;
 
 import it.justmeet.justmeet.config.WoWoUtility;
+import it.justmeet.justmeet.exceptions.ForbiddenAccess;
 import it.justmeet.justmeet.models.Photo;
 import it.justmeet.justmeet.models.repositories.PhotoRepository;
 
@@ -39,7 +40,7 @@ public class PhotoController {
 		// Cancella dal database
 		Photo p = photoRepo.findById(photoId).get();
 		if (!p.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			throw new IllegalAccessError();
+			throw new ForbiddenAccess("Stai cercando di eliminare una foto non tua");
 		}
 		try {
 			photoRepo.delete(p);

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.firebase.auth.FirebaseAuthException;
 
 import it.justmeet.justmeet.config.WoWoUtility;
+import it.justmeet.justmeet.exceptions.ForbiddenAccess;
 import it.justmeet.justmeet.models.Review;
 import it.justmeet.justmeet.models.repositories.ReviewRepository;
 
@@ -39,7 +40,7 @@ public class ReviewController {
 		// Cancella dal database
 		Review r = reviewRepo.findById(reviewId).get();
 		if (!r.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			throw new IllegalAccessError();
+			throw new ForbiddenAccess("Stai cercando di eliminare un recensione che non hai scritto tu");
 		}
 		try {
 			reviewRepo.delete(r);

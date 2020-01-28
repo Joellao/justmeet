@@ -17,6 +17,7 @@ import it.justmeet.justmeet.models.repositories.AnnouncementRepository;
 import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
 import it.justmeet.justmeet.config.WoWoUtility;
+import it.justmeet.justmeet.exceptions.ForbiddenAccess;
 import it.justmeet.justmeet.models.Announcement;
 import it.justmeet.justmeet.models.creates.AnnouncementCreate;
 import it.justmeet.justmeet.models.Comment;
@@ -90,8 +91,8 @@ public class AnnouncementController {
 			@RequestBody AnnouncementCreate announce, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
 		Announcement announcement = announcementRepo.findById(announcementId).get();
-		if (announcement.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			return null;
+		if (!announcement.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
+			throw new ForbiddenAccess("Questo annuncio non l'hai creato tu!");
 		}
 		announcement.setName(announce.getName());
 		announcement.setCategory(announce.getCategory());
@@ -111,7 +112,7 @@ public class AnnouncementController {
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		Announcement announce = announcementRepo.findById(announcementId).get();
 		if (!announce.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			throw new IllegalAccessError();
+			throw new ForbiddenAccess("Questo annuncio non l'hai creato tu!");
 		}
 		try {
 			announcementRepo.delete(announce);

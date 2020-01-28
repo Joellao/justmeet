@@ -15,6 +15,7 @@ import java.util.Date;
 import com.google.firebase.auth.FirebaseAuthException;
 
 import it.justmeet.justmeet.config.WoWoUtility;
+import it.justmeet.justmeet.exceptions.ForbiddenAccess;
 import it.justmeet.justmeet.models.Comment;
 import it.justmeet.justmeet.models.SegnalazioneCommento;
 import it.justmeet.justmeet.models.creates.CommentCreate;
@@ -54,7 +55,7 @@ public class CommentController {
 
 		Comment c = commentRepo.findById(commentId).get();
 		if (!c.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			return null;
+			throw new ForbiddenAccess("Non puoi modificare un commento non tuo");
 		}
 		c.setBody(comment.getBody());
 		c.setDate(new Date());
@@ -73,7 +74,7 @@ public class CommentController {
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		Comment c = commentRepo.findById(commentId).get();
 		if (!c.getUser().getUid().equals(WoWoUtility.getInstance().getUid(token))) {
-			throw new IllegalAccessError();
+			throw new ForbiddenAccess("Non puoi eliminare un commento non tuo");
 		}
 		try {
 			commentRepo.delete(c);
