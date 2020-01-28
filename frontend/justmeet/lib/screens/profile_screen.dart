@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/screens/my_friends.dart';
+import 'package:justmeet/screens/new_event_screen.dart';
 import 'package:justmeet/screens/profile_announcement_screen.dart';
 import 'package:justmeet/screens/profile_event_screen.dart';
 import 'package:justmeet/screens/profile_settings_screen.dart';
@@ -95,8 +96,41 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
+    List<Tab> userTabs = [
+      Tab(child: Text("Eventi")),
+      Tab(child: Text("Annunci")),
+      Tab(child: Text("Amici")),
+      Tab(child: Text("Richieste"))
+    ];
+    List<Tab> institutionTabs = [
+      Tab(child: Text("Eventi")),
+      Tab(child: Text("Crea Evento")),
+    ];
+    List<Widget> userPages = [
+      ProfileEventScreen(
+        events: this.widget.user.events,
+      ),
+      ProfileAnnouncementScreen(
+        announcements: this.widget.user.announcements,
+      ),
+      MyFriendsScreen(friends: this.widget.user.friends),
+      RequestFriendsScreen(requests: this.widget.user.friendRequests),
+    ];
+    List<Widget> insitutionPages = [
+      ProfileEventScreen(
+        events: this.widget.user.events,
+      ),
+      Padding(
+        padding: const EdgeInsets.only(top: 120),
+        child: NewEventScreen(),
+      )
+    ];
+    List<Tab> toUseTabs =
+        Provider.of<User>(context).type == 1 ? userTabs : institutionTabs;
+    List<Widget> toUsePages =
+        Provider.of<User>(context).type == 1 ? userPages : insitutionPages;
     return DefaultTabController(
-      length: 4, // This is the number of tabs.
+      length: toUseTabs.length, // This is the number of tabs.
       child: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           // These are the slivers that show up in the "outer" scroll view.
@@ -160,12 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 expandedHeight: 250.0,
                 forceElevated: innerBoxIsScrolled,
                 bottom: TabBar(
-                  tabs: [
-                    Tab(child: Text("Eventi")),
-                    Tab(child: Text("Annunci")),
-                    Tab(child: Text("Amici")),
-                    Tab(child: Text("Richieste"))
-                  ],
+                  tabs: toUseTabs,
                 ),
               ),
             ),
@@ -173,16 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         },
         body: TabBarView(
             // These are the contents of the tab views, below the tabs.
-            children: [
-              ProfileEventScreen(
-                events: this.widget.user.events,
-              ),
-              ProfileAnnouncementScreen(
-                announcements: this.widget.user.announcements,
-              ),
-              MyFriendsScreen(friends: this.widget.user.friends),
-              RequestFriendsScreen(requests: this.widget.user.friendRequests),
-            ]),
+            children: toUsePages),
       ),
     );
   }
