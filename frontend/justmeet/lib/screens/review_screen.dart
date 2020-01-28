@@ -219,13 +219,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
               ],
             ),
           ),
-          InkWell(
-            onTap: () => print("More premuto"),
-            child: Icon(
-              Icons.more_vert,
-              size: 30.0,
-            ),
-          ),
         ],
       ),
     );

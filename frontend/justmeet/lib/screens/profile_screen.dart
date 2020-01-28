@@ -94,6 +94,16 @@ class _ProfileScreenState extends State<ProfileScreen>
     return robe.contains(Provider.of<User>(context).uid);
   }
 
+  bool isMyFriend() {
+    List myFriends = Provider.of<User>(context).friends;
+    List<dynamic> robe = [];
+    myFriends.forEach((robbo) {
+      User user = User.fromJson(robbo);
+      robe.add(user.uid);
+    });
+    return robe.contains(this.widget.user.uid);
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Tab> userTabs = [
@@ -102,9 +112,17 @@ class _ProfileScreenState extends State<ProfileScreen>
       Tab(child: Text("Amici")),
       Tab(child: Text("Richieste"))
     ];
+    List<Tab> otherUserTabs = [
+      Tab(child: Text("Eventi")),
+      Tab(child: Text("Annunci")),
+      Tab(child: Text("Amici")),
+    ];
     List<Tab> institutionTabs = [
       Tab(child: Text("Eventi")),
       Tab(child: Text("Crea Evento")),
+    ];
+    List<Tab> otherInstitutionTabs = [
+      Tab(child: Text("Eventi")),
     ];
     List<Widget> userPages = [
       ProfileEventScreen(
@@ -116,6 +134,15 @@ class _ProfileScreenState extends State<ProfileScreen>
       MyFriendsScreen(friends: this.widget.user.friends),
       RequestFriendsScreen(requests: this.widget.user.friendRequests),
     ];
+    List<Widget> otherUserPages = [
+      ProfileEventScreen(
+        events: this.widget.user.events,
+      ),
+      ProfileAnnouncementScreen(
+        announcements: this.widget.user.announcements,
+      ),
+      MyFriendsScreen(friends: this.widget.user.friends),
+    ];
     List<Widget> insitutionPages = [
       ProfileEventScreen(
         events: this.widget.user.events,
@@ -125,10 +152,27 @@ class _ProfileScreenState extends State<ProfileScreen>
         child: NewEventScreen(),
       )
     ];
-    List<Tab> toUseTabs =
-        Provider.of<User>(context).type == 1 ? userTabs : institutionTabs;
-    List<Widget> toUsePages =
-        Provider.of<User>(context).type == 1 ? userPages : insitutionPages;
+    List<Widget> otherInsitutionPages = [
+      ProfileEventScreen(
+        events: this.widget.user.events,
+      ),
+    ];
+
+    List<Tab> toUseTabs = this.widget.user.type == 1
+        ? (Provider.of<User>(context).uid == this.widget.user.uid
+            ? userTabs
+            : otherUserTabs)
+        : (Provider.of<User>(context).uid == this.widget.user.uid
+            ? institutionTabs
+            : otherInstitutionTabs);
+    List<Widget> toUsePages = this.widget.user.type == 1
+        ? (Provider.of<User>(context).uid == this.widget.user.uid
+            ? userPages
+            : otherUserPages)
+        : (Provider.of<User>(context).uid == this.widget.user.uid
+            ? insitutionPages
+            : otherInsitutionPages);
+
     return DefaultTabController(
       length: toUseTabs.length, // This is the number of tabs.
       child: NestedScrollView(
@@ -158,25 +202,27 @@ class _ProfileScreenState extends State<ProfileScreen>
                             size: 30.0,
                           ),
                         )
-                      : !getFriendRequest()
-                          ? InkWell(
-                              onTap: () {
-                                _sendFriendRequest();
-                              },
-                              child: Icon(
-                                Icons.person_add,
-                                size: 30.0,
-                              ),
-                            )
-                          : InkWell(
-                              onTap: () {
-                                _sendFriendRequest();
-                              },
-                              child: Icon(
-                                Icons.remove_circle,
-                                size: 30.0,
-                              ),
-                            ),
+                      : this.widget.user.type == 2
+                          ? Text("")
+                          : !isMyFriend()
+                              ? InkWell(
+                                  onTap: () {
+                                    _sendFriendRequest();
+                                  },
+                                  child: Icon(
+                                    Icons.person_add,
+                                    size: 30.0,
+                                  ),
+                                )
+                              : InkWell(
+                                  onTap: () {
+                                    _removeFriend();
+                                  },
+                                  child: Icon(
+                                    Icons.remove_circle,
+                                    size: 30.0,
+                                  ),
+                                ),
                   SizedBox(width: 10)
                 ],
                 flexibleSpace: FlexibleSpaceBar(

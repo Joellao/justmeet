@@ -221,7 +221,6 @@ class _EventScreenState extends State<EventScreen> {
                     textStyle: TextStyle(
                       fontSize: 25,
                       color: Colori.grigio,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -408,7 +407,7 @@ class _EventScreenState extends State<EventScreen> {
                     ),
                   ),
                   child: Icon(
-                    Icons.subject,
+                    Icons.star,
                     size: 80,
                     color: Colori.grigio,
                   ),

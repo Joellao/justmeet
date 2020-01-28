@@ -147,14 +147,6 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
               ],
             ),
           ),
-          InkWell(
-            onTap: () => print("More premuto"),
-            child: Icon(
-              Icons.more_vert,
-              color: Colori.grigio,
-              size: 30.0,
-            ),
-          ),
         ],
       ),
     );

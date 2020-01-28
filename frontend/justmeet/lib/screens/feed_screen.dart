@@ -146,13 +146,6 @@ class _FeedScreenState extends State<FeedScreen>
               ],
             ),
           ),
-          InkWell(
-            onTap: () => print("More premuto"),
-            child: Icon(
-              Icons.more_vert,
-              size: 30.0,
-            ),
-          ),
         ],
       ),
     );
