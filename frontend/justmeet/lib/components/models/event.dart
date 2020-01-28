@@ -17,23 +17,26 @@ class Event {
   final List photo;
   final bool cancelled;
   final bool isFree;
-  Event({
-    Key key,
-    @required this.name,
-    @required this.location,
-    @required this.category,
-    @required this.maxNumber,
-    this.date,
-    this.id,
-    this.description,
-    this.comments,
-    this.reviews,
-    this.partecipants,
-    this.cancelled,
-    this.user,
-    this.isFree,
-    this.photo,
-  });
+  final double latitude;
+  final double longitude;
+  Event(
+      {Key key,
+      @required this.name,
+      @required this.location,
+      @required this.category,
+      @required this.maxNumber,
+      this.date,
+      this.id,
+      this.description,
+      this.comments,
+      this.reviews,
+      this.partecipants,
+      this.cancelled,
+      this.user,
+      this.isFree,
+      this.photo,
+      this.latitude,
+      this.longitude});
   Event.fromJson(Map<String, dynamic> json)
       : this.id = json['id'],
         this.name = json['name'],
@@ -50,5 +53,7 @@ class Event {
         this.partecipants = json['partecipants'],
         this.cancelled = json['cancelled'],
         this.isFree = json['free'],
-        this.photo = json['photoUrls'];
+        this.photo = json['photoUrls'],
+        this.latitude = json['latitude'],
+        this.longitude = json['longitude'];
 }

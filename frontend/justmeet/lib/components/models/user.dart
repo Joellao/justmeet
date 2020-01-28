@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class User {
-  final String uid;
-  final String firstName;
-  final String lastName;
-  final String birthDate;
-  final String profileImage;
-  final String email;
-  final String bio;
-  final List events;
-  final String username;
-  final List announcements;
+class User extends ChangeNotifier {
+  String uid;
+  String firstName;
+  String lastName;
+  String birthDate;
+  String profileImage;
+  String email;
+  String bio;
+  List events;
+  String username;
+  List announcements;
   List friends;
   List friendRequests;
   List partecipatedEvents;
@@ -47,4 +47,34 @@ class User {
         this.partecipatedEvents = json['partecipatedEvents'] == null
             ? []
             : json['partecipatedEvents'];
+
+  void update(
+      uid,
+      firstName,
+      lastName,
+      birthDate,
+      email,
+      bio,
+      events,
+      profileImage,
+      username,
+      announcements,
+      friends,
+      friendRequests,
+      partecipatedEvents) {
+    this.uid = uid;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.birthDate = birthDate;
+    this.profileImage = profileImage;
+    this.email = email;
+    this.bio = bio;
+    this.events = events;
+    this.username = username;
+    this.announcements = announcements;
+    this.friends = friends;
+    this.friendRequests = friendRequests;
+    this.partecipatedEvents = partecipatedEvents;
+    notifyListeners();
+  }
 }

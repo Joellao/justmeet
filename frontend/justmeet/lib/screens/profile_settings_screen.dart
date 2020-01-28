@@ -73,13 +73,29 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   }
 
   void sendRequest() async {
-    await Provider.of<UserController>(context).modifyUser(
-        context,
-        controllerUsername.text,
-        imageUrl != null ? imageUrl : widget.user.profileImage,
-        controllerBio.text,
-        controllerEmail.text,
-        widget.user.uid);
+    User user = await Provider.of<UserController>(context, listen: false)
+        .modifyUser(
+            context,
+            controllerUsername.text,
+            imageUrl != null ? imageUrl : widget.user.profileImage,
+            controllerBio.text,
+            controllerEmail.text,
+            widget.user.uid);
+
+    Provider.of<User>(context, listen: false).update(
+        user.uid,
+        user.firstName,
+        user.lastName,
+        user.birthDate,
+        user.email,
+        user.bio,
+        user.events,
+        user.profileImage,
+        user.username,
+        user.announcements,
+        user.friends,
+        user.friendRequests,
+        user.partecipatedEvents);
   }
 
   void signOut() async {
