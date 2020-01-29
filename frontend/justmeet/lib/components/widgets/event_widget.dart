@@ -20,7 +20,7 @@ class EventWidget extends StatefulWidget {
 class _EventWidgetState extends State<EventWidget> {
   Dio dio = new Dio();
 
-  _partecipate() async {
+  Future<bool> _partecipate() async {
     try {
       String token = Provider.of<String>(context, listen: false);
       Response response = await dio.post(
@@ -38,13 +38,15 @@ class _EventWidgetState extends State<EventWidget> {
         } else {
           print("errore");
         }
+        return true;
       }
     } on DioError catch (e) {
       print(e.response);
     }
+    return false;
   }
 
-  _cancelpartecipate() async {
+  Future<bool> _cancelpartecipate() async {
     try {
       String token = Provider.of<String>(context, listen: false);
       Response response = await dio.patch(
@@ -62,10 +64,12 @@ class _EventWidgetState extends State<EventWidget> {
         } else {
           print("errore");
         }
+        return true;
       }
     } on DioError catch (e) {
       print(e.response);
     }
+    return false;
   }
 
   static Future<void> openMap(String location) async {
@@ -282,16 +286,16 @@ class _EventWidgetState extends State<EventWidget> {
                                       ),
                                     ),
                                   ),
-                                  onPressed: () => {
-                                        if (_cancelpartecipate() != null)
-                                          {
-                                            Scaffold.of(context)
-                                                .showSnackBar(SnackBar(
-                                              content: Text(
-                                                  "Sprenotazione effettuata"),
-                                            ))
-                                          }
-                                      })
+                                  onPressed: () async {
+                                    bool cancel = await _cancelpartecipate();
+                                    if (cancel) {
+                                      Scaffold.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content:
+                                            Text("Sprenotazione effettuata"),
+                                      ));
+                                    }
+                                  })
                               : RaisedButton(
                                   color: Color(0xFF5257f2),
                                   elevation: 4,
@@ -314,16 +318,17 @@ class _EventWidgetState extends State<EventWidget> {
                                                       .partecipants
                                                       .length)) >
                                           0)
-                                      ? () => {
-                                            if (_partecipate() != null)
-                                              {
-                                                Scaffold.of(context)
-                                                    .showSnackBar(SnackBar(
-                                                  content: Text(
-                                                      "Prenotazione effettuata"),
-                                                ))
-                                              }
+                                      ? () async {
+                                          bool partecipate =
+                                              await _partecipate();
+                                          if (partecipate) {
+                                            Scaffold.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  "Prenotazione effettuata"),
+                                            ));
                                           }
+                                        }
                                       : null,
                                 )
                           : Text(""),

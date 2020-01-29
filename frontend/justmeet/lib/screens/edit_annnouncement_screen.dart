@@ -19,7 +19,6 @@ class EditAnnouncementScreen extends StatefulWidget {
 class _EditAnnouncementScreenState extends State<EditAnnouncementScreen> {
   final _formKey = GlobalKey<FormState>();
   String _announceName, _description, _category = 'Cinema';
-  bool _isFree = true;
 
   _editEvent() async {
     print("Entrato");

@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,6 +35,24 @@ class _EventScreenState extends State<EventScreen> {
     } else {
       throw 'Could not open the map.';
     }
+  }
+
+  bool refresh;
+
+  remove(value, index) {
+    print(this.widget.event.comments.length);
+    this.widget.event.comments.removeAt(index);
+    setState(() {
+      refresh = value;
+    });
+  }
+
+  add(value, comment) {
+    print(this.widget.event.comments.length);
+    this.widget.event.comments.add(comment);
+    setState(() {
+      refresh = value;
+    });
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -83,7 +103,7 @@ class _EventScreenState extends State<EventScreen> {
     }
   }
 
-  _submit() async {
+  Future<LinkedHashMap<String, dynamic>> _submit() async {
     print("Entrato");
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
@@ -106,11 +126,13 @@ class _EventScreenState extends State<EventScreen> {
         if (response.statusCode == 200) {
           print(response.data);
           print("Evento commentato");
+          return response.data;
         }
       } on DioError catch (e) {
         print(e.response);
       }
     }
+    return null;
   }
 
   @override
@@ -426,7 +448,10 @@ class _EventScreenState extends State<EventScreen> {
                   ),
                 ),
                 InkWell(
-                  onTap: () => _submit(),
+                  onTap: () async {
+                    LinkedHashMap comment = await _submit();
+                    add(true, comment);
+                  },
                   child: Icon(
                     Icons.send,
                     color: Colori.grigio,
@@ -439,9 +464,7 @@ class _EventScreenState extends State<EventScreen> {
                     Comment com = Comment.fromJson(
                         this.widget.event.comments.elementAt(index));
                     return CommentWidget(
-                      comment: com,
-                      profileWidget: getProfileWidget(this.widget.event),
-                    );
+                        comment: com, func: remove, index: index);
                   }),
                 ),
                 SizedBox(height: 10),
@@ -503,13 +526,53 @@ class _EventScreenState extends State<EventScreen> {
               ],
             ),
           ),
-          InkWell(
-            onTap: () => print("More premuto"),
-            child: Icon(
+          PopupMenuButton<int>(
+            icon: Icon(
               Icons.more_vert,
               size: 30.0,
             ),
-          ),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 1,
+                child: InkWell(
+                  child: Text("Modifica Commento"),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                EditEventScreen(event: this.widget.event)));
+                  },
+                ),
+              ),
+              PopupMenuItem(
+                value: 2,
+                child: InkWell(
+                  child: Text("Cancella commento"),
+                  onTap: () {
+                    if (_deleteEvent() != null) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text("Evento cancellato"),
+                      ));
+                    }
+                  },
+                ),
+              ),
+              PopupMenuItem(
+                value: 3,
+                child: InkWell(
+                  child: Text("Segnala Commento"),
+                  onTap: () {
+                    if (_cancelEvent() != null) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text("Commento segnalato con successo"),
+                      ));
+                    }
+                  },
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );

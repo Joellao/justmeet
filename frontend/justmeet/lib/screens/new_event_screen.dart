@@ -229,7 +229,8 @@ class _NewEventScreenState extends State<NewEventScreen> {
                         'Musica',
                         'Sagre',
                         'Teatro',
-                        'Feste'
+                        'Feste',
+                        'Scuola'
                       ].map((String value) {
                         return new DropdownMenuItem<String>(
                           value: value,

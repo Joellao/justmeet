@@ -21,14 +21,43 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen>
     with SingleTickerProviderStateMixin {
   Dio dio = new Dio();
+  User utente;
+
+  Future<User> getUser() async {
+    String token = Provider.of<String>(context, listen: false);
+
+    try {
+      Response response = await dio.get(
+        "https://justmeetgjj.herokuapp.com/user/${this.widget.user.uid}",
+        options: Options(
+          headers: {
+            "Authorization": token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        if (response.data == "") return null;
+        return User.fromJson(response.data);
+      }
+      if (response.statusCode == 500) {
+        print("Ciao");
+      }
+    } on DioError catch (e) {}
+    return null;
+  }
 
   TabController controller;
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+  }
 
   _sendFriendRequest() async {
     try {
       String token = Provider.of<String>(context, listen: false);
       Response response = await dio.patch(
-        "https://justmeetgjj.herokuapp.com/user/${this.widget.user.uid}",
+        "https://justmeetgjj.herokuapp.com/user/${utente.uid}",
         options: Options(
           headers: {
             "Authorization": token,
@@ -52,7 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     try {
       String token = Provider.of<String>(context, listen: false);
       Response response = await dio.put(
-        "https://justmeetgjj.herokuapp.com/user/${this.widget.user.uid}/removeFriend",
+        "https://justmeetgjj.herokuapp.com/user/${utente.uid}/removeFriend",
         options: Options(
           headers: {
             "Authorization": token,
@@ -72,19 +101,29 @@ class _ProfileScreenState extends State<ProfileScreen>
     }
   }
 
+  fetchUser() async {
+    print("DIO DE DIO");
+    if (Provider.of<User>(context, listen: false).uid == this.widget.user.uid) {
+      setState(() {
+        utente = this.widget.user;
+      });
+    } else {
+      var user2 = await getUser();
+      setState(() {
+        utente = user2;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     controller = new TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+    fetchUser();
   }
 
   bool getFriendRequest() {
-    List friendRequests = this.widget.user.friendRequests;
+    List friendRequests = utente.friendRequests;
     List<dynamic> robe = [];
     print(friendRequests);
     friendRequests.forEach((robbo) {
@@ -101,11 +140,21 @@ class _ProfileScreenState extends State<ProfileScreen>
       User user = User.fromJson(robbo);
       robe.add(user.uid);
     });
-    return robe.contains(this.widget.user.uid);
+    return robe.contains(utente.uid);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (utente == null) {
+      return Scaffold(
+        body: Container(
+          color: Colori.bluScuro,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
     List<Tab> userTabs = [
       Tab(child: Text("Eventi")),
       Tab(child: Text("Annunci")),
@@ -126,26 +175,26 @@ class _ProfileScreenState extends State<ProfileScreen>
     ];
     List<Widget> userPages = [
       ProfileEventScreen(
-        events: this.widget.user.events,
+        events: utente.events,
       ),
       ProfileAnnouncementScreen(
-        announcements: this.widget.user.announcements,
+        announcements: utente.announcements,
       ),
-      MyFriendsScreen(friends: this.widget.user.friends),
-      RequestFriendsScreen(requests: this.widget.user.friendRequests),
+      MyFriendsScreen(friends: utente.friends),
+      RequestFriendsScreen(requests: utente.friendRequests),
     ];
     List<Widget> otherUserPages = [
       ProfileEventScreen(
-        events: this.widget.user.events,
+        events: utente.events,
       ),
       ProfileAnnouncementScreen(
-        announcements: this.widget.user.announcements,
+        announcements: utente.announcements,
       ),
-      MyFriendsScreen(friends: this.widget.user.friends),
+      MyFriendsScreen(friends: utente.friends),
     ];
     List<Widget> insitutionPages = [
       ProfileEventScreen(
-        events: this.widget.user.events,
+        events: utente.events,
       ),
       Padding(
         padding: const EdgeInsets.only(top: 120),
@@ -154,22 +203,22 @@ class _ProfileScreenState extends State<ProfileScreen>
     ];
     List<Widget> otherInsitutionPages = [
       ProfileEventScreen(
-        events: this.widget.user.events,
+        events: utente.events,
       ),
     ];
 
-    List<Tab> toUseTabs = this.widget.user.type == 1
-        ? (Provider.of<User>(context).uid == this.widget.user.uid
+    List<Tab> toUseTabs = utente.type == 1
+        ? (Provider.of<User>(context).uid == utente.uid
             ? userTabs
             : otherUserTabs)
-        : (Provider.of<User>(context).uid == this.widget.user.uid
+        : (Provider.of<User>(context).uid == utente.uid
             ? institutionTabs
             : otherInstitutionTabs);
-    List<Widget> toUsePages = this.widget.user.type == 1
-        ? (Provider.of<User>(context).uid == this.widget.user.uid
+    List<Widget> toUsePages = utente.type == 1
+        ? (Provider.of<User>(context).uid == utente.uid
             ? userPages
             : otherUserPages)
-        : (Provider.of<User>(context).uid == this.widget.user.uid
+        : (Provider.of<User>(context).uid == utente.uid
             ? insitutionPages
             : otherInsitutionPages);
 
@@ -184,17 +233,17 @@ class _ProfileScreenState extends State<ProfileScreen>
               child: SliverAppBar(
                 backgroundColor: Colori.bluScuro,
                 pinned: true,
-                title: Text(this.widget.user.username),
+                title: Text(utente.username),
                 centerTitle: true,
                 actions: <Widget>[
-                  Provider.of<User>(context).uid == this.widget.user.uid
+                  Provider.of<User>(context).uid == utente.uid
                       ? InkWell(
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProfileSettingsScreen(
-                                      user: this.widget.user)),
+                                  builder: (context) =>
+                                      ProfileSettingsScreen(user: utente)),
                             );
                           },
                           child: Icon(
@@ -202,7 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             size: 30.0,
                           ),
                         )
-                      : this.widget.user.type == 2
+                      : utente.type == 2
                           ? Text("")
                           : !isMyFriend()
                               ? InkWell(
@@ -226,9 +275,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                   SizedBox(width: 10)
                 ],
                 flexibleSpace: FlexibleSpaceBar(
-                  background: this.widget.user.profileImage != ""
+                  background: utente.profileImage != ""
                       ? Image.network(
-                          this.widget.user.profileImage,
+                          utente.profileImage,
                           fit: BoxFit.cover,
                         )
                       : Icon(
