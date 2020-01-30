@@ -48,10 +48,10 @@ class _AnnouncementWidgetState extends State<AnnouncementWidget> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                       child: Image.network(
-                        "https://apprecs.org/ios/images/app-icons/256/ca/644106186.jpg",
+                        "https://lnx.societalibera.org/wp/wp-content/uploads/2018/11/annuncio-512x445.png",
                         height: 90,
                         width: 150,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.scaleDown,
                       ),
                     ),
                   ),

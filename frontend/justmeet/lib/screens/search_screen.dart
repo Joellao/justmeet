@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/screens/map_screen.dart';
-import 'package:justmeet/screens/search_event.screen.dart';
+import 'package:justmeet/screens/event/search_event.screen.dart';
 import 'package:justmeet/screens/search_user_screen.dart';
 
 class SearchScreen extends StatefulWidget {

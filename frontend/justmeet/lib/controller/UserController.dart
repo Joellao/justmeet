@@ -9,13 +9,30 @@ class UserController {
       String bio, String email, String uid) async {
     String token = Provider.of<String>(context, listen: false);
     Response response = await dio.put(
-      "https://justmeetgjj.herokuapp.com/user/$uid",
+      "https://justmeetgjj.herokuapp.com/user/",
       data: {
         "username": username,
         "profileImage": profileImage,
         "bio": bio,
         "email": email
       },
+      options: Options(
+        headers: {
+          "Authorization": token,
+        },
+        responseType: ResponseType.json,
+      ),
+    );
+    if (response.statusCode == 200) {
+      return User.fromJson(response.data);
+    }
+    return null;
+  }
+
+  Future<User> getUser(context) async {
+    String token = Provider.of<String>(context, listen: false);
+    Response response = await dio.get(
+      "https://justmeetgjj.herokuapp.com/user/",
       options: Options(
         headers: {
           "Authorization": token,

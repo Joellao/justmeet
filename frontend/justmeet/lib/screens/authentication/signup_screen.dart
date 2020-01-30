@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:justmeet/components/colori.dart';
-import 'package:justmeet/screens/signup_screen_institution.dart';
-import 'package:justmeet/screens/signup_screen_user.dart';
+import 'package:justmeet/screens/authentication/signup_screen_institution.dart';
+import 'package:justmeet/screens/authentication/signup_screen_user.dart';
 
 class SignupScreen extends StatefulWidget {
   @override

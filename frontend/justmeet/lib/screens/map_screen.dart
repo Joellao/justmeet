@@ -7,7 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:justmeet/components/models/event.dart';
-import 'package:justmeet/screens/event_screen.dart';
+import 'package:justmeet/screens/event/event_screen.dart';
 import 'package:provider/provider.dart';
 
 class MapScreen extends StatefulWidget {

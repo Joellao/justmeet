@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:justmeet/components/colori.dart';
-import 'package:justmeet/screens/new_announcement_screen.dart';
-import 'package:justmeet/screens/new_event_screen.dart';
+import 'package:justmeet/screens/announcement/new_announcement_screen.dart';
+import 'package:justmeet/screens/event/new_event_screen.dart';
 
 class CreateScreen extends StatefulWidget {
   @override

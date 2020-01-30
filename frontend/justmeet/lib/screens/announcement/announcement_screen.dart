@@ -7,7 +7,7 @@ import 'package:justmeet/components/models/announcement.dart';
 import 'package:justmeet/components/models/comment.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/comment_widget.dart';
-import 'package:justmeet/screens/edit_annnouncement_screen.dart';
+import 'package:justmeet/screens/announcement/edit_annnouncement_screen.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 

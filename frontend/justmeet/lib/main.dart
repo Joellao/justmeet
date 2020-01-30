@@ -4,7 +4,7 @@ import 'package:justmeet/components/auth_widget_builder.dart';
 import 'package:justmeet/controller/AuthController.dart';
 import 'package:justmeet/screens/login_screen.dart';
 import 'package:justmeet/screens/profile_screen.dart';
-import 'package:justmeet/screens/signup_screen.dart';
+import 'package:justmeet/screens/authentication/signup_screen.dart';
 import 'package:justmeet/screens/homepage_screen.dart';
 import 'package:provider/provider.dart';
 

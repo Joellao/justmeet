@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/user.dart';
+import 'package:justmeet/controller/UserController.dart';
 import 'package:justmeet/screens/event_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,6 +20,7 @@ class EventWidget extends StatefulWidget {
 
 class _EventWidgetState extends State<EventWidget> {
   Dio dio = new Dio();
+  bool partecipating = false;
 
   Future<bool> _partecipate() async {
     try {
@@ -38,6 +40,25 @@ class _EventWidgetState extends State<EventWidget> {
         } else {
           print("errore");
         }
+        User user = await Provider.of<UserController>(context, listen: false)
+            .getUser(context);
+        Provider.of<User>(context, listen: false).update(
+            user.uid,
+            user.firstName,
+            user.lastName,
+            user.birthDate,
+            user.email,
+            user.bio,
+            user.events,
+            user.profileImage,
+            user.username,
+            user.announcements,
+            user.friends,
+            user.friendRequests,
+            user.partecipatedEvents);
+        setState(() {
+          partecipating = true;
+        });
         return true;
       }
     } on DioError catch (e) {
@@ -64,6 +85,25 @@ class _EventWidgetState extends State<EventWidget> {
         } else {
           print("errore");
         }
+        User user = await Provider.of<UserController>(context, listen: false)
+            .getUser(context);
+        Provider.of<User>(context, listen: false).update(
+            user.uid,
+            user.firstName,
+            user.lastName,
+            user.birthDate,
+            user.email,
+            user.bio,
+            user.events,
+            user.profileImage,
+            user.username,
+            user.announcements,
+            user.friends,
+            user.friendRequests,
+            user.partecipatedEvents);
+        setState(() {
+          partecipating = false;
+        });
         return true;
       }
     } on DioError catch (e) {
@@ -273,7 +313,7 @@ class _EventWidgetState extends State<EventWidget> {
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Provider.of<User>(context).uid !=
                               this.widget.event.user.uid
-                          ? isPrenoted()
+                          ? (isPrenoted() || partecipating)
                               ? RaisedButton(
                                   color: Colors.red,
                                   elevation: 4,
