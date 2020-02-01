@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/models/announcement.dart';
-import 'package:justmeet/screens/announcement_screen.dart';
+import 'package:justmeet/screens/announcement/announcement_screen.dart';
 
 class AnnouncementWidget extends StatefulWidget {
   final Announcement announcement;

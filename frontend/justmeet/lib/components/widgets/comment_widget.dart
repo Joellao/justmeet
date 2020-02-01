@@ -3,11 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/models/comment.dart';
-import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/user.dart';
-import 'package:justmeet/screens/edit_comment_screen.dart';
+import 'package:justmeet/screens/comment/edit_comment_screen.dart';
 import 'package:justmeet/screens/profile_screen.dart';
-import 'package:justmeet/screens/segnala_commento_screen.dart';
+import 'package:justmeet/screens/comment/segnala_commento_screen.dart';
 import 'package:provider/provider.dart';
 
 class CommentWidget extends StatefulWidget {

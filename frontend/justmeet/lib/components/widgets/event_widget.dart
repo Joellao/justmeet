@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/controller/UserController.dart';
-import 'package:justmeet/screens/event_screen.dart';
+import 'package:justmeet/screens/event/event_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
