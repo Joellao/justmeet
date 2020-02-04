@@ -8,6 +8,7 @@ import 'package:justmeet/screens/announcement/profile_announcement_screen.dart';
 import 'package:justmeet/screens/event/profile_event_screen.dart';
 import 'package:justmeet/screens/profile_settings_screen.dart';
 import 'package:justmeet/screens/request_friends.dart';
+import 'package:justmeet/screens/segnala_problema.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -101,8 +102,31 @@ class _ProfileScreenState extends State<ProfileScreen>
     }
   }
 
+  _deleteProfile() async {
+    try {
+      String token = Provider.of<String>(context, listen: false);
+      Response response = await dio.delete(
+        "https://justmeetgjj.herokuapp.com/user/${utente.uid}",
+        options: Options(
+          headers: {
+            "Authorization": token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        if (response.data) {
+          print("Profilo eliminato");
+        } else {
+          print("errore");
+        }
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+  }
+
   fetchUser() async {
-    print("DIO DE DIO");
     if (Provider.of<User>(context, listen: false).uid == this.widget.user.uid) {
       setState(() {
         utente = this.widget.user;
@@ -176,6 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     List<Widget> userPages = [
       ProfileEventScreen(
         events: utente.events,
+        user: utente,
       ),
       ProfileAnnouncementScreen(
         announcements: utente.announcements,
@@ -186,6 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     List<Widget> otherUserPages = [
       ProfileEventScreen(
         events: utente.events,
+        user: utente,
       ),
       ProfileAnnouncementScreen(
         announcements: utente.announcements,
@@ -195,6 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     List<Widget> insitutionPages = [
       ProfileEventScreen(
         events: utente.events,
+        user: utente,
       ),
       Padding(
         padding: const EdgeInsets.only(top: 120),
@@ -204,6 +231,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     List<Widget> otherInsitutionPages = [
       ProfileEventScreen(
         events: utente.events,
+        user: utente,
       ),
     ];
 
@@ -237,19 +265,53 @@ class _ProfileScreenState extends State<ProfileScreen>
                 centerTitle: true,
                 actions: <Widget>[
                   Provider.of<User>(context).uid == utente.uid
-                      ? InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ProfileSettingsScreen(user: utente)),
-                            );
-                          },
-                          child: Icon(
+                      ? PopupMenuButton<int>(
+                          icon: Icon(
                             Icons.settings,
                             size: 30.0,
                           ),
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: 1,
+                              child: InkWell(
+                                child: Text("Modifica Profilo"),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ProfileSettingsScreen(
+                                                  user: utente)));
+                                },
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 2,
+                              child: InkWell(
+                                child: Text("Cancella profilo"),
+                                onTap: () {
+                                  if (_deleteProfile() != null) {
+                                    Scaffold.of(context).showSnackBar(SnackBar(
+                                      content: Text("Profilo cancellato"),
+                                    ));
+                                  }
+                                },
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 3,
+                              child: InkWell(
+                                child: Text("Segnala Problema"),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ReportProblemScreen()));
+                                },
+                              ),
+                            ),
+                          ],
                         )
                       : utente.type == 2
                           ? Text("")

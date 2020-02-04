@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +11,6 @@ import 'package:justmeet/components/models/review.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/review_widget.dart';
 import 'package:justmeet/components/widgets/star_rating.dart';
-import 'package:justmeet/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -37,8 +38,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
   final _formKey = GlobalKey<FormState>();
   String _body;
   int _stars;
+  //Future<LinkedHashMap<String, dynamic>> reviews;
 
-  _submit() async {
+  Future<LinkedHashMap<String, dynamic>> _submit() async {
     print("Entrato");
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
@@ -62,11 +64,31 @@ class _ReviewScreenState extends State<ReviewScreen> {
         if (response.statusCode == 200) {
           print(response.data);
           print("Recensione aggiunta");
+          return response.data;
         }
       } on DioError catch (e) {
         print(e.response);
       }
     }
+    return null;
+  }
+
+  bool refresh;
+
+  add(value, review) {
+    print(this.widget.event.reviews.length);
+    this.widget.event.reviews.add(review);
+    setState(() {
+      refresh = value;
+    });
+  }
+
+  remove(value, index) {
+    print(this.widget.event.reviews.length);
+    this.widget.event.reviews.removeAt(index);
+    setState(() {
+      refresh = value;
+    });
   }
 
   @override
@@ -76,21 +98,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
       appBar: AppBar(
         title: Text(this.widget.event.name),
         backgroundColor: Colori.bluScuro,
-        actions: <Widget>[
-          user.uid == this.widget.event.user.uid
-              ? InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => null));
-                  },
-                  child: Icon(
-                    Icons.settings,
-                    size: 30.0,
-                  ),
-                )
-              : null,
-          SizedBox(width: 10)
-        ],
       ),
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -141,7 +148,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
                   ),
                 ),
                 InkWell(
-                  onTap: () => _submit(),
+                  onTap: () async {
+                    LinkedHashMap rev = await _submit();
+                    add(true, rev);
+                  },
                   child: Icon(
                     Icons.send,
                     color: Colori.grigio,
@@ -155,7 +165,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
                         this.widget.event.reviews.elementAt(index));
                     return ReviewWidget(
                       review: r,
-                      profileWidget: getProfileWidget(this.widget.event),
+                      func: remove,
+                      index: index,
                     );
                   }),
                 ),
@@ -164,62 +175,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget getProfileWidget(Event event) {
-    return Container(
-      padding: EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          InkWell(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ProfileScreen(user: event.user)),
-            ),
-            child: Row(
-              children: <Widget>[
-                CircleAvatar(
-                  backgroundImage: event.user.profileImage != ""
-                      ? NetworkImage(event.user.profileImage)
-                      : null,
-                  child: event.user.profileImage == ""
-                      ? Icon(Icons.person, size: 25)
-                      : null,
-                ),
-                SizedBox(
-                  width: 7.0,
-                ),
-                Text(
-                  event.user.firstName,
-                  textAlign: TextAlign.left,
-                  style: GoogleFonts.roboto(
-                    textStyle: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(" "),
-                Text(
-                  event.user.lastName,
-                  textAlign: TextAlign.left,
-                  style: GoogleFonts.roboto(
-                    textStyle: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

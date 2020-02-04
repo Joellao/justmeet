@@ -28,7 +28,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   _submit() {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      sendRequest();
+      editProfile();
     }
   }
 
@@ -72,30 +72,36 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     }
   }
 
-  void sendRequest() async {
-    User user = await Provider.of<UserController>(context, listen: false)
-        .modifyUser(
-            context,
-            controllerUsername.text,
-            imageUrl != null ? imageUrl : widget.user.profileImage,
-            controllerBio.text,
-            controllerEmail.text,
-            widget.user.uid);
-
-    Provider.of<User>(context, listen: false).update(
-        user.uid,
-        user.firstName,
-        user.lastName,
-        user.birthDate,
-        user.email,
-        user.bio,
-        user.events,
-        user.profileImage,
-        user.username,
-        user.announcements,
-        user.friends,
-        user.friendRequests,
-        user.partecipatedEvents);
+  void editProfile() async {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      try {
+        Dio dio = new Dio();
+        String token = Provider.of<String>(context, listen: false);
+        Response response = await dio.put(
+          "https://justmeetgjj.herokuapp.com/user/${this.widget.user.uid}",
+          data: {
+            "username": userName,
+            "bio": bio,
+            "email": email,
+            "profileImage":
+                imageUrl != null ? imageUrl : widget.user.profileImage
+          },
+          options: Options(
+            headers: {
+              "Authorization": token,
+            },
+            responseType: ResponseType.json,
+          ),
+        );
+        if (response.statusCode == 200) {
+          print(response.data);
+          print("Profilo modificato");
+        }
+      } on DioError catch (e) {
+        print(e.response);
+      }
+    }
   }
 
   void signOut() async {

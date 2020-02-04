@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
 import 'package:justmeet/components/models/event.dart';
+import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/event_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -85,7 +86,7 @@ class _SearchEventScreenState extends State<SearchEventScreen> {
                     Event event = _events.elementAt(index);
                     return EventWidget(
                       event: event,
-                      profileWidget: getProfileWidget(event),
+                      profileWidget: getProfileWidget(event.user),
                     );
                   },
                 )
@@ -97,7 +98,7 @@ class _SearchEventScreenState extends State<SearchEventScreen> {
     );
   }
 
-  Widget getProfileWidget(Event event) {
+  Widget getProfileWidget(User user) {
     return Container(
       padding: EdgeInsets.all(8.0),
       child: Row(
@@ -106,10 +107,10 @@ class _SearchEventScreenState extends State<SearchEventScreen> {
           Row(
             children: <Widget>[
               CircleAvatar(
-                backgroundImage: event.user.profileImage != ""
-                    ? NetworkImage(event.user.profileImage)
+                backgroundImage: user.profileImage != ""
+                    ? NetworkImage(user.profileImage)
                     : null,
-                child: event.user.profileImage == ""
+                child: user.profileImage == ""
                     ? Icon(Icons.person, size: 25)
                     : null,
               ),
@@ -117,7 +118,7 @@ class _SearchEventScreenState extends State<SearchEventScreen> {
                 width: 7.0,
               ),
               Text(
-                event.user.firstName,
+                user.firstName,
                 textAlign: TextAlign.left,
                 style: GoogleFonts.roboto(
                   textStyle: TextStyle(
@@ -129,7 +130,7 @@ class _SearchEventScreenState extends State<SearchEventScreen> {
               ),
               Text(" "),
               Text(
-                event.user.lastName,
+                user.lastName,
                 textAlign: TextAlign.left,
                 style: GoogleFonts.roboto(
                   textStyle: TextStyle(

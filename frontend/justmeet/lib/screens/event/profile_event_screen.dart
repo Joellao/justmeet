@@ -7,8 +7,11 @@ import 'package:provider/provider.dart';
 
 class ProfileEventScreen extends StatelessWidget {
   final List<dynamic> events;
+  final User user;
 
-  const ProfileEventScreen({Key key, @required this.events}) : super(key: key);
+  const ProfileEventScreen(
+      {Key key, @required this.events, @required this.user})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -32,7 +35,7 @@ class ProfileEventScreen extends StatelessWidget {
                     (BuildContext context, int index) {
                       Event event =
                           Event.fromJson(this.events.elementAt(index));
-                      event.user = Provider.of<User>(context);
+                      event.user = user;
                       return EventWidget(
                         event: event,
                       );

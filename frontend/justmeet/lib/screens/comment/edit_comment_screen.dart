@@ -60,61 +60,63 @@ class _EditCommentScreenState extends State<EditCommentScreen> {
       body: Container(
         height: MediaQuery.of(context).size.height,
         color: Color(0xFF05204a),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 40.0,
-            vertical: 70.0,
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: <Widget>[
-                Text(
-                  "Modifica commento",
-                  style: GoogleFonts.roboto(
-                    textStyle: TextStyle(
-                      color: Colori.grigio,
-                      fontSize: 35,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 35.0,
-                ),
-                CustomField(
-                  icon: Icons.edit,
-                  label: 'Commento',
-                  hint: "Inserisci il commento",
-                  validator: (body) => body.length <= 0
-                      ? 'Il commento non può essere vuoto'
-                      : null,
-                  onSaved: (body) => this._body = body,
-                  obscureText: false,
-                  controller: controller,
-                ),
-                SizedBox(
-                  height: 15.0,
-                ),
-                FlatButton(
-                  color: Colori.viola,
-                  child: Text(
-                    'Modifica',
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 40.0,
+              vertical: 70.0,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    "Modifica commento",
                     style: GoogleFonts.roboto(
                       textStyle: TextStyle(
                         color: Colori.grigio,
+                        fontSize: 35,
                       ),
                     ),
                   ),
-                  onPressed: () async {
-                    Comment comment = await _submit();
-                    if (comment != null) {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text("Commento Segnalato"),
-                      ));
-                    }
-                  },
-                )
-              ],
+                  SizedBox(
+                    height: 35.0,
+                  ),
+                  CustomField(
+                    icon: Icons.edit,
+                    label: 'Commento',
+                    hint: "Inserisci il commento",
+                    validator: (body) => body.length <= 0
+                        ? 'Il commento non può essere vuoto'
+                        : null,
+                    onSaved: (body) => this._body = body,
+                    obscureText: false,
+                    controller: controller,
+                  ),
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                  FlatButton(
+                    color: Colori.viola,
+                    child: Text(
+                      'Modifica',
+                      style: GoogleFonts.roboto(
+                        textStyle: TextStyle(
+                          color: Colori.grigio,
+                        ),
+                      ),
+                    ),
+                    onPressed: () async {
+                      Comment comment = await _submit();
+                      if (comment != null) {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text("Commento modificato"),
+                        ));
+                      }
+                    },
+                  )
+                ],
+              ),
             ),
           ),
         ),

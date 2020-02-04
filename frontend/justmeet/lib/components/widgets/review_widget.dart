@@ -1,20 +1,50 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/models/review.dart';
+import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/star_rating.dart';
+import 'package:justmeet/screens/profile_screen.dart';
+import 'package:provider/provider.dart';
 
 class ReviewWidget extends StatefulWidget {
   final Review review;
-  final Widget profileWidget;
+  //final Widget profileWidget;
+  final int index;
+  final Function func;
 
-  const ReviewWidget({Key key, this.review, this.profileWidget})
+  const ReviewWidget({Key key, this.review, this.index, this.func})
       : super(key: key);
   @override
   _ReviewWidgetState createState() => _ReviewWidgetState();
 }
 
 class _ReviewWidgetState extends State<ReviewWidget> {
+  Future<bool> _deleteReview() async {
+    try {
+      Dio dio = new Dio();
+      String token = Provider.of<String>(context, listen: false);
+      Response response = await dio.delete(
+        "https://justmeetgjj.herokuapp.com/review/${this.widget.review.id}",
+        options: Options(
+          headers: {
+            "Authorization": token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        print(response.data);
+        print("Recensione eliminata");
+        return true;
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -30,7 +60,7 @@ class _ReviewWidgetState extends State<ReviewWidget> {
           ),
           child: Column(
             children: <Widget>[
-              widget.profileWidget != null ? widget.profileWidget : SizedBox(),
+              getProfileWidget(this.widget.review.user),
               Row(
                 children: <Widget>[
                   Padding(
@@ -73,6 +103,82 @@ class _ReviewWidgetState extends State<ReviewWidget> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget getProfileWidget(User user) {
+    return Container(
+      padding: EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          InkWell(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProfileScreen(user: user)),
+            ),
+            child: Row(
+              children: <Widget>[
+                CircleAvatar(
+                  backgroundImage: user.profileImage != ""
+                      ? NetworkImage(user.profileImage)
+                      : null,
+                  child: user.profileImage == ""
+                      ? Icon(Icons.person, size: 25)
+                      : null,
+                ),
+                SizedBox(
+                  width: 7.0,
+                ),
+                Text(
+                  user.firstName,
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.roboto(
+                    textStyle: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  user.lastName,
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.roboto(
+                    textStyle: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                PopupMenuButton<int>(
+                  icon: Icon(
+                    Icons.more_vert,
+                    size: 30.0,
+                  ),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 2,
+                      child: InkWell(
+                        child: Text("Cancella recensione"),
+                        onTap: () {
+                          if (_deleteReview() != null) {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Recensione cancellato"),
+                            ));
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

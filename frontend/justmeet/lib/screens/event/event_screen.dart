@@ -10,6 +10,7 @@ import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/comment_widget.dart';
 import 'package:justmeet/screens/event/edit_event_screen.dart';
+import 'package:justmeet/screens/event/partecipant_screen.dart';
 import 'package:justmeet/screens/photo_screen.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:justmeet/screens/review/review_screen.dart';
@@ -321,52 +322,63 @@ class _EventScreenState extends State<EventScreen> {
                 ),
                 SizedBox(height: 20),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.all(6.0),
-                      child: Container(
-                        width: 85,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colori.grigio, width: 1.5),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
+                      child: InkWell(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PartecipantScreen(
+                              partecipants: this.widget.event.partecipants,
+                            ),
                           ),
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Partecipanti",
-                              style: GoogleFonts.roboto(
-                                textStyle: TextStyle(
-                                  color: Colori.grigio,
+                        child: Container(
+                          width: 90,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            border:
+                                Border.all(color: Colori.grigio, width: 1.5),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "Partecipanti",
+                                style: GoogleFonts.roboto(
+                                  textStyle: TextStyle(
+                                    color: Colori.grigio,
+                                  ),
                                 ),
                               ),
-                            ),
-                            FittedBox(
-                              child: Text(
-                                widget.event.partecipants == null
-                                    ? 0.toString()
-                                    : widget.event.partecipants.length
-                                        .toString(),
-                                style: TextStyle(
-                                  color: Colori.grigio,
-                                  fontSize: 22.0,
-                                  fontWeight: FontWeight.w600,
+                              FittedBox(
+                                child: Text(
+                                  widget.event.partecipants == null
+                                      ? 0.toString()
+                                      : widget.event.partecipants.length
+                                          .toString(),
+                                  style: TextStyle(
+                                    color: Colori.grigio,
+                                    fontSize: 22.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 5),
+                    SizedBox(width: 20),
                     Padding(
                       padding: const EdgeInsets.all(1.0),
                       child: Container(
-                        width: 85,
+                        width: 90,
                         height: 70,
                         decoration: BoxDecoration(
                           border: Border.all(color: Colori.grigio, width: 1.5),
@@ -404,6 +416,26 @@ class _EventScreenState extends State<EventScreen> {
                       ),
                     ),
                     SizedBox(width: 10),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ReviewScreen(event: this.widget.event),
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.star,
+                        size: 80,
+                        color: Colori.grigio,
+                      ),
+                    ),
+                    SizedBox(width: 30),
                     InkWell(
                       onTap: () => Navigator.push(
                         context,
@@ -419,20 +451,6 @@ class _EventScreenState extends State<EventScreen> {
                       ),
                     ),
                   ],
-                ),
-                InkWell(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ReviewScreen(event: this.widget.event),
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.star,
-                    size: 80,
-                    color: Colori.grigio,
-                  ),
                 ),
                 Form(
                   key: _formKey,

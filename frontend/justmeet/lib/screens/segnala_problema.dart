@@ -1,20 +1,18 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
 import 'package:provider/provider.dart';
 
-class ReportCommentScreen extends StatefulWidget {
-  final int commentId;
-
-  const ReportCommentScreen({Key key, this.commentId}) : super(key: key);
+class ReportProblemScreen extends StatefulWidget {
+  // const ReportProblemScreen({Key key, this.commentId}) : super(key: key);
   @override
-  _ReportCommentScreenState createState() => _ReportCommentScreenState();
+  _ReportProblemScreenState createState() => _ReportProblemScreenState();
 }
 
-class _ReportCommentScreenState extends State<ReportCommentScreen> {
+class _ReportProblemScreenState extends State<ReportProblemScreen> {
   final _formKey = GlobalKey<FormState>();
   String _body;
 
@@ -26,7 +24,7 @@ class _ReportCommentScreenState extends State<ReportCommentScreen> {
         Dio dio = new Dio();
         String token = Provider.of<String>(context, listen: false);
         Response response = await dio.post(
-          "https://justmeetgjj.herokuapp.com/comment/${this.widget.commentId}",
+          "https://justmeetgjj.herokuapp.com/report",
           queryParameters: {'body': this._body},
           options: Options(
             headers: {
@@ -54,6 +52,7 @@ class _ReportCommentScreenState extends State<ReportCommentScreen> {
       appBar: AppBar(
         backgroundColor: Colori.bluScuro,
         elevation: 1,
+        title: Text("Segnalazione"),
       ),
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -70,7 +69,7 @@ class _ReportCommentScreenState extends State<ReportCommentScreen> {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      "Segnala commento",
+                      "Segnala un problema",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.roboto(
                         textStyle: TextStyle(

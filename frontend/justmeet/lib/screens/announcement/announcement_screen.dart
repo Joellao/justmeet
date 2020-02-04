@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,6 +26,24 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
   final _formKey = GlobalKey<FormState>();
   String _body;
 
+  bool refresh;
+
+  remove(value, index) {
+    print(this.widget.announce.comments.length);
+    this.widget.announce.comments.removeAt(index);
+    setState(() {
+      refresh = value;
+    });
+  }
+
+  add(value, comment) {
+    print(this.widget.announce.comments.length);
+    this.widget.announce.comments.add(comment);
+    setState(() {
+      refresh = value;
+    });
+  }
+
   _deleteAnnounce() async {
     print("Entrato");
     try {
@@ -47,7 +67,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
     }
   }
 
-  _submit() async {
+  Future<LinkedHashMap<String, dynamic>> _submit() async {
     print("Entrato");
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
@@ -70,11 +90,13 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
         if (response.statusCode == 200) {
           print(response.data);
           print("Evento commentato");
+          return response.data;
         }
       } on DioError catch (e) {
         print(e.response);
       }
     }
+    return null;
   }
 
   @override
@@ -200,7 +222,10 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                   ),
                 ),
                 InkWell(
-                  onTap: () => _submit(),
+                  onTap: () async {
+                    LinkedHashMap comment = await _submit();
+                    add(true, comment);
+                  },
                   child: Icon(
                     Icons.send,
                     color: Colori.grigio,
@@ -213,9 +238,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                     Comment com = Comment.fromJson(
                         this.widget.announce.comments.elementAt(index));
                     return CommentWidget(
-                      comment: com,
-                      profileWidget: getProfileWidget(this.widget.announce),
-                    );
+                        comment: com, func: remove, index: index);
                   }),
                 ),
                 SizedBox(height: 10),

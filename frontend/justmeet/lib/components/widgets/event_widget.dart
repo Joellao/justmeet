@@ -369,7 +369,7 @@ class _EventWidgetState extends State<EventWidget> {
                                             ));
                                           }
                                         }
-                                      : null,
+                                      : Text(""),
                                 )
                           : Text(""),
                     ),

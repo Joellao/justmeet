@@ -21,6 +21,11 @@ class Review {
     this.id,
   });
 
+  @override
+  String toString() {
+    return "id: ${this.id} + body: ${this.body} + star: ${this.stars} + data: ${this.date}";
+  }
+
   Review.fromJson(Map<String, dynamic> json)
       : this.body = json['body'],
         this.stars = json['stars'],
