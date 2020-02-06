@@ -69,9 +69,9 @@ public class Event {
 	private List<Review> reviews = new ArrayList<Review>();
 	@ManyToMany(fetch = FetchType.LAZY)
 	private List<User> partecipants = new ArrayList<User>();
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "events_photos", referencedColumnName = "event_id")
+	@JoinColumn(name = "events_photos", referencedColumnName = "id")
 	private List<Photo> photos = new ArrayList<Photo>();
 	@Column(name = "isPublic")
 	private boolean isPublic;
