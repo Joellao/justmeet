@@ -70,10 +70,10 @@ public class Event {
 	@ManyToMany(fetch = FetchType.LAZY)
 	private List<User> partecipants = new ArrayList<User>();
 	@OneToMany(fetch = FetchType.LAZY)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private List<Photo> photos = new ArrayList<Photo>();
 	@Column(name = "isPublic")
 	private boolean isPublic;
-
 	@Column(name = "longitude")
 	private double longitude;
 	@Column(name = "latitude")
