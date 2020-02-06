@@ -129,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   fetchUser() async {
     if (Provider.of<User>(context, listen: false).uid == this.widget.user.uid) {
       setState(() {
-        utente = this.widget.user;
+        utente = Provider.of<User>(context, listen: false);
       });
     } else {
       var user2 = await getUser();

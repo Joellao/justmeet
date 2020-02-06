@@ -76,7 +76,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
   bool refresh;
 
   add(value, review) {
-    print(this.widget.event.reviews.length);
+    print(this.widget.event.reviews);
     this.widget.event.reviews.add(review);
     setState(() {
       refresh = value;

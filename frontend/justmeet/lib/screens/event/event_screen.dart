@@ -126,6 +126,7 @@ class _EventScreenState extends State<EventScreen> {
         );
         if (response.statusCode == 200) {
           print(response.data);
+
           print("Evento commentato");
           return response.data;
         }

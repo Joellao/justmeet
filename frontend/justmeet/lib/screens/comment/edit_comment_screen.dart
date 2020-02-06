@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
 import 'package:justmeet/components/models/comment.dart';
@@ -26,9 +25,12 @@ class _EditCommentScreenState extends State<EditCommentScreen> {
       try {
         Dio dio = new Dio();
         String token = Provider.of<String>(context, listen: false);
+        print(this._body);
         Response response = await dio.put(
           "https://justmeetgjj.herokuapp.com/comment/${this.widget.comment.id}",
-          queryParameters: {'body': this._body},
+          data: {
+            "body": _body,
+          },
           options: Options(
             headers: {
               "Authorization": token,
@@ -50,70 +52,60 @@ class _EditCommentScreenState extends State<EditCommentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = new TextEditingController();
-    controller.text = this.widget.comment.body;
+    TextEditingController controller1 = new TextEditingController();
+
+    controller1.text = this.widget.comment.body;
+
     return Scaffold(
-      appBar: AppBar(
-        elevation: 1,
-        backgroundColor: Colori.bluScuro,
-      ),
       body: Container(
-        height: MediaQuery.of(context).size.height,
         color: Color(0xFF05204a),
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 40.0,
-              vertical: 70.0,
+              vertical: 20.0,
             ),
             child: Form(
               key: _formKey,
               child: Column(
                 children: <Widget>[
+                  SizedBox(
+                    height: 20,
+                  ),
                   Text(
-                    "Modifica commento",
+                    "Modifica Commento",
                     style: GoogleFonts.roboto(
                       textStyle: TextStyle(
-                        color: Colori.grigio,
-                        fontSize: 35,
-                      ),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colori.grigio),
                     ),
                   ),
-                  SizedBox(
-                    height: 35.0,
-                  ),
+                  SizedBox(height: 10),
                   CustomField(
-                    icon: Icons.edit,
-                    label: 'Commento',
-                    hint: "Inserisci il commento",
-                    validator: (body) => body.length <= 0
-                        ? 'Il commento non può essere vuoto'
+                    initialValue: this.widget.comment.body,
+                    icon: Icons.dehaze,
+                    label: 'Descrizione',
+                    hint: "Inserisci la descrizione dell'evento",
+                    validator: (name) => name.length <= 0
+                        ? 'Il nome non può essere vuoto'
                         : null,
-                    onSaved: (body) => this._body = body,
+                    onSaved: (name) => this._body = name,
                     obscureText: false,
-                    controller: controller,
+                    controller: controller1,
                   ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
-                  FlatButton(
-                    color: Colori.viola,
-                    child: Text(
-                      'Modifica',
-                      style: GoogleFonts.roboto(
-                        textStyle: TextStyle(
-                          color: Colori.grigio,
-                        ),
-                      ),
+                  Builder(
+                    builder: (ctx) => FlatButton(
+                      color: Colori.viola,
+                      child: Text('Modifica commento'),
+                      onPressed: () {
+                        if (_submit() != null) {
+                          Scaffold.of(ctx).showSnackBar(SnackBar(
+                            content: Text("Commento Modificato"),
+                          ));
+                        }
+                      },
                     ),
-                    onPressed: () async {
-                      Comment comment = await _submit();
-                      if (comment != null) {
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text("Commento modificato"),
-                        ));
-                      }
-                    },
                   )
                 ],
               ),

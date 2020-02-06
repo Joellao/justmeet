@@ -262,7 +262,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
                           'Musica',
                           'Sagre',
                           'Teatro',
-                          'Feste'
+                          'Feste',
+                          'Scuola'
                         ].map((String value) {
                           return new DropdownMenuItem<String>(
                             value: value,

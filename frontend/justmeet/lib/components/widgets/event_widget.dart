@@ -21,7 +21,7 @@ class EventWidget extends StatefulWidget {
 class _EventWidgetState extends State<EventWidget> {
   Dio dio = new Dio();
   bool partecipating = false;
-
+  int fake = 0;
   Future<bool> _partecipate() async {
     try {
       String token = Provider.of<String>(context, listen: false);
@@ -58,6 +58,7 @@ class _EventWidgetState extends State<EventWidget> {
             user.partecipatedEvents);
         setState(() {
           partecipating = true;
+          fake++;
         });
         return true;
       }
@@ -85,6 +86,16 @@ class _EventWidgetState extends State<EventWidget> {
         } else {
           print("errore");
         }
+        var valore;
+        this.widget.event.partecipants.forEach((value) {
+          User user = User.fromJson(value);
+          if (user.uid == Provider.of<User>(context, listen: false).uid) {
+            valore = value;
+          }
+        });
+        if (valore != null) {
+          this.widget.event.partecipants.remove(valore);
+        }
         User user = await Provider.of<UserController>(context, listen: false)
             .getUser(context);
         Provider.of<User>(context, listen: false).update(
@@ -103,6 +114,7 @@ class _EventWidgetState extends State<EventWidget> {
             user.partecipatedEvents);
         setState(() {
           partecipating = false;
+          fake--;
         });
         return true;
       }
@@ -123,16 +135,30 @@ class _EventWidgetState extends State<EventWidget> {
     }
   }
 
-  bool isPrenoted() {
+  void isPrenoted() {
     bool found = false;
-    if (this.widget.event.partecipants == null) return found;
+    if (this.widget.event.partecipants == null) return;
     this.widget.event.partecipants.forEach((value) {
       User user = User.fromJson(value);
-      if (user.uid == Provider.of<User>(context).uid) {
+      if (user.uid == Provider.of<User>(context, listen: false).uid) {
         found = true;
       }
     });
-    return found;
+    setState(() {
+      partecipating = found;
+      fake = this.widget.event.partecipants.length;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    isPrenoted();
   }
 
   @override
@@ -291,11 +317,7 @@ class _EventWidgetState extends State<EventWidget> {
                           ),
                           FittedBox(
                             child: Text(
-                              (widget.event.maxNumber -
-                                      (widget.event.partecipants != null
-                                          ? widget.event.partecipants.length
-                                          : 0))
-                                  .toString(),
+                              (widget.event.maxNumber - fake).toString(),
                               style: TextStyle(
                                 fontSize: 22.0,
                                 fontWeight: FontWeight.w600,
@@ -313,7 +335,7 @@ class _EventWidgetState extends State<EventWidget> {
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Provider.of<User>(context).uid !=
                               this.widget.event.user.uid
-                          ? (isPrenoted() || partecipating)
+                          ? (partecipating)
                               ? RaisedButton(
                                   color: Colors.red,
                                   elevation: 4,

@@ -29,7 +29,7 @@ class _RequestFriendsState extends State<RequestFriendsScreen> {
             child: Column(
               children: [
                 SizedBox(
-                  height: 150,
+                  height: 100,
                 ),
                 ListView.builder(
                   shrinkWrap: true,

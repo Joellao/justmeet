@@ -154,30 +154,31 @@ class _ReviewWidgetState extends State<ReviewWidget> {
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
-                PopupMenuButton<int>(
-                  icon: Icon(
-                    Icons.more_vert,
-                    size: 30.0,
-                  ),
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 2,
-                      child: InkWell(
-                        child: Text("Cancella recensione"),
-                        onTap: () {
-                          if (_deleteReview() != null) {
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                              content: Text("Recensione cancellato"),
-                            ));
-                          }
-                        },
-                      ),
-                    ),
-                  ],
-                )
               ],
             ),
           ),
+          PopupMenuButton<int>(
+            icon: Icon(
+              Icons.more_vert,
+              size: 30.0,
+            ),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 2,
+                child: InkWell(
+                  child: Text("Cancella recensione"),
+                  onTap: () {
+                    if (_deleteReview() != null) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text("Recensione cancellato"),
+                      ));
+                      this.widget.func(true, this.widget.index);
+                    }
+                  },
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );

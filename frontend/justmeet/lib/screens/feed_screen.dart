@@ -153,5 +153,5 @@ class _FeedScreenState extends State<FeedScreen>
 
   @override
   // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 }

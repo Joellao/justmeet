@@ -20,6 +20,37 @@ class _PhotoScreenState extends State<PhotoScreen> {
   File _image;
   String imageUrl;
 
+  void _delete(id) async {
+    try {
+      Dio dio = new Dio();
+      String token = Provider.of<String>(context, listen: false);
+      Response response = await dio.delete(
+        "https://justmeetgjj.herokuapp.com/photo/$id",
+        options: Options(
+          headers: {
+            "Authorization": token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      var valore;
+      this.widget.event.photo.forEach((value) {
+        EventPhoto photo = EventPhoto.fromJson(value);
+        if (photo.id == id) {
+          valore = value;
+        }
+      });
+      this.widget.event.photo.remove(valore);
+
+      print(response.data);
+      setState(() {
+        imageUrl = "photo.url";
+      });
+    } on DioError catch (e) {
+      print(e.response);
+    }
+  }
+
   void getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
@@ -44,6 +75,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
           ),
         );
         EventPhoto photo = EventPhoto.fromJson(response.data);
+        this.widget.event.photo.add(response.data);
         setState(() {
           imageUrl = photo.url;
         });
@@ -84,8 +116,13 @@ class _PhotoScreenState extends State<PhotoScreen> {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Center(
-                  child: Image.network(
-                photo.url,
+                  child: InkWell(
+                onLongPress: () {
+                  _delete(photo.id);
+                },
+                child: Image.network(
+                  photo.url,
+                ),
               )),
             );
           }),

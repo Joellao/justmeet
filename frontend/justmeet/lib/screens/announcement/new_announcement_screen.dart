@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
+import 'package:justmeet/components/models/user.dart';
 import 'package:provider/provider.dart';
 
 class NewAnnouncementScreen extends StatefulWidget {
@@ -41,6 +42,23 @@ class _NewEventScreenState extends State<NewAnnouncementScreen> {
         );
         if (response.statusCode == 200) {
           print("Annuncio creato con successo");
+          User user = Provider.of<User>(context, listen: false);
+          List list = user.announcements;
+          list.add(response.data);
+          Provider.of<User>(context, listen: false).update(
+              user.uid,
+              user.firstName,
+              user.lastName,
+              user.birthDate,
+              user.email,
+              user.bio,
+              user.events,
+              user.profileImage,
+              user.username,
+              list,
+              user.friends,
+              user.friendRequests,
+              user.partecipatedEvents);
         }
       } on DioError catch (e) {
         print(e.response);

@@ -34,5 +34,5 @@ class Review {
             DateFormat("dd/MM/yyyy").format(DateTime.parse(json['date'])),
         this.user = json['user'] != null ? User.fromJson(json['user']) : null,
         this.event =
-            json['event'] != null ? Event.fromJson(json['user']) : null;
+            json['event'] != null ? Event.fromJson(json['event']) : null;
 }

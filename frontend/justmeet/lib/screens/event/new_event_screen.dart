@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
+import 'package:justmeet/components/models/user.dart';
 import 'package:provider/provider.dart';
 
 class NewEventScreen extends StatefulWidget {
@@ -51,6 +52,23 @@ class _NewEventScreenState extends State<NewEventScreen> {
         );
         if (response.statusCode == 200) {
           print(response.data);
+          User user = Provider.of<User>(context, listen: false);
+          List list = user.events;
+          list.add(response.data);
+          Provider.of<User>(context, listen: false).update(
+              user.uid,
+              user.firstName,
+              user.lastName,
+              user.birthDate,
+              user.email,
+              user.bio,
+              list,
+              user.profileImage,
+              user.username,
+              user.announcements,
+              user.friends,
+              user.friendRequests,
+              user.partecipatedEvents);
           print("Evento creato con successo");
         }
       } on DioError catch (e) {

@@ -38,6 +38,7 @@ class _SearchEventScreenState extends State<SearchEventScreen> {
           print(response.data);
 
           List events2 = response.data;
+          _events = [];
           events2.forEach((event) {
             setState(() {
               _events.add(Event.fromJson(event));

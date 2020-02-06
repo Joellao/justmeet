@@ -23,7 +23,7 @@ class MyFriendsScreen extends StatelessWidget {
             child: Column(
               children: [
                 SizedBox(
-                  height: 150,
+                  height: 100,
                 ),
                 ListView.builder(
                   shrinkWrap: true,
