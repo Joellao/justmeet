@@ -9,6 +9,7 @@ import 'package:justmeet/components/widgets/announcement_widget.dart';
 import 'package:justmeet/components/widgets/event_widget.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
 
 class FeedScreen extends StatefulWidget {
   @override
@@ -32,9 +33,15 @@ class _FeedScreenState extends State<FeedScreen>
 
   Future<List<dynamic>> getDataEvent() async {
     String token = Provider.of<String>(context, listen: false);
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     Response response = await dio.get(
       "https://justmeetgjj.herokuapp.com/feed/",
-      queryParameters: {"latitude": 0.0, "longitude": 0.0, "raggio": 0},
+      queryParameters: {
+        "latitude": position.latitude,
+        "longitude": position.longitude,
+        "raggio": 50
+      },
       options: Options(
         headers: {
           "Authorization": token,

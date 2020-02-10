@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "374664629063-q3kvk2ejteun5lpfvcoo49kh275nge2q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.justmeet",
+            "certificate_hash": "78f31587b1d929ff05c4f40d51f4e06febd43486"
+          }
+        },
+        {
           "client_id": "374664629063-74ppp4cab5m83u3h094nfq8hmk4mupnc.apps.googleusercontent.com",
           "client_type": 3
         }

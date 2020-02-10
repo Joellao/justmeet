@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
 import 'package:justmeet/controller/AuthController.dart';
@@ -29,6 +30,20 @@ class _LoginScreenState extends State<LoginScreen> {
       } on Exception catch (error) {
         print(error);
       }
+    }
+  }
+
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: <String>['email', 'profile'],
+  );
+
+  Future<void> googleSignIn() async {
+    try {
+      GoogleSignInAccount login = await _googleSignIn.signIn();
+      AuthController controller = new AuthController();
+      controller.googleSignIn(login);
+    } catch (error) {
+      print(error);
     }
   }
 
@@ -158,6 +173,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
                           ),
+                        ),
+                        FlatButton.icon(
+                          onPressed: googleSignIn,
+                          icon: Icon(Icons.cloud),
+                          label: Text("Google SignIn"),
+                          color: Colori.viola,
                         )
                       ],
                     ),

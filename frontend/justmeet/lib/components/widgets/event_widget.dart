@@ -333,7 +333,7 @@ class _EventWidgetState extends State<EventWidget> {
                     fit: FlexFit.tight,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                      child: Provider.of<User>(context).uid !=
+                      child: Provider.of<User>(context, listen: false).uid !=
                               this.widget.event.user.uid
                           ? (partecipating)
                               ? RaisedButton(

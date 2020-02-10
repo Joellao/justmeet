@@ -14,9 +14,9 @@ import 'package:justmeet/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 class AnnouncementScreen extends StatefulWidget {
-  final Announcement announce;
+  Announcement announce;
 
-  const AnnouncementScreen({Key key, this.announce}) : super(key: key);
+  AnnouncementScreen({Key key, this.announce}) : super(key: key);
 
   @override
   _AnnouncementScreenState createState() => _AnnouncementScreenState();
@@ -45,8 +45,15 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
   }
 
   replaceComment(value, comment, index) {
-    Comment commentInList = this.widget.announce.comments.elementAt(index);
-    commentInList = comment;
+    this.widget.announce.comments.removeAt(index);
+    this.widget.announce.comments.insert(index, comment);
+    setState(() {
+      refresh = value;
+    });
+  }
+
+  modifyAnnounce(value, announce) {
+    this.widget.announce = Announcement.fromJson(announce);
     setState(() {
       refresh = value;
     });
@@ -58,7 +65,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
       Dio dio = new Dio();
       String token = Provider.of<String>(context, listen: false);
       Response response = await dio.delete(
-        "https://justmeetgjj.herokuapp.com/event/${this.widget.announce.id}",
+        "https://justmeetgjj.herokuapp.com/announcement/${this.widget.announce.id}",
         options: Options(
           headers: {
             "Authorization": token,
@@ -68,7 +75,33 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
       );
       if (response.statusCode == 200) {
         print(response.data);
-        print("Evento cancellato");
+        print("Annuncio cancellato");
+        List announces = [];
+        User user = Provider.of<User>(context, listen: false);
+        for (Map<String, dynamic> announce in user.announcements) {
+          Announcement a = Announcement.fromJson(announce);
+          if (a.id != this.widget.announce.id) {
+            announces.add(a);
+          }
+        }
+        Provider.of<User>(context, listen: false).update(
+            user.uid,
+            user.firstName,
+            user.lastName,
+            user.birthDate,
+            user.email,
+            user.bio,
+            user.events,
+            user.profileImage,
+            user.username,
+            announces,
+            user.friends,
+            user.friendRequests,
+            user.partecipatedEvents);
+        var count = 0;
+        Navigator.popUntil(context, (route) {
+          return count++ == 2;
+        });
       }
     } on DioError catch (e) {
       print(e.response);
@@ -109,7 +142,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<User>(context);
+    User user = Provider.of<User>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colori.bluScuro,

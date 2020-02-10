@@ -18,9 +18,9 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EventScreen extends StatefulWidget {
-  final Event event;
+  Event event;
 
-  const EventScreen({Key key, this.event}) : super(key: key);
+  EventScreen({Key key, this.event}) : super(key: key);
 
   @override
   _EventScreenState createState() => _EventScreenState();
@@ -64,6 +64,13 @@ class _EventScreenState extends State<EventScreen> {
     });
   }
 
+  modifyEvent(value, event) {
+    this.widget.event = Event.fromJson(event);
+    setState(() {
+      refresh = value;
+    });
+  }
+
   final _formKey = GlobalKey<FormState>();
   String _body;
   _deleteEvent() async {
@@ -83,6 +90,32 @@ class _EventScreenState extends State<EventScreen> {
       if (response.statusCode == 200) {
         print(response.data);
         print("Evento cancellato");
+        List events = [];
+        User user = Provider.of<User>(context, listen: false);
+        for (Map<String, dynamic> event in user.events) {
+          Event a = Event.fromJson(event);
+          if (a.id != this.widget.event.id) {
+            events.add(a);
+          }
+        }
+        Provider.of<User>(context, listen: false).update(
+            user.uid,
+            user.firstName,
+            user.lastName,
+            user.birthDate,
+            user.email,
+            user.bio,
+            events,
+            user.profileImage,
+            user.username,
+            user.announcements,
+            user.friends,
+            user.friendRequests,
+            user.partecipatedEvents);
+        var count = 0;
+        Navigator.popUntil(context, (route) {
+          return count++ == 2;
+        });
       }
     } on DioError catch (e) {
       print(e.response);
@@ -147,6 +180,7 @@ class _EventScreenState extends State<EventScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(this.widget.event.photo);
     User user = Provider.of<User>(context);
     return Scaffold(
       appBar: AppBar(
@@ -168,6 +202,7 @@ class _EventScreenState extends State<EventScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => EditEventScreen(
+                                      func: modifyEvent,
                                       event: this.widget.event)));
                         },
                       ),
