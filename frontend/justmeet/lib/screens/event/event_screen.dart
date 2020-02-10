@@ -56,6 +56,14 @@ class _EventScreenState extends State<EventScreen> {
     });
   }
 
+  replaceComment(value, comment, index) {
+    this.widget.event.comments.removeAt(index);
+    this.widget.event.comments.insert(index, comment);
+    setState(() {
+      refresh = value;
+    });
+  }
+
   final _formKey = GlobalKey<FormState>();
   String _body;
   _deleteEvent() async {
@@ -483,7 +491,10 @@ class _EventScreenState extends State<EventScreen> {
                     Comment com = Comment.fromJson(
                         this.widget.event.comments.elementAt(index));
                     return CommentWidget(
-                        comment: com, func: remove, index: index);
+                        comment: com,
+                        removeFunc: remove,
+                        modifyFunc: replaceComment,
+                        index: index);
                   }),
                 ),
                 SizedBox(height: 10),

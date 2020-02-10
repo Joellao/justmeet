@@ -7,9 +7,12 @@ import 'package:justmeet/components/models/comment.dart';
 import 'package:provider/provider.dart';
 
 class EditCommentScreen extends StatefulWidget {
-  final Comment comment;
+  Comment comment;
+  Function modifyFunc;
+  int index;
 
-  const EditCommentScreen({Key key, this.comment}) : super(key: key);
+  EditCommentScreen({Key key, this.comment, this.modifyFunc, this.index})
+      : super(key: key);
   @override
   _EditCommentScreenState createState() => _EditCommentScreenState();
 }
@@ -41,7 +44,9 @@ class _EditCommentScreenState extends State<EditCommentScreen> {
         if (response.statusCode == 200) {
           print(response.data);
           print("Modificato con successo");
-          return Comment.fromJson(response.data);
+          Comment comment = Comment.fromJson(response.data);
+          this.widget.modifyFunc(true, response.data, this.widget.index);
+          return comment;
         }
       } on DioError catch (e) {
         print(e.response);
@@ -57,7 +62,13 @@ class _EditCommentScreenState extends State<EditCommentScreen> {
     controller1.text = this.widget.comment.body;
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colori.bluScuro,
+        elevation: 1,
+      ),
       body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
         color: Color(0xFF05204a),
         child: SingleChildScrollView(
           child: Padding(
@@ -98,8 +109,11 @@ class _EditCommentScreenState extends State<EditCommentScreen> {
                     builder: (ctx) => FlatButton(
                       color: Colori.viola,
                       child: Text('Modifica commento'),
-                      onPressed: () {
-                        if (_submit() != null) {
+                      onPressed: () async {
+                        Comment comment = await _submit();
+                        if (comment != null) {
+                          controller1.text = comment.body;
+                          this.widget.comment = comment;
                           Scaffold.of(ctx).showSnackBar(SnackBar(
                             content: Text("Commento Modificato"),
                           ));

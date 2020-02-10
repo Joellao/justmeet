@@ -13,10 +13,16 @@ class CommentWidget extends StatefulWidget {
   final Comment comment;
   final Widget profileWidget;
   final int index;
-  final Function func;
+  final Function removeFunc;
+  final Function modifyFunc;
 
   const CommentWidget(
-      {Key key, this.comment, this.profileWidget, this.index, this.func})
+      {Key key,
+      this.comment,
+      this.profileWidget,
+      this.index,
+      this.removeFunc,
+      this.modifyFunc})
       : super(key: key);
   @override
   _CommentWidgetState createState() => _CommentWidgetState();
@@ -132,10 +138,12 @@ class _CommentWidgetState extends State<CommentWidget> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              EditCommentScreen(
-                                                  comment:
-                                                      this.widget.comment)));
+                                        builder: (context) => EditCommentScreen(
+                                          comment: this.widget.comment,
+                                          modifyFunc: this.widget.modifyFunc,
+                                          index: this.widget.index,
+                                        ),
+                                      ));
                                 },
                               ),
                             ),
@@ -149,7 +157,9 @@ class _CommentWidgetState extends State<CommentWidget> {
                                     Scaffold.of(context).showSnackBar(SnackBar(
                                       content: Text("Commento cancellato"),
                                     ));
-                                    this.widget.func(true, this.widget.index);
+                                    this
+                                        .widget
+                                        .removeFunc(true, this.widget.index);
                                   }
                                 },
                               ),

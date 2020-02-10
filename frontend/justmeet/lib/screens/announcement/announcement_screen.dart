@@ -44,6 +44,14 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
     });
   }
 
+  replaceComment(value, comment, index) {
+    Comment commentInList = this.widget.announce.comments.elementAt(index);
+    commentInList = comment;
+    setState(() {
+      refresh = value;
+    });
+  }
+
   _deleteAnnounce() async {
     print("Entrato");
     try {
@@ -238,7 +246,10 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                     Comment com = Comment.fromJson(
                         this.widget.announce.comments.elementAt(index));
                     return CommentWidget(
-                        comment: com, func: remove, index: index);
+                        comment: com,
+                        removeFunc: remove,
+                        modifyFunc: replaceComment,
+                        index: index);
                   }),
                 ),
                 SizedBox(height: 10),

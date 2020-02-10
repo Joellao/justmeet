@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/event_photo.dart';
+import 'package:justmeet/screens/photo_view_screen.dart';
 import 'package:provider/provider.dart';
 
 class PhotoScreen extends StatefulWidget {
@@ -116,14 +117,23 @@ class _PhotoScreenState extends State<PhotoScreen> {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Center(
-                  child: InkWell(
-                onLongPress: () {
-                  _delete(photo.id);
-                },
-                child: Image.network(
-                  photo.url,
+                child: InkWell(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PhotoViewScreen(
+                              photoUrl: photo.url,
+                              username: photo.user.username,
+                            )),
+                  ),
+                  onLongPress: () {
+                    _delete(photo.id);
+                  },
+                  child: Image.network(
+                    photo.url,
+                  ),
                 ),
-              )),
+              ),
             );
           }),
         ),
