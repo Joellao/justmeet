@@ -40,7 +40,7 @@ class _HomePageScreenState extends State<HomePageScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Provider.of<User>(context) != null
+    return Provider.of<User>(context, listen: false) != null
         ? Scaffold(
             appBar: AppBar(
               elevation: 1,
@@ -52,19 +52,23 @@ class _HomePageScreenState extends State<HomePageScreen>
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            ProfileScreen(user: Provider.of<User>(context))),
+                        builder: (context) => ProfileScreen(
+                            user: Provider.of<User>(context, listen: false))),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: CircleAvatar(
                       radius: 20,
-                      backgroundImage:
-                          Provider.of<User>(context).profileImage != ""
-                              ? NetworkImage(
-                                  Provider.of<User>(context).profileImage)
-                              : null,
-                      child: Provider.of<User>(context).profileImage == ""
+                      backgroundImage: Provider.of<User>(context, listen: false)
+                                  .profileImage !=
+                              ""
+                          ? NetworkImage(
+                              Provider.of<User>(context, listen: false)
+                                  .profileImage)
+                          : null,
+                      child: Provider.of<User>(context, listen: false)
+                                  .profileImage ==
+                              ""
                           ? Icon(Icons.person, size: 25)
                           : null,
                     ),
@@ -87,7 +91,8 @@ class _HomePageScreenState extends State<HomePageScreen>
                 CreateScreen(),
                 SearchScreen(),
                 PartecipatedEventsScreen(
-                    events: Provider.of<User>(context).partecipatedEvents),
+                    events: Provider.of<User>(context, listen: false)
+                        .partecipatedEvents),
               ],
             ),
             bottomNavigationBar: CurvedNavigationBar(

@@ -10,9 +10,9 @@ import 'package:justmeet/controller/UserController.dart';
 import 'package:provider/provider.dart';
 
 class ProfileSettingsScreen extends StatefulWidget {
-  final User user;
+  User user;
 
-  const ProfileSettingsScreen({Key key, this.user}) : super(key: key);
+  ProfileSettingsScreen({Key key, this.user}) : super(key: key);
   @override
   _ProfileSettingsScreenState createState() => _ProfileSettingsScreenState();
 }
@@ -38,6 +38,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     controllerUsername = new TextEditingController(text: widget.user.username);
     controllerBio = new TextEditingController(text: widget.user.bio);
     controllerEmail = new TextEditingController(text: widget.user.email);
+    imageUrl = this.widget.user.profileImage;
   }
 
   void getImage() async {
@@ -96,7 +97,26 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         );
         if (response.statusCode == 200) {
           print(response.data);
+          User userToChangeWith = User.fromJson(response.data);
+          Provider.of<User>(context, listen: false).update(
+              userToChangeWith.uid,
+              userToChangeWith.firstName,
+              userToChangeWith.lastName,
+              userToChangeWith.birthDate,
+              userToChangeWith.email,
+              userToChangeWith.bio,
+              userToChangeWith.events,
+              userToChangeWith.profileImage,
+              userToChangeWith.username,
+              userToChangeWith.announcements,
+              userToChangeWith.friends,
+              userToChangeWith.friendRequests,
+              userToChangeWith.partecipatedEvents);
           print("Profilo modificato");
+          var count = 0;
+          Navigator.popUntil(context, (route) {
+            return count++ == 2;
+          });
         }
       } on DioError catch (e) {
         print(e.response);
@@ -146,12 +166,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   onTap: getImage,
                   child: CircleAvatar(
                     radius: 70,
-                    backgroundImage: widget.user.profileImage != ""
-                        ? NetworkImage(widget.user.profileImage)
-                        : null,
-                    child: widget.user.profileImage == ""
-                        ? Icon(Icons.person, size: 70)
-                        : null,
+                    backgroundImage:
+                        imageUrl != "" ? NetworkImage(imageUrl) : null,
+                    child: imageUrl == "" ? Icon(Icons.person, size: 70) : null,
                   ),
                 ),
                 Form(

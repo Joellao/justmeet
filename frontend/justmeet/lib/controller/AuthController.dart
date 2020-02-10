@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:justmeet/components/models/creates/SignupInstitution.dart';
 import 'package:justmeet/components/models/creates/SignupUser.dart';
 import 'package:justmeet/components/models/user.dart';
@@ -32,8 +33,7 @@ class AuthController {
         ),
       );
       if (response.statusCode == 200) {
-        if(response.data=="")
-        return null;
+        if (response.data == "") return null;
         return User.fromJson(response.data);
       }
       if (response.statusCode == 500) {
@@ -63,8 +63,61 @@ class AuthController {
     }
   }
 
+  Future<DummyUser> googleSignIn(GoogleSignInAccount login) async {
+    GoogleSignInAuthentication auth = await login.authentication;
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: auth.accessToken,
+      idToken: auth.idToken,
+    );
+    final AuthResult result =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    signOut();
+    FirebaseUser user = result.user;
+    String fullName = user.displayName;
+    String username = user.email.substring(0, user.email.indexOf("@"));
+    String name = user.displayName.substring(0, fullName.indexOf(" "));
+    String surname = user.displayName.substring(fullName.indexOf(" ") + 1);
+    String date;
+    try {
+      Response response = await dio.get(
+        'https://people.googleapis.com/v1/people/${login.id}?personFields=birthdays',
+        options: Options(headers: await login.authHeaders),
+      );
+      Map map = response.data['birthdays'][0]['date'];
+      var day = map['day'];
+      var month = map['month'];
+      var year = map['year'];
+      date = "$day/$month/$year";
+      print(date);
+    } on DioError catch (e) {
+      print(e.response);
+    }
+    try {
+      Response response = await dio
+          .post("https://justmeetgjj.herokuapp.com/signupUserGoogle", data: {
+        'uid': user.uid,
+        'email': user.email,
+        'firstName': name,
+        'lastName': surname,
+        'userName': username,
+        'date': date,
+      });
+
+      if (response.statusCode == 200) {
+        print(response.data);
+        if (response.data == "") {
+          FirebaseAuth.instance.signInWithCredential(credential);
+        }
+        return _userFromFirebase(user);
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+
+    return null;
+  }
+
   Future<FirebaseUser> signUpUser(SignupUser form) async {
-    print("ciao2");
     Response response =
         await dio.post("https://justmeetgjj.herokuapp.com/signupUser", data: {
       "email": form.email,
@@ -74,7 +127,6 @@ class AuthController {
       "birthDate": form.birthDate,
       "userName": form.userName
     });
-    print("ciao");
     if (response.statusCode == 401) {
       print(response.data);
       return response.data;
@@ -83,7 +135,6 @@ class AuthController {
   }
 
   Future<FirebaseUser> signUpInstitution(SignupInstitution form) async {
-    print("entrato");
     Response response = await dio
         .post("https://justmeetgjj.herokuapp.com/signupInstitution", data: {
       "name": form.name,

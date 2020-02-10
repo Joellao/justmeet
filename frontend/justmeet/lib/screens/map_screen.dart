@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/screens/event/event_screen.dart';
@@ -34,11 +35,13 @@ class MapScreenState extends State<MapScreen>
     Dio dio = new Dio();
     String token = Provider.of<String>(context, listen: false);
     GoogleMapController controller = await _controller.future;
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     Response response = await dio.get(
       "https://justmeetgjj.herokuapp.com/event/map",
       queryParameters: {
-        "latitude": 43.616943,
-        "longitude": 13.516667,
+        "latitude": position.latitude,
+        "longitude": position.longitude,
         "raggio": 30
       },
       options: Options(
@@ -94,5 +97,5 @@ class MapScreenState extends State<MapScreen>
   }
 
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 }

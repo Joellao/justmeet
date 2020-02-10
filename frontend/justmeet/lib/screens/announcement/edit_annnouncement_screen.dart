@@ -9,7 +9,8 @@ import 'package:provider/provider.dart';
 
 class EditAnnouncementScreen extends StatefulWidget {
   @required
-  final Announcement announce;
+  Announcement announce;
+  Function func;
 
   EditAnnouncementScreen({Key key, this.announce}) : super(key: key);
   @override
@@ -44,7 +45,8 @@ class _EditAnnouncementScreenState extends State<EditAnnouncementScreen> {
         );
         if (response.statusCode == 200) {
           print(response.data);
-          print("Evento modificato");
+          print("Annuncio modificato");
+          this.widget.func(true, response.data);
         }
       } on DioError catch (e) {
         print(e.response);

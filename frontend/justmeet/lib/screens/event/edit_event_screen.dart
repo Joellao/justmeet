@@ -10,8 +10,9 @@ import 'package:provider/provider.dart';
 class EditEventScreen extends StatefulWidget {
   @required
   final Event event;
+  Function func;
 
-  EditEventScreen({Key key, this.event}) : super(key: key);
+  EditEventScreen({Key key, this.event, this.func}) : super(key: key);
   @override
   _EditEventScreenState createState() => _EditEventScreenState();
 }
@@ -51,6 +52,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
         if (response.statusCode == 200) {
           print(response.data);
           print("Evento modificato");
+          this.widget.func(true, response.data);
         }
       } on DioError catch (e) {
         print(e.response);
@@ -71,6 +73,10 @@ class _EditEventScreenState extends State<EditEventScreen> {
     controller4.text = this.widget.event.date;
 
     return Scaffold(
+      appBar: AppBar(
+        elevation: 1,
+        backgroundColor: Colori.bluScuro,
+      ),
       body: Container(
         color: Color(0xFF05204a),
         child: SingleChildScrollView(

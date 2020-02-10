@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/user.dart';
+import 'package:justmeet/controller/AuthController.dart';
 import 'package:justmeet/screens/my_friends.dart';
 import 'package:justmeet/screens/event/new_event_screen.dart';
 import 'package:justmeet/screens/announcement/profile_announcement_screen.dart';
@@ -117,6 +118,8 @@ class _ProfileScreenState extends State<ProfileScreen>
       if (response.statusCode == 200) {
         if (response.data) {
           print("Profilo eliminato");
+          AuthController auth = new AuthController();
+          auth.signOut();
         } else {
           print("errore");
         }
@@ -154,11 +157,11 @@ class _ProfileScreenState extends State<ProfileScreen>
       User user = User.fromJson(robbo);
       robe.add(user.uid);
     });
-    return robe.contains(Provider.of<User>(context).uid);
+    return robe.contains(Provider.of<User>(context, listen: false).uid);
   }
 
   bool isMyFriend() {
-    List myFriends = Provider.of<User>(context).friends;
+    List myFriends = Provider.of<User>(context, listen: false).friends;
     List<dynamic> robe = [];
     myFriends.forEach((robbo) {
       User user = User.fromJson(robbo);
@@ -236,17 +239,17 @@ class _ProfileScreenState extends State<ProfileScreen>
     ];
 
     List<Tab> toUseTabs = utente.type == 1
-        ? (Provider.of<User>(context).uid == utente.uid
+        ? (Provider.of<User>(context, listen: false).uid == utente.uid
             ? userTabs
             : otherUserTabs)
-        : (Provider.of<User>(context).uid == utente.uid
+        : (Provider.of<User>(context, listen: false).uid == utente.uid
             ? institutionTabs
             : otherInstitutionTabs);
     List<Widget> toUsePages = utente.type == 1
-        ? (Provider.of<User>(context).uid == utente.uid
+        ? (Provider.of<User>(context, listen: false).uid == utente.uid
             ? userPages
             : otherUserPages)
-        : (Provider.of<User>(context).uid == utente.uid
+        : (Provider.of<User>(context, listen: false).uid == utente.uid
             ? insitutionPages
             : otherInsitutionPages);
 
@@ -264,7 +267,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 title: Text(utente.username),
                 centerTitle: true,
                 actions: <Widget>[
-                  Provider.of<User>(context).uid == utente.uid
+                  Provider.of<User>(context, listen: false).uid == utente.uid
                       ? PopupMenuButton<int>(
                           icon: Icon(
                             Icons.settings,
