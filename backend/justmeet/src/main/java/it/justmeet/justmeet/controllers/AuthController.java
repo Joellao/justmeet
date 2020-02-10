@@ -32,6 +32,7 @@ import it.justmeet.justmeet.models.Institution;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.repositories.InstitutionRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
+import it.justmeet.justmeet.models.auth.GoogleSignin;
 import it.justmeet.justmeet.models.auth.LoginModel;
 import it.justmeet.justmeet.models.auth.SignupModelInstitution;
 import it.justmeet.justmeet.models.auth.SignupModelUser;
@@ -149,16 +150,14 @@ public class AuthController {
 	}
 
 	@PostMapping("/signupUserGoogle")
-	public Object signupUserGoogle(@RequestParam("email") String email, @RequestParam("userName") String username,
-			@RequestParam("name") String firstName, @RequestParam("lastName") String lastName,
-			@RequestParam("uid") String uid, @RequestParam("date") String date2)
-			throws ParseException, InvalidDataException {
-		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(date2);
+	public Object signupUserGoogle(@RequestBody GoogleSignin signin) throws ParseException, InvalidDataException {
+		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(signin.getDate());
 		WoWoUtility.getInstance().validateBirthdate(date);
-		if (userRepo.findByUid(uid) != null) {
+		if (userRepo.findByUid(signin.getUid()) != null) {
 			return null;
 		}
-		return userRepo.save(new User(uid, username, firstName, lastName, email, date, 1));
+		return userRepo.save(new User(signin.getUid(), signin.getUserName(), signin.getFirstName(),
+				signin.getLastName(), signin.getEmail(), date, 1));
 	}
 
 	public Object fireBaseSignIn(String email, String password) {
