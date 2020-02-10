@@ -138,7 +138,8 @@ public class AnnouncementController {
 		String userId = WoWoUtility.getInstance().getUid(token);
 		Announcement announcement = announcementRepo.findById(announcementId).get();
 		Comment c = new Comment(comment.getBody(), userRepo.findByUid(userId), new Date());
-		announcement.addComment(c);
+		Comment savedComment = commentRepo.save(c);
+		announcement.addComment(savedComment);
 		announcementRepo.save(announcement);
 		return c;
 	}

@@ -234,7 +234,8 @@ public class EventController {
 		AbstractUser user = abstractRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
 		Comment c = new Comment(comment.getBody(), user, new Date());
-		event.addComment(c);
+		Comment savedComment = commentRepo.save(c);
+		event.addComment(savedComment);
 		eventRepo.save(event);
 		return c;
 	}
@@ -256,7 +257,8 @@ public class EventController {
 		User user = userRepo.findByUid(userId);
 		Event event = eventRepo.findById(eventId).get();
 		Review r = new Review(user, event, review.getBody(), review.getStars(), new Date());
-		event.addReview(r);
+		Review savedReview = reviewRepo.save(r);
+		event.addReview(savedReview);
 		eventRepo.save(event);
 		return r;
 	}
@@ -335,10 +337,10 @@ public class EventController {
 			String url = WoWoUtility.getPhotoUrl(file.getOriginalFilename(), bytes);
 			Event event = eventRepo.findById(eventId).get();
 			Photo photo = new Photo(url, abstractRepo.findByUid(userId), new Date());
-			event.addPhoto(photo);
-			photoRepo.save(photo);
+			Photo savedPhoto = photoRepo.save(photo);
+			event.addPhoto(savedPhoto);
 			eventRepo.save(event);
-			return new Photo(url);
+			return photo;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
