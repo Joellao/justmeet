@@ -148,6 +148,19 @@ public class AuthController {
 	public void handle() {
 	}
 
+	@PostMapping("/signupUserGoogle")
+	public Object signupUserGoogle(@RequestParam("email") String email, @RequestParam("userName") String username,
+			@RequestParam("name") String firstName, @RequestParam("lastName") String lastName,
+			@RequestParam("uid") String uid, @RequestParam("date") String date2)
+			throws ParseException, InvalidDataException {
+		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(date2);
+		WoWoUtility.getInstance().validateBirthdate(date);
+		if (userRepo.findByUid(uid) != null) {
+			return null;
+		}
+		return userRepo.save(new User(uid, username, firstName, lastName, email, date, 1));
+	}
+
 	public Object fireBaseSignIn(String email, String password) {
 		LoginModel login = new LoginModel(email, password);
 		RestTemplate t = new RestTemplate();

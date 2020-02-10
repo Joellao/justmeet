@@ -151,16 +151,17 @@ public class UserController {
 	public boolean requestFriend(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token)
 			throws FirebaseAuthException {
 		String myId = WoWoUtility.getInstance().getUid(token);
-		
+
 		User user = getOtherProfile(userId, token);
 		User me = userRepo.findByUid(myId);
-		if(userId!=myId) {
-		user.getRequestFriends().add(me);
-		if (userRepo.save(user) != null) {
-			return true;
-		}
-		return false;}
-		else return false;
+		if (userId != myId) {
+			user.getRequestFriends().add(me);
+			if (userRepo.save(user) != null) {
+				return true;
+			}
+			return false;
+		} else
+			return false;
 	}
 
 	@PatchMapping("/user/{userId}/{answer}")
