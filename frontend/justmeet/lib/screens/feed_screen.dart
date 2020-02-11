@@ -75,6 +75,19 @@ class _FeedScreenState extends State<FeedScreen>
         child: FutureBuilder<List<dynamic>>(
           builder: (context, snapshot) {
             if (snapshot.hasData) {
+              if (snapshot.data.length == 0) {
+                return Center(
+                  child: Text(
+                    'Sembra che non ci siano dati per te 😕😕',
+                    style: TextStyle(
+                      fontFamily: 'Raleway',
+                      color: Colori.grigio,
+                      decoration: TextDecoration.none,
+                      fontSize: 20.0,
+                    ),
+                  ),
+                );
+              }
               return ListView.builder(
                 shrinkWrap: true,
                 itemCount: snapshot.data.length,

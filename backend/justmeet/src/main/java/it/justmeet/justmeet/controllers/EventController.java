@@ -51,6 +51,8 @@ import it.justmeet.justmeet.models.Photo;
 import it.justmeet.justmeet.models.Review;
 import it.justmeet.justmeet.models.RispostaLocation;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.similarity.*;
 import org.springframework.web.bind.annotation.PutMapping;
 
 /**
@@ -361,8 +363,13 @@ public class EventController {
 	public List<Event> findEvent(@PathVariable("eventName") String eventName,
 			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
 		WoWoUtility.getInstance().getUid(token);
-		List<Event> result = eventRepo.findAll().stream().filter(event -> eventName.equals(event.getName()))
-				.collect(Collectors.toList());
+		List<Event> result = eventRepo.findAll().stream().filter(event -> {
+			String daCercare = eventName.toLowerCase();
+			if (event.getName().toLowerCase().contains(daCercare)) {
+				return true;
+			}
+			return false;
+		}).collect(Collectors.toList());
 		return result;
 	}
 

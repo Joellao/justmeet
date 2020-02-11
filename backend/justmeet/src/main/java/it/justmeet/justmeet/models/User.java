@@ -74,10 +74,6 @@ public class User extends AbstractUser {
 		this.partecipatedEvents.remove(e);
 	}
 
-	public String getUsername() {
-		return userName;
-	}
-
 	public String getFirstName() {
 		return firstName;
 	}
@@ -108,10 +104,6 @@ public class User extends AbstractUser {
 
 	public void setUid(String uid) {
 		this.uid = uid;
-	}
-
-	public void setUsername(String userName) {
-		this.userName = userName;
 	}
 
 	public void setFirstName(String firstName) {

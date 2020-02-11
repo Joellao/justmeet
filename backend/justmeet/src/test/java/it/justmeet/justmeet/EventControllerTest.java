@@ -34,6 +34,7 @@ import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.repositories.EventRepository;
 import it.justmeet.justmeet.models.repositories.InstitutionRepository;
 import it.justmeet.justmeet.models.repositories.PhotoRepository;
+import it.justmeet.justmeet.models.repositories.ReportProblemRepository;
 import it.justmeet.justmeet.models.repositories.ReviewRepository;
 import it.justmeet.justmeet.models.repositories.SegnalazioneCommentoRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
@@ -62,6 +63,8 @@ public class EventControllerTest {
         SegnalazioneCommentoRepository sglRepo;
         @MockBean
         ReviewRepository revRepo;
+        @MockBean
+        ReportProblemRepository repProbRepo;
 
         static String idToken = Extension.idToken;
         Event event = new Event("TestEvent", "Macerata", "Test Descrizione", new Date(), true, Category.CINEMA, 8);

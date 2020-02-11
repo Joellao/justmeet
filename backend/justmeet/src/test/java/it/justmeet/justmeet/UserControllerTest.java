@@ -31,6 +31,7 @@ import it.justmeet.justmeet.models.repositories.CommentRepository;
 import it.justmeet.justmeet.models.repositories.EventRepository;
 import it.justmeet.justmeet.models.repositories.InstitutionRepository;
 import it.justmeet.justmeet.models.repositories.PhotoRepository;
+import it.justmeet.justmeet.models.repositories.ReportProblemRepository;
 import it.justmeet.justmeet.models.repositories.ReviewRepository;
 import it.justmeet.justmeet.models.repositories.SegnalazioneCommentoRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
@@ -40,100 +41,107 @@ import it.justmeet.justmeet.models.repositories.UserRepository;
 
 public class UserControllerTest {
 
-    @Autowired
-    MockMvc mvc;
-    @MockBean
-    UserRepository userRepo;
-    @MockBean
-    AbstractUserRepository abstractRepo;
-    @MockBean
-    AnnouncementRepository announcementRepo;
-    @MockBean
-    CommentRepository commnetRepo;
-    @MockBean
-    InstitutionRepository instRepo;
-    @MockBean
-    EventRepository eventRepo;
-    @MockBean
-    PhotoRepository photoRepo;
-    @MockBean
-    SegnalazioneCommentoRepository sglRepo;
-    @MockBean
-    ReviewRepository revRepo;
+        @Autowired
+        MockMvc mvc;
+        @MockBean
+        UserRepository userRepo;
+        @MockBean
+        AbstractUserRepository abstractRepo;
+        @MockBean
+        AnnouncementRepository announcementRepo;
+        @MockBean
+        CommentRepository commnetRepo;
+        @MockBean
+        InstitutionRepository instRepo;
+        @MockBean
+        EventRepository eventRepo;
+        @MockBean
+        PhotoRepository photoRepo;
+        @MockBean
+        SegnalazioneCommentoRepository sglRepo;
+        @MockBean
+        ReviewRepository revRepo;
+        @MockBean
+        ReportProblemRepository repProbRepo;
 
-    static String idToken = Extension.idToken;
+        static String idToken = Extension.idToken;
 
-    @Test
-    public void getUserWithoutToken() throws Exception {
-        AbstractUser user = new User("DhSAxAaAMXZgmZyLrT96tgSDObD3", "joellao", "Asdrubale", "Barca", "asd@asd.com",
-                new Date(), 1);
-        Mockito.when(abstractRepo.findByUid(user.getUid())).thenReturn(user);
-        mvc.perform(MockMvcRequestBuilders.get("/user").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isForbidden());
-    }
+        @Test
+        public void getUserWithoutToken() throws Exception {
+                AbstractUser user = new User("DhSAxAaAMXZgmZyLrT96tgSDObD3", "joellao", "Asdrubale", "Barca",
+                                "asd@asd.com", new Date(), 1);
+                Mockito.when(abstractRepo.findByUid(user.getUid())).thenReturn(user);
+                mvc.perform(MockMvcRequestBuilders.get("/user").contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(MockMvcResultMatchers.status().isForbidden());
+        }
 
-    @Test
-    public void getUser() throws Exception {
-        AbstractUser user = new User("DhSAxAaAMXZgmZyLrT96tgSDObD3", "joellao", "Asdrubale", "Barca", "asd@asd.com",
-                new Date(), 1);
-        Mockito.when(abstractRepo.findByUid(user.getUid())).thenReturn(user);
-        mvc.perform(MockMvcRequestBuilders.get("/user").header("Authorization", idToken)
-                .contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk());
-    }
+        @Test
+        public void getUser() throws Exception {
+                AbstractUser user = new User("DhSAxAaAMXZgmZyLrT96tgSDObD3", "joellao", "Asdrubale", "Barca",
+                                "asd@asd.com", new Date(), 1);
+                Mockito.when(abstractRepo.findByUid(user.getUid())).thenReturn(user);
+                mvc.perform(MockMvcRequestBuilders.get("/user").header("Authorization", idToken)
+                                .contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(MockMvcResultMatchers.status().isOk());
+        }
 
-    @Test
-    public void getProfileNotExisting() throws Exception {
-        Mockito.when(abstractRepo.findByUid("nonEsistente")).thenReturn(null);
-        mvc.perform(MockMvcRequestBuilders.get("/user/nonEsistente").header("Authorization", idToken)
-                .contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isNotFound());
-    }
+        @Test
+        public void getProfileNotExisting() throws Exception {
+                Mockito.when(abstractRepo.findByUid("nonEsistente")).thenReturn(null);
+                mvc.perform(MockMvcRequestBuilders.get("/user/nonEsistente").header("Authorization", idToken)
+                                .contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        }
 
-    @Test
-    public void getProfileExisting() throws Exception {
-        User user = new User("uidEsistente", "mario.rossi", "Mario", "Rossi", "asd@asd.com", new Date(), 1);
-        Mockito.when(userRepo.findByUid(user.getUid())).thenReturn(user);
-        mvc.perform(MockMvcRequestBuilders.get("/user/uidEsistente").header("Authorization", idToken)
-                .contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk());
-    }
+        @Test
+        public void getProfileExisting() throws Exception {
+                User user = new User("uidEsistente", "mario.rossi", "Mario", "Rossi", "asd@asd.com", new Date(), 1);
+                Mockito.when(userRepo.findByUid(user.getUid())).thenReturn(user);
+                mvc.perform(MockMvcRequestBuilders.get("/user/uidEsistente").header("Authorization", idToken)
+                                .contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(MockMvcResultMatchers.status().isOk());
+        }
 
-    @Test
-    public void modifyOwnProfile() throws Exception {
-        AbstractUser user = new User("DhSAxAaAMXZgmZyLrT96tgSDObD3", "joellao", "Asdrubale", "Barca", "asd@asd.com",
-                new Date(), 1);
-        Mockito.when(abstractRepo.findByUid(user.getUid())).thenReturn(user);
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("username", "prova");
-        map.put("email", "prova");
-        map.put("profileImage", "prova");
-        map.put("bio", "prova");
-        String json = new ObjectMapper().writeValueAsString(map);
-        mvc.perform(MockMvcRequestBuilders.put("/user/DhSAxAaAMXZgmZyLrT96tgSDObD3").header("Authorization", idToken)
-                .contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.userName", is(map.get("username"))));
-    }
+        @Test
+        public void modifyOwnProfile() throws Exception {
+                AbstractUser user = new User("DhSAxAaAMXZgmZyLrT96tgSDObD3", "joellao", "Asdrubale", "Barca",
+                                "asd@asd.com", new Date(), 1);
+                Mockito.when(abstractRepo.findByUid(user.getUid())).thenReturn(user);
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("username", "prova");
+                map.put("email", "prova");
+                map.put("profileImage", "prova");
+                map.put("bio", "prova");
+                String json = new ObjectMapper().writeValueAsString(map);
+                mvc.perform(MockMvcRequestBuilders.put("/user/DhSAxAaAMXZgmZyLrT96tgSDObD3")
+                                .header("Authorization", idToken).contentType(MediaType.APPLICATION_JSON).content(json))
+                                .andExpect(MockMvcResultMatchers.status().isOk())
+                                .andExpect(MockMvcResultMatchers.jsonPath("$.userName", is(map.get("username"))));
+        }
 
-    @Test
-    public void modifyOtherProfile() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("username", "prova");
-        map.put("email", "prova");
-        map.put("profileImage", "prova");
-        map.put("bio", "prova");
-        String json = new ObjectMapper().writeValueAsString(map);
-        User user = new User("uidEsistente", "mario.rossi", "Mario", "Rossi", "asd@asd.com", new Date(), 1);
-        Mockito.when(abstractRepo.findByUid(user.getUid())).thenReturn(user);
-        mvc.perform(MockMvcRequestBuilders.put("/user/uidEsistente").header("Authorization", idToken)
-                .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(MockMvcResultMatchers.status().isForbidden());
-    }
+        @Test
+        public void modifyOtherProfile() throws Exception {
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("username", "prova");
+                map.put("email", "prova");
+                map.put("profileImage", "prova");
+                map.put("bio", "prova");
+                String json = new ObjectMapper().writeValueAsString(map);
+                User user = new User("uidEsistente", "mario.rossi", "Mario", "Rossi", "asd@asd.com", new Date(), 1);
+                Mockito.when(abstractRepo.findByUid(user.getUid())).thenReturn(user);
+                mvc.perform(MockMvcRequestBuilders.put("/user/uidEsistente").header("Authorization", idToken)
+                                .contentType(MediaType.APPLICATION_JSON).content(json))
+                                .andExpect(MockMvcResultMatchers.status().isForbidden());
+        }
 
-    @Test
-    public void getEvents() throws Exception {
-        User user = new User("uidEsistente", "mario.rossi", "Mario", "Rossi", "asd@asd.com", new Date(), 1);
-        Mockito.when(abstractRepo.findByUid(user.getUid())).thenReturn(user);
-        mvc.perform(MockMvcRequestBuilders.get("/user/uidEsistente/event").header("Authorization", idToken)
-                .contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk());
-        assertEquals(user.getEvents(), new ArrayList<Event>());
-    }
+        @Test
+        public void getEvents() throws Exception {
+                User user = new User("uidEsistente", "mario.rossi", "Mario", "Rossi", "asd@asd.com", new Date(), 1);
+                Mockito.when(abstractRepo.findByUid(user.getUid())).thenReturn(user);
+                mvc.perform(MockMvcRequestBuilders.get("/user/uidEsistente/event").header("Authorization", idToken)
+                                .contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(MockMvcResultMatchers.status().isOk());
+                assertEquals(user.getEvents(), new ArrayList<Event>());
+        }
 
 }

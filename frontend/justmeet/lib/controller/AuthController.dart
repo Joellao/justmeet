@@ -105,9 +105,7 @@ class AuthController {
 
       if (response.statusCode == 200) {
         print(response.data);
-        if (response.data == "") {
-          FirebaseAuth.instance.signInWithCredential(credential);
-        }
+        FirebaseAuth.instance.signInWithCredential(credential);
         return _userFromFirebase(user);
       }
     } on DioError catch (e) {
