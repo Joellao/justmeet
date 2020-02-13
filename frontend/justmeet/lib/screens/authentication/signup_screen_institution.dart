@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
@@ -15,14 +16,16 @@ class _SignupScreenInstitutionState extends State<SignupScreenInstitution> {
   final _formKey = GlobalKey<FormState>();
   String _name, _password, _email, _userName;
 
-  _submit() async {
+  Future<bool> _submit() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       SignupInstitution form = SignupInstitution(
           email: _email, password: _password, name: _name, userName: _userName);
-      await Provider.of<AuthController>(context, listen: false)
+      bool user = await Provider.of<AuthController>(context, listen: false)
           .signUpInstitution(form);
+      return user;
     }
+    return false;
   }
 
   @override
@@ -117,9 +120,18 @@ class _SignupScreenInstitutionState extends State<SignupScreenInstitution> {
                         padding: EdgeInsets.symmetric(
                           horizontal: 70.0,
                         ),
-                        onPressed: () {
-                          _submit();
-                          Navigator.pop(context);
+                        onPressed: () async {
+                          bool result = await _submit();
+                          if (result) {
+                            Navigator.pop(context);
+                          } else {
+                            Scaffold.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "C'è stato un errore, riprova più tardi!"),
+                              ),
+                            );
+                          }
                         },
                         child: Text(
                           "Registrati",

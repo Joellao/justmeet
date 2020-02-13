@@ -50,7 +50,7 @@ class MapScreenState extends State<MapScreen>
       queryParameters: {
         "latitude": position.latitude,
         "longitude": position.longitude,
-        "raggio": 30
+        "raggio": 90
       },
       options: Options(
         headers: {

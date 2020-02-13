@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:justmeet/components/colori.dart';
@@ -14,7 +15,7 @@ class SignupScreenUser extends StatefulWidget {
 class _SignupScreenUserState extends State<SignupScreenUser> {
   final _formKey = GlobalKey<FormState>();
   String _firstName, _lastName, _email, _password, _userName, _birthDate;
-  _submit() async {
+  Future<bool> _submit() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       SignupUser form = SignupUser(
@@ -24,8 +25,11 @@ class _SignupScreenUserState extends State<SignupScreenUser> {
           email: _email,
           password: _password,
           userName: _userName);
-      await Provider.of<AuthController>(context).signUpUser(form);
+      bool user = await Provider.of<AuthController>(context, listen: false)
+          .signUpUser(form);
+      return user;
     }
+    return false;
   }
 
   @override
@@ -169,9 +173,18 @@ class _SignupScreenUserState extends State<SignupScreenUser> {
                         padding: EdgeInsets.symmetric(
                           horizontal: 70.0,
                         ),
-                        onPressed: () {
-                          _submit();
-                          Navigator.pop(context);
+                        onPressed: () async {
+                          bool result = await _submit();
+                          if (result) {
+                            Navigator.pop(context);
+                          } else {
+                            Scaffold.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "C'è stato un errore, riprova più tardi!"),
+                              ),
+                            );
+                          }
                         },
                         child: Text(
                           "Registrati",

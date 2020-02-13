@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +13,8 @@ class DummyUser {
   const DummyUser({@required this.uid});
   final String uid;
 }
+
+enum authProblems { UserNotFound, PasswordNotValid, NetworkError }
 
 class AuthController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -59,7 +63,37 @@ class AuthController {
       FirebaseUser user = result.user;
       return _userFromFirebase(user);
     } catch (e) {
-      throw new Exception(e);
+      authProblems errorType;
+      if (Platform.isAndroid) {
+        switch (e.message) {
+          case 'There is no user record corresponding to this identifier. The user may have been deleted.':
+            errorType = authProblems.UserNotFound;
+            break;
+          case 'The password is invalid or the user does not have a password.':
+            errorType = authProblems.PasswordNotValid;
+            break;
+          case 'A network error (such as timeout, interrupted connection or unreachable host) has occurred.':
+            errorType = authProblems.NetworkError;
+            break;
+          default:
+            print('Case ${e.message} is not yet implemented');
+        }
+      } else if (Platform.isIOS) {
+        switch (e.code) {
+          case 'Error 17011':
+            errorType = authProblems.UserNotFound;
+            break;
+          case 'Error 17009':
+            errorType = authProblems.PasswordNotValid;
+            break;
+          case 'Error 17020':
+            errorType = authProblems.NetworkError;
+            break;
+          default:
+            print('Case ${e.message} is not yet implemented');
+        }
+      }
+      throw new Exception(errorType);
     }
   }
 
@@ -93,15 +127,17 @@ class AuthController {
       print(e.response);
     }
     try {
-      Response response = await dio
-          .post("https://justmeetgjj.herokuapp.com/signupUserGoogle", data: {
-        'uid': user.uid,
-        'email': user.email,
-        'firstName': name,
-        'lastName': surname,
-        'userName': username,
-        'date': date,
-      });
+      Response response = await dio.post(
+        "https://justmeetgjj.herokuapp.com/signupUserGoogle",
+        data: {
+          'uid': user.uid,
+          'email': user.email,
+          'firstName': name,
+          'lastName': surname,
+          'userName': username,
+          'date': date,
+        },
+      );
 
       if (response.statusCode == 200) {
         print(response.data);
@@ -115,24 +151,29 @@ class AuthController {
     return null;
   }
 
-  Future<FirebaseUser> signUpUser(SignupUser form) async {
-    Response response =
-        await dio.post("https://justmeetgjj.herokuapp.com/signupUser", data: {
-      "email": form.email,
-      "firstName": form.firstName,
-      "lastName": form.lastName,
-      "password": form.password,
-      "birthDate": form.birthDate,
-      "userName": form.userName
-    });
-    if (response.statusCode == 401) {
-      print(response.data);
-      return response.data;
+  Future<bool> signUpUser(SignupUser form) async {
+    try {
+      Response response =
+          await dio.post("https://justmeetgjj.herokuapp.com/signupUser", data: {
+        "email": form.email,
+        "firstName": form.firstName,
+        "lastName": form.lastName,
+        "password": form.password,
+        "birthDate": form.birthDate,
+        "userName": form.userName
+      });
+      if (response.statusCode == 200) {
+        print(response.data);
+        return true;
+      }
+    } on DioError catch (e) {
+      print(e.response);
     }
-    return null;
+
+    return false;
   }
 
-  Future<FirebaseUser> signUpInstitution(SignupInstitution form) async {
+  Future<bool> signUpInstitution(SignupInstitution form) async {
     Response response = await dio
         .post("https://justmeetgjj.herokuapp.com/signupInstitution", data: {
       "name": form.name,
@@ -140,10 +181,10 @@ class AuthController {
       "password": form.password,
       "userName": form.userName
     });
-    if (response.statusCode == 401) {
-      return response.data;
+    if (response.statusCode == 200) {
+      return true;
     }
-    return null;
+    return false;
   }
 
   DummyUser _userFromFirebase(FirebaseUser user) {
