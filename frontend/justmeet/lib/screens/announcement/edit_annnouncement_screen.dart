@@ -64,6 +64,8 @@ class _EditAnnouncementScreenState extends State<EditAnnouncementScreen> {
 
     return Scaffold(
         body: Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
       color: Color(0xFF05204a),
       child: SingleChildScrollView(
           child: Padding(

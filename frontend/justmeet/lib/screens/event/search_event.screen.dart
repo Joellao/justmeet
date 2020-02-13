@@ -56,16 +56,16 @@ class _SearchEventScreenState extends State<SearchEventScreen> {
     return Container(
       color: Colori.bluScuro,
       child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 40.0,
-            vertical: 20.0,
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: <Widget>[
-                CustomField(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40.0,
+                  vertical: 20.0,
+                ),
+                child: CustomField(
                   icon: Icons.edit,
                   label: 'Cerca evento',
                   hint: "Inserisci il nome dell'evento",
@@ -75,24 +75,24 @@ class _SearchEventScreenState extends State<SearchEventScreen> {
                       name, //salva la variabile dentro eventName
                   obscureText: false,
                 ),
-                FlatButton(
-                  color: Colori.viola,
-                  child: Text('Cerca Evento'),
-                  onPressed: _submit,
-                ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _events.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    Event event = _events.elementAt(index);
-                    return EventWidget(
-                      event: event,
-                      profileWidget: getProfileWidget(event.user),
-                    );
-                  },
-                )
-              ],
-            ),
+              ),
+              FlatButton(
+                color: Colori.viola,
+                child: Text('Cerca Evento'),
+                onPressed: _submit,
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: _events.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Event event = _events.elementAt(index);
+                  return EventWidget(
+                    event: event,
+                    profileWidget: getProfileWidget(event.user),
+                  );
+                },
+              )
+            ],
           ),
         ),
       ),
@@ -127,7 +127,7 @@ class _SearchEventScreenState extends State<SearchEventScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                overflow: TextOverflow.ellipsis,
+                overflow: TextOverflow.fade,
               ),
               Text(" "),
               Text(

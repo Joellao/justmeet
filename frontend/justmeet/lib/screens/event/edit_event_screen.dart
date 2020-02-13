@@ -78,6 +78,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
         backgroundColor: Colori.bluScuro,
       ),
       body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
         color: Color(0xFF05204a),
         child: SingleChildScrollView(
           child: Padding(
