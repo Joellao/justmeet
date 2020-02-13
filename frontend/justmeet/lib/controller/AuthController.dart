@@ -52,8 +52,11 @@ class AuthController {
 
   Future<String> getToken() async {
     FirebaseUser user = await _auth.currentUser();
-    IdTokenResult token = await user.getIdToken();
-    return token.token;
+    if (user != null) {
+      IdTokenResult token = await user.getIdToken();
+      return token.token;
+    }
+    return null;
   }
 
   Future<DummyUser> signIn(String email, String password) async {
@@ -103,20 +106,26 @@ class AuthController {
       accessToken: auth.accessToken,
       idToken: auth.idToken,
     );
-    final AuthResult result =
-        await FirebaseAuth.instance.signInWithCredential(credential);
+    // final AuthResult result =
+    //     await FirebaseAuth.instance.signInWithCredential(credential);
+    // FirebaseUser user = result.user;
+    // await signOut();
+    final AuthResult resultFasullo =
+        await _auth.signInWithCredential(credential);
+    String uid = resultFasullo.user.uid;
     signOut();
-    FirebaseUser user = result.user;
-    String fullName = user.displayName;
-    String username = user.email.substring(0, user.email.indexOf("@"));
-    String name = user.displayName.substring(0, fullName.indexOf(" "));
-    String surname = user.displayName.substring(fullName.indexOf(" ") + 1);
-    String date;
-    try {
+    String fullName = login.displayName;
+    String username = login.email.substring(0, login.email.indexOf("@"));
+    String name = login.displayName.substring(0, fullName.indexOf(" "));
+    String surname = login.displayName.substring(fullName.indexOf(" ") + 1);
+    String date = "01/01/1970";
+    /*try {
       Response response = await dio.get(
         'https://people.googleapis.com/v1/people/${login.id}?personFields=birthdays',
         options: Options(headers: await login.authHeaders),
       );
+      print(response.data);
+
       Map map = response.data['birthdays'][0]['date'];
       var day = map['day'];
       var month = map['month'];
@@ -125,13 +134,13 @@ class AuthController {
       print(date);
     } on DioError catch (e) {
       print(e.response);
-    }
+    }*/
     try {
       Response response = await dio.post(
         "https://justmeetgjj.herokuapp.com/signupUserGoogle",
         data: {
-          'uid': user.uid,
-          'email': user.email,
+          'uid': uid,
+          'email': login.email,
           'firstName': name,
           'lastName': surname,
           'userName': username,
@@ -141,8 +150,9 @@ class AuthController {
 
       if (response.statusCode == 200) {
         print(response.data);
-        FirebaseAuth.instance.signInWithCredential(credential);
-        return _userFromFirebase(user);
+        AuthResult result =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+        return _userFromFirebase(result.user);
       }
     } on DioError catch (e) {
       print(e.response);
