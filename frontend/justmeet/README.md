@@ -2,9 +2,8 @@
 
 Per il Frontend è stato utilizzato il framework **Flutter** che ci permette di creare app native sia per ios che android. La scelta di Flutter è stata dettata soprattuto dal fatto che è possibile avere una codebase unica per le applicazioni Android e iOS. Inoltre Flutter mette a disposizione l'hot reload che non richiede di ricompilare il codice;
 
-Login Screen             |  Profile Screen |          Map of Events
-:-------------------------:|:-------------------------:
-![](https://i.imgur.com/UnxY6vC.png) |  ![](https://i.imgur.com/uxR0rEj.png)|![](https://i.imgur.com/b8XpjiA.png)
+
+![](https://i.imgur.com/UnxY6vC.png) ![](https://i.imgur.com/uxR0rEj.png) ![](https://i.imgur.com/b8XpjiA.png)
 
  Il codice è stato scritto in **Dart**, un nuovo e moderno linguaggio orientato agli oggetti che definisce la maggior parte del suo sistema (gesture, animazioni, framework, widget, ecc.) e che è supportato da Flutter.
 
