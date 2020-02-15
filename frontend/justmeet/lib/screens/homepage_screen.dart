@@ -4,7 +4,6 @@ import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/screens/create_screen.dart';
 import 'package:justmeet/screens/feed_screen.dart';
-import 'package:justmeet/screens//friends_screen.dart';
 import 'package:justmeet/screens/event/partecipated_events_screen.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:justmeet/screens/search_screen.dart';
@@ -40,6 +39,7 @@ class _HomePageScreenState extends State<HomePageScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Provider.of<User>(context, listen: false) != null
         ? Scaffold(
             appBar: AppBar(

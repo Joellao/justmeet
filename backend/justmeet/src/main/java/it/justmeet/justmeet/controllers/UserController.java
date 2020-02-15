@@ -175,7 +175,7 @@ public class UserController {
 		String myId = WoWoUtility.getInstance().getUid(token);
 		User user = getOtherProfile(userId, token);
 		User me = userRepo.findByUid(myId);
-		if(me.getFriends().contains(user))
+		if (me.getFriends().contains(user))
 			return false;
 		if (answer) {
 			me.getFriends().add(user);

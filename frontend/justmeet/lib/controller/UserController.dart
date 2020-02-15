@@ -45,4 +45,65 @@ class UserController {
     }
     return null;
   }
+
+  Future<List> searchUser(String token, String username) async {
+    try {
+      Dio dio = new Dio();
+      Response response = await dio.get(
+        "https://justmeetgjj.herokuapp.com/user/$username/find",
+        options: Options(
+          headers: {
+            "Authorization": token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        return response.data;
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+    return null;
+  }
+
+  Future<bool> acceptRequest(String token, String uid) async {
+    try {
+      Response response = await dio.patch(
+        "https://justmeetgjj.herokuapp.com/user/$uid/true",
+        options: Options(
+          headers: {
+            "Authorization": token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+    return false;
+  }
+
+  Future<bool> refuseRequest(String token, String uid) async {
+    try {
+      Response response = await dio.patch(
+        "https://justmeetgjj.herokuapp.com/user/$uid/false",
+        options: Options(
+          headers: {
+            "Authorization": token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+    return false;
+  }
 }

@@ -1,10 +1,13 @@
-import 'package:dio/dio.dart';
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
+import 'package:justmeet/components/models/creates/EventCreate.dart';
 import 'package:justmeet/components/models/user.dart';
+import 'package:justmeet/controller/EventController.dart';
 import 'package:provider/provider.dart';
 
 class NewEventScreen extends StatefulWidget {
@@ -18,63 +21,44 @@ class _NewEventScreenState extends State<NewEventScreen> {
   bool _isFree = true;
   int _maxPersons;
 
-  _submit() async {
-    print("Entrato");
+  Future<LinkedHashMap<String, dynamic>> _createEventFromProvider() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      print(_eventName);
-      print(_location);
-      print(_description);
-      print(_date);
-      print(_category);
-      print(_isFree);
-      print(_maxPersons);
-      try {
-        Dio dio = new Dio();
-        String token = Provider.of<String>(context, listen: false);
-        Response response = await dio.post(
-          "https://justmeetgjj.herokuapp.com/event",
-          data: {
-            "name": _eventName,
-            "location": _location,
-            "description": _description,
-            "isFree": _isFree,
-            "category": _category.toUpperCase(),
-            "maxPersons": _maxPersons,
-            'date': _date
-          },
-          options: Options(
-            headers: {
-              "Authorization": token,
-            },
-            responseType: ResponseType.json,
-          ),
-        );
-        if (response.statusCode == 200) {
-          print(response.data);
-          User user = Provider.of<User>(context, listen: false);
-          List list = user.events;
-          list.add(response.data);
-          Provider.of<User>(context, listen: false).update(
-              user.uid,
-              user.firstName,
-              user.lastName,
-              user.birthDate,
-              user.email,
-              user.bio,
-              list,
-              user.profileImage,
-              user.username,
-              user.announcements,
-              user.friends,
-              user.friendRequests,
-              user.partecipatedEvents);
-          print("Evento creato con successo");
-        }
-      } on DioError catch (e) {
-        print(e.response);
+      String token = Provider.of<String>(context, listen: false);
+      EventCreate create = new EventCreate(
+        category: this._category.toUpperCase(),
+        name: this._eventName,
+        location: this._location,
+        date: this._date,
+        description: this._description,
+        isFree: this._isFree,
+        maxPersons: this._maxPersons,
+      );
+      LinkedHashMap<String, dynamic> created =
+          await Provider.of<EventController>(context, listen: false)
+              .createEvent(token, create);
+      if (created != null) {
+        User user = Provider.of<User>(context, listen: false);
+        List list = user.events;
+        list.add(created);
+        Provider.of<User>(context, listen: false).update(
+            user.uid,
+            user.firstName,
+            user.lastName,
+            user.birthDate,
+            user.email,
+            user.bio,
+            list,
+            user.profileImage,
+            user.username,
+            user.announcements,
+            user.friends,
+            user.friendRequests,
+            user.partecipatedEvents);
+        return created;
       }
     }
+    return null;
   }
 
   @override
@@ -286,11 +270,15 @@ class _NewEventScreenState extends State<NewEventScreen> {
                 FlatButton(
                   color: Colori.viola,
                   child: Text('Crea Evento'),
-                  onPressed: () {
-                    if (_submit() != null) {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text("Evento creato"),
-                      ));
+                  onPressed: () async {
+                    LinkedHashMap<String, dynamic> created =
+                        await _createEventFromProvider();
+                    if (created != null) {
+                      Scaffold.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Evento creato"),
+                        ),
+                      );
                     }
                   },
                 )

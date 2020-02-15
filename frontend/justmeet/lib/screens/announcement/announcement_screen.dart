@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
@@ -9,6 +8,7 @@ import 'package:justmeet/components/models/announcement.dart';
 import 'package:justmeet/components/models/comment.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/comment_widget.dart';
+import 'package:justmeet/controller/AnnouncementController.dart';
 import 'package:justmeet/screens/announcement/edit_annnouncement_screen.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +29,6 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
   bool refresh;
 
   remove(value, index) {
-    print(this.widget.announce.comments.length);
     this.widget.announce.comments.removeAt(index);
     setState(() {
       refresh = value;
@@ -37,7 +36,6 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
   }
 
   add(value, comment) {
-    print(this.widget.announce.comments.length);
     this.widget.announce.comments.add(comment);
     setState(() {
       refresh = value;
@@ -59,83 +57,48 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
     });
   }
 
-  _deleteAnnounce() async {
-    print("Entrato");
-    try {
-      Dio dio = new Dio();
-      String token = Provider.of<String>(context, listen: false);
-      Response response = await dio.delete(
-        "https://justmeetgjj.herokuapp.com/announcement/${this.widget.announce.id}",
-        options: Options(
-          headers: {
-            "Authorization": token,
-          },
-          responseType: ResponseType.json,
-        ),
-      );
-      if (response.statusCode == 200) {
-        print(response.data);
-        print("Annuncio cancellato");
-        List announces = [];
-        User user = Provider.of<User>(context, listen: false);
-        for (Map<String, dynamic> announce in user.announcements) {
-          Announcement a = Announcement.fromJson(announce);
-          if (a.id != this.widget.announce.id) {
-            announces.add(a);
-          }
+  Future<bool> _deleteFromProvider() async {
+    String token = Provider.of<String>(context, listen: false);
+    bool deleted =
+        await Provider.of<AnnouncementController>(context, listen: false)
+            .deleteAnnouncement(token, this.widget.announce.id);
+    if (deleted) {
+      List announces = [];
+      User user = Provider.of<User>(context, listen: false);
+      for (Map<String, dynamic> announce in user.announcements) {
+        Announcement a = Announcement.fromJson(announce);
+        if (a.id != this.widget.announce.id) {
+          announces.add(announce);
         }
-        Provider.of<User>(context, listen: false).update(
-            user.uid,
-            user.firstName,
-            user.lastName,
-            user.birthDate,
-            user.email,
-            user.bio,
-            user.events,
-            user.profileImage,
-            user.username,
-            announces,
-            user.friends,
-            user.friendRequests,
-            user.partecipatedEvents);
-        var count = 0;
-        Navigator.popUntil(context, (route) {
-          return count++ == 2;
-        });
       }
-    } on DioError catch (e) {
-      print(e.response);
+      Provider.of<User>(context, listen: false).update(
+          user.uid,
+          user.firstName,
+          user.lastName,
+          user.birthDate,
+          user.email,
+          user.bio,
+          user.events,
+          user.profileImage,
+          user.username,
+          announces,
+          user.friends,
+          user.friendRequests,
+          user.partecipatedEvents);
+      var count = 0;
+      Navigator.popUntil(context, (route) {
+        return count++ == 2;
+      });
     }
+    return deleted;
   }
 
-  Future<LinkedHashMap<String, dynamic>> _submit() async {
-    print("Entrato");
+  Future<LinkedHashMap<String, dynamic>> _createCommentFromProvider() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      print(_body);
-      try {
-        Dio dio = new Dio();
-        String token = Provider.of<String>(context, listen: false);
-        Response response = await dio.post(
-          "https://justmeetgjj.herokuapp.com/announcement/${this.widget.announce.id}/comment",
-          data: {
-            "body": _body,
-          },
-          options: Options(
-            headers: {
-              "Authorization": token,
-            },
-            responseType: ResponseType.json,
-          ),
-        );
-        if (response.statusCode == 200) {
-          print(response.data);
-          print("Evento commentato");
-          return response.data;
-        }
-      } on DioError catch (e) {
-        print(e.response);
-      }
+      String token = Provider.of<String>(context, listen: false);
+      return await Provider.of<AnnouncementController>(context, listen: false)
+          .commentAnnouncement(token, this.widget.announce.id, this._body);
     }
     return null;
   }
@@ -160,10 +123,14 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                         child: Text("Modifica Annuncio"),
                         onTap: () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditAnnouncementScreen(
-                                      announce: this.widget.announce)));
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditAnnouncementScreen(
+                                announce: this.widget.announce,
+                                func: this.modifyAnnounce,
+                              ),
+                            ),
+                          );
                         },
                       ),
                     ),
@@ -171,11 +138,21 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                       value: 2,
                       child: InkWell(
                         child: Text("Cancella Annuncio"),
-                        onTap: () {
-                          if (_deleteAnnounce() != null) {
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                              content: Text("Annuncio cancellato"),
-                            ));
+                        onTap: () async {
+                          bool delete = await _deleteFromProvider();
+                          if (delete) {
+                            Scaffold.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("Annuncio cancellato"),
+                              ),
+                            );
+                          } else {
+                            Scaffold.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "C'è stato un errore, riprova più tardi"),
+                              ),
+                            );
                           }
                         },
                       ),
@@ -264,7 +241,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                 ),
                 InkWell(
                   onTap: () async {
-                    LinkedHashMap comment = await _submit();
+                    LinkedHashMap comment = await _createCommentFromProvider();
                     add(true, comment);
                   },
                   child: Icon(

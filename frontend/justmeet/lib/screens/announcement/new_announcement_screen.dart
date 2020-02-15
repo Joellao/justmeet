@@ -1,9 +1,12 @@
-import 'package:dio/dio.dart';
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
+import 'package:justmeet/components/models/creates/AnnouncementCreate.dart';
 import 'package:justmeet/components/models/user.dart';
+import 'package:justmeet/controller/AnnouncementController.dart';
 import 'package:provider/provider.dart';
 
 class NewAnnouncementScreen extends StatefulWidget {
@@ -15,55 +18,38 @@ class _NewEventScreenState extends State<NewAnnouncementScreen> {
   final _formKey = GlobalKey<FormState>();
   String _announcementName, _description, _category = 'Cinema';
 
-  _submit() async {
-    print("Entrato");
+  Future<LinkedHashMap<String, dynamic>> createAnnouncement() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      print(_announcementName);
+      String token = Provider.of<String>(context, listen: false);
+      AnnouncementCreate create = new AnnouncementCreate(
+          category: this._category.toUpperCase(),
+          name: this._announcementName,
+          description: this._description);
+      LinkedHashMap<String, dynamic> creato =
+          await Provider.of<AnnouncementController>(context, listen: false)
+              .newAnnouncement(token, create);
 
-      print(_category);
-
-      try {
-        Dio dio = new Dio();
-        String token = Provider.of<String>(context, listen: false);
-        Response response = await dio.post(
-          "https://justmeetgjj.herokuapp.com/announcement",
-          data: {
-            "name": _announcementName,
-            "description": _description,
-            "category": _category.toUpperCase(),
-          },
-          options: Options(
-            headers: {
-              "Authorization": token,
-            },
-            responseType: ResponseType.json,
-          ),
-        );
-        if (response.statusCode == 200) {
-          print("Annuncio creato con successo");
-          User user = Provider.of<User>(context, listen: false);
-          List list = user.announcements;
-          list.add(response.data);
-          Provider.of<User>(context, listen: false).update(
-              user.uid,
-              user.firstName,
-              user.lastName,
-              user.birthDate,
-              user.email,
-              user.bio,
-              user.events,
-              user.profileImage,
-              user.username,
-              list,
-              user.friends,
-              user.friendRequests,
-              user.partecipatedEvents);
-        }
-      } on DioError catch (e) {
-        print(e.response);
-      }
+      User user = Provider.of<User>(context, listen: false);
+      List list = user.announcements;
+      list.add(creato);
+      Provider.of<User>(context, listen: false).update(
+          user.uid,
+          user.firstName,
+          user.lastName,
+          user.birthDate,
+          user.email,
+          user.bio,
+          user.events,
+          user.profileImage,
+          user.username,
+          list,
+          user.friends,
+          user.friendRequests,
+          user.partecipatedEvents);
+      return creato;
     }
+    return null;
   }
 
   @override
@@ -168,11 +154,15 @@ class _NewEventScreenState extends State<NewAnnouncementScreen> {
               FlatButton(
                 color: Colori.viola,
                 child: Text('Crea Annuncio'),
-                onPressed: () {
-                  if (_submit() != null) {
-                    Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text("Annuncio creato"),
-                    ));
+                onPressed: () async {
+                  LinkedHashMap<String, dynamic> creato =
+                      await createAnnouncement();
+                  if (creato != null) {
+                    Scaffold.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Annuncio creato"),
+                      ),
+                    );
                   }
                 },
               )

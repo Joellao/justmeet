@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/models/review.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/star_rating.dart';
+import 'package:justmeet/controller/ReviewController.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -21,28 +22,11 @@ class ReviewWidget extends StatefulWidget {
 }
 
 class _ReviewWidgetState extends State<ReviewWidget> {
-  Future<bool> _deleteReview() async {
-    try {
-      Dio dio = new Dio();
-      String token = Provider.of<String>(context, listen: false);
-      Response response = await dio.delete(
-        "https://justmeetgjj.herokuapp.com/review/${this.widget.review.id}",
-        options: Options(
-          headers: {
-            "Authorization": token,
-          },
-          responseType: ResponseType.json,
-        ),
-      );
-      if (response.statusCode == 200) {
-        print(response.data);
-        print("Recensione eliminata");
-        return true;
-      }
-    } on DioError catch (e) {
-      print(e.response);
-    }
-    return false;
+  Future<bool> _deleteReviewFromProvider() async {
+    String token = Provider.of<String>(context, listen: false);
+    bool deleted = await Provider.of<ReviewController>(context, listen: false)
+        .deleteReview(token, this.widget.review.id);
+    return deleted;
   }
 
   @override
@@ -167,11 +151,14 @@ class _ReviewWidgetState extends State<ReviewWidget> {
                 value: 2,
                 child: InkWell(
                   child: Text("Cancella recensione"),
-                  onTap: () {
-                    if (_deleteReview() != null) {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text("Recensione cancellato"),
-                      ));
+                  onTap: () async {
+                    bool deleted = await _deleteReviewFromProvider();
+                    if (deleted) {
+                      Scaffold.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Recensione cancellato"),
+                        ),
+                      );
                       this.widget.func(true, this.widget.index);
                     }
                   },

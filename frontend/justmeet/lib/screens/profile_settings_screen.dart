@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/controller/AuthController.dart';
-import 'package:justmeet/controller/UserController.dart';
 import 'package:provider/provider.dart';
 
 class ProfileSettingsScreen extends StatefulWidget {
@@ -42,7 +42,13 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   }
 
   void getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var image;
+    try {
+      image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    } on PlatformException catch (e) {
+      print(e);
+    }
+
     setState(() {
       _image = image;
     });
@@ -163,7 +169,18 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 InkWell(
-                  onTap: getImage,
+                  onTap: () {
+                    try {
+                      getImage();
+                    } catch (e) {
+                      Scaffold.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              "Devi dare i permessi per scegliere l'immagine"),
+                        ),
+                      );
+                    }
+                  },
                   child: CircleAvatar(
                     radius: 70,
                     backgroundImage:

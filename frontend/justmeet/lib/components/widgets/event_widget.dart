@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/user.dart';
+import 'package:justmeet/controller/EventController.dart';
 import 'package:justmeet/controller/UserController.dart';
 import 'package:justmeet/screens/event/event_screen.dart';
 import 'package:provider/provider.dart';
@@ -22,106 +23,74 @@ class _EventWidgetState extends State<EventWidget> {
   Dio dio = new Dio();
   bool partecipating = false;
   int fake = 0;
-  Future<bool> _partecipate() async {
-    try {
-      String token = Provider.of<String>(context, listen: false);
-      Response response = await dio.post(
-        "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}/prenote",
-        options: Options(
-          headers: {
-            "Authorization": token,
-          },
-          responseType: ResponseType.json,
-        ),
-      );
-      if (response.statusCode == 200) {
-        if (response.data) {
-          print("Prenotazione effettuata con successo");
-        } else {
-          print("errore");
-        }
-        User user = await Provider.of<UserController>(context, listen: false)
-            .getUser(context);
-        Provider.of<User>(context, listen: false).update(
-            user.uid,
-            user.firstName,
-            user.lastName,
-            user.birthDate,
-            user.email,
-            user.bio,
-            user.events,
-            user.profileImage,
-            user.username,
-            user.announcements,
-            user.friends,
-            user.friendRequests,
-            user.partecipatedEvents);
-        setState(() {
-          partecipating = true;
-          fake++;
-        });
-        return true;
-      }
-    } on DioError catch (e) {
-      print(e.response);
+
+  Future<bool> _partecipateFromProvider() async {
+    String token = Provider.of<String>(context, listen: false);
+    bool partecipate =
+        await Provider.of<EventController>(context, listen: false)
+            .partecipateEvent(token, this.widget.event.id);
+    if (partecipate) {
+      User user = await Provider.of<UserController>(context, listen: false)
+          .getUser(context);
+      Provider.of<User>(context, listen: false).update(
+          user.uid,
+          user.firstName,
+          user.lastName,
+          user.birthDate,
+          user.email,
+          user.bio,
+          user.events,
+          user.profileImage,
+          user.username,
+          user.announcements,
+          user.friends,
+          user.friendRequests,
+          user.partecipatedEvents);
+      setState(() {
+        partecipating = true;
+        fake++;
+      });
     }
-    return false;
+    return partecipate;
   }
 
-  Future<bool> _cancelpartecipate() async {
-    try {
-      String token = Provider.of<String>(context, listen: false);
-      Response response = await dio.patch(
-        "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}/cancelPrenote",
-        options: Options(
-          headers: {
-            "Authorization": token,
-          },
-          responseType: ResponseType.json,
-        ),
-      );
-      if (response.statusCode == 200) {
-        if (response.data) {
-          print("Sprenotazione effettuata");
-        } else {
-          print("errore");
+  Future<bool> _cancelPrenoteFromProvider() async {
+    String token = Provider.of<String>(context, listen: false);
+    bool cancelled = await Provider.of<EventController>(context, listen: false)
+        .cancelPartecipateEvent(token, this.widget.event.id);
+    if (cancelled) {
+      var valore;
+      this.widget.event.partecipants.forEach((value) {
+        User user = User.fromJson(value);
+        if (user.uid == Provider.of<User>(context, listen: false).uid) {
+          valore = value;
         }
-        var valore;
-        this.widget.event.partecipants.forEach((value) {
-          User user = User.fromJson(value);
-          if (user.uid == Provider.of<User>(context, listen: false).uid) {
-            valore = value;
-          }
-        });
-        if (valore != null) {
-          this.widget.event.partecipants.remove(valore);
-        }
-        User user = await Provider.of<UserController>(context, listen: false)
-            .getUser(context);
-        Provider.of<User>(context, listen: false).update(
-            user.uid,
-            user.firstName,
-            user.lastName,
-            user.birthDate,
-            user.email,
-            user.bio,
-            user.events,
-            user.profileImage,
-            user.username,
-            user.announcements,
-            user.friends,
-            user.friendRequests,
-            user.partecipatedEvents);
-        setState(() {
-          partecipating = false;
-          fake--;
-        });
-        return true;
+      });
+      if (valore != null) {
+        this.widget.event.partecipants.remove(valore);
       }
-    } on DioError catch (e) {
-      print(e.response);
+      User user = await Provider.of<UserController>(context, listen: false)
+          .getUser(context);
+      Provider.of<User>(context, listen: false).update(
+          user.uid,
+          user.firstName,
+          user.lastName,
+          user.birthDate,
+          user.email,
+          user.bio,
+          user.events,
+          user.profileImage,
+          user.username,
+          user.announcements,
+          user.friends,
+          user.friendRequests,
+          user.partecipatedEvents);
+      setState(() {
+        partecipating = false;
+        fake--;
+      });
     }
-    return false;
+    return cancelled;
   }
 
   static Future<void> openMap(String location) async {
@@ -349,7 +318,8 @@ class _EventWidgetState extends State<EventWidget> {
                                     ),
                                   ),
                                   onPressed: () async {
-                                    bool cancel = await _cancelpartecipate();
+                                    bool cancel =
+                                        await _cancelPrenoteFromProvider();
                                     if (cancel) {
                                       Scaffold.of(context)
                                           .showSnackBar(SnackBar(
@@ -358,40 +328,45 @@ class _EventWidgetState extends State<EventWidget> {
                                       ));
                                     }
                                   })
-                              : RaisedButton(
-                                  color: Color(0xFF5257f2),
-                                  elevation: 4,
-                                  disabledColor: Colors.red,
-                                  child: Text(
-                                    "Prenotati",
-                                    style: GoogleFonts.roboto(
-                                      textStyle: TextStyle(
-                                        fontWeight: FontWeight.bold,
+                              : Builder(
+                                  builder: (context) => RaisedButton(
+                                    color: Color(0xFF5257f2),
+                                    elevation: 4,
+                                    disabledColor: Colors.red,
+                                    child: Text(
+                                      "Prenotati",
+                                      style: GoogleFonts.roboto(
+                                        textStyle: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  onPressed: ((widget.event.maxNumber -
-                                              (this.widget.event.partecipants ==
-                                                      null
-                                                  ? 0
-                                                  : this
-                                                      .widget
-                                                      .event
-                                                      .partecipants
-                                                      .length)) >
-                                          0)
-                                      ? () async {
-                                          bool partecipate =
-                                              await _partecipate();
-                                          if (partecipate) {
-                                            Scaffold.of(context)
-                                                .showSnackBar(SnackBar(
-                                              content: Text(
-                                                  "Prenotazione effettuata"),
-                                            ));
+                                    onPressed: ((widget.event.maxNumber -
+                                                (this
+                                                            .widget
+                                                            .event
+                                                            .partecipants ==
+                                                        null
+                                                    ? 0
+                                                    : this
+                                                        .widget
+                                                        .event
+                                                        .partecipants
+                                                        .length)) >
+                                            0)
+                                        ? () async {
+                                            bool partecipate =
+                                                await _partecipateFromProvider();
+                                            if (partecipate) {
+                                              Scaffold.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    "Prenotazione effettuata"),
+                                              ));
+                                            }
                                           }
-                                        }
-                                      : Text(""),
+                                        : Text(""),
+                                  ),
                                 )
                           : Text(""),
                     ),

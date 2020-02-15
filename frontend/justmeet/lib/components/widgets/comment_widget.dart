@@ -1,9 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/models/comment.dart';
 import 'package:justmeet/components/models/user.dart';
+import 'package:justmeet/controller/CommentController.dart';
 import 'package:justmeet/screens/comment/edit_comment_screen.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:justmeet/screens/comment/segnala_commento_screen.dart';
@@ -29,28 +29,11 @@ class CommentWidget extends StatefulWidget {
 }
 
 class _CommentWidgetState extends State<CommentWidget> {
-  Future<bool> _deleteComment() async {
-    try {
-      Dio dio = new Dio();
-      String token = Provider.of<String>(context, listen: false);
-      Response response = await dio.delete(
-        "https://justmeetgjj.herokuapp.com/comment/${this.widget.comment.id}",
-        options: Options(
-          headers: {
-            "Authorization": token,
-          },
-          responseType: ResponseType.json,
-        ),
-      );
-      if (response.statusCode == 200) {
-        print(response.data);
-        print("Segnalato con successo");
-        return true;
-      }
-    } on DioError catch (e) {
-      print(e.response);
-    }
-    return false;
+  Future<bool> _deleteCommentFromProvider() async {
+    String token = Provider.of<String>(context, listen: false);
+    bool deleted = await Provider.of<CommentController>(context, listen: false)
+        .deleteComment(token, this.widget.comment.id);
+    return deleted;
   }
 
   @override
@@ -152,7 +135,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                               child: InkWell(
                                 child: Text("Cancella commento"),
                                 onTap: () async {
-                                  bool delete = await _deleteComment();
+                                  bool delete =
+                                      await _deleteCommentFromProvider();
                                   if (delete) {
                                     Scaffold.of(context).showSnackBar(SnackBar(
                                       content: Text("Commento cancellato"),

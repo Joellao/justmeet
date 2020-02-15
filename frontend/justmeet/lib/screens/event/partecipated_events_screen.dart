@@ -6,7 +6,6 @@ import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/event_widget.dart';
 import 'package:justmeet/screens/profile_screen.dart';
-import 'package:provider/provider.dart';
 
 class PartecipatedEventsScreen extends StatelessWidget {
   final List<dynamic> events;

@@ -5,17 +5,24 @@ import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/request_widget.dart';
 
 class RequestFriendsScreen extends StatefulWidget {
-  final List<dynamic> requests;
-  const RequestFriendsScreen({Key key, this.requests}) : super(key: key);
+  List<dynamic> requests;
+  RequestFriendsScreen({Key key, this.requests}) : super(key: key);
 
   @override
   _RequestFriendsState createState() => _RequestFriendsState();
 }
 
 class _RequestFriendsState extends State<RequestFriendsScreen> {
+  bool refresh = false;
+  void remove(value, index) {
+    this.widget.requests.removeAt(index);
+    setState(() {
+      refresh = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = new TextEditingController();
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -39,6 +46,8 @@ class _RequestFriendsState extends State<RequestFriendsScreen> {
                         User.fromJson(this.widget.requests.elementAt(index));
                     return RequestWidget(
                       user: user,
+                      index: index,
+                      func: remove,
                     );
                   },
                 )

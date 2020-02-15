@@ -15,7 +15,7 @@ class Event {
   final List reviews;
   final List partecipants;
   final List photo;
-  final bool cancelled;
+  bool cancelled;
   final bool isFree;
   final double latitude;
   final double longitude;

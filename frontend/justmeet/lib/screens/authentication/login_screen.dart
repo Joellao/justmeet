@@ -60,8 +60,8 @@ class _LoginScreenState extends State<LoginScreen> {
     });
     try {
       GoogleSignInAccount login = await _googleSignIn.signIn();
-      AuthController controller = new AuthController();
-      await controller.googleSignIn(login);
+      await Provider.of<AuthController>(context, listen: false)
+          .googleSignIn(login);
     } catch (error) {
       print(error);
     }

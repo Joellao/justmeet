@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
@@ -6,6 +6,7 @@ import 'package:justmeet/components/custom_field.dart';
 import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/event_widget.dart';
+import 'package:justmeet/controller/EventController.dart';
 import 'package:provider/provider.dart';
 
 class SearchEventScreen extends StatefulWidget {
@@ -18,37 +19,23 @@ class _SearchEventScreenState extends State<SearchEventScreen> {
   final _formKey = GlobalKey<FormState>();
   List<Event> _events = [];
 
-  _submit() async {
-    print("Entrato");
+  Future<LinkedHashMap<String, dynamic>> _searchFromProvider() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      try {
-        Dio dio = new Dio();
-        String token = Provider.of<String>(context, listen: false);
-        Response response = await dio.get(
-          "https://justmeetgjj.herokuapp.com/event/$_eventName/find",
-          options: Options(
-            headers: {
-              "Authorization": token,
-            },
-            responseType: ResponseType.json,
-          ),
-        );
-        if (response.statusCode == 200) {
-          print(response.data);
-
-          List events2 = response.data;
-          _events = [];
-          events2.forEach((event) {
-            setState(() {
-              _events.add(Event.fromJson(event));
-            });
+      String token = Provider.of<String>(context, listen: false);
+      List search = await Provider.of<EventController>(context, listen: false)
+          .findEvent(token, this._eventName);
+      if (search != null) {
+        List events2 = search;
+        _events = [];
+        events2.forEach((event) {
+          setState(() {
+            _events.add(Event.fromJson(event));
           });
-        }
-      } on DioError catch (e) {
-        print(e.response);
+        });
       }
     }
+    return null;
   }
 
   @override
@@ -56,6 +43,7 @@ class _SearchEventScreenState extends State<SearchEventScreen> {
     return Container(
       color: Colori.bluScuro,
       child: SingleChildScrollView(
+        primary: true,
         child: Form(
           key: _formKey,
           child: Column(
@@ -79,9 +67,12 @@ class _SearchEventScreenState extends State<SearchEventScreen> {
               FlatButton(
                 color: Colori.viola,
                 child: Text('Cerca Evento'),
-                onPressed: _submit,
+                onPressed: () {
+                  _searchFromProvider();
+                },
               ),
               ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: _events.length,
                 itemBuilder: (BuildContext context, int index) {

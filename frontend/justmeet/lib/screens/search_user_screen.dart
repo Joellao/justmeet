@@ -1,9 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
 import 'package:justmeet/components/models/user.dart';
+import 'package:justmeet/controller/UserController.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -17,36 +17,22 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
   final _formKey = GlobalKey<FormState>();
   List<User> _users = [];
 
-  _submit() async {
+  Future<dynamic> _searchUser() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      try {
-        Dio dio = new Dio();
-        String token = Provider.of<String>(context, listen: false);
-        Response response = await dio.get(
-          "https://justmeetgjj.herokuapp.com/user/$_userName/find",
-          options: Options(
-            headers: {
-              "Authorization": token,
-            },
-            responseType: ResponseType.json,
-          ),
-        );
-        if (response.statusCode == 200) {
-          List users2 = response.data;
-          setState(() {
-            this._users = [];
-          });
-          users2.forEach((user) {
-            setState(() {
-              _users.add(User.fromJson(user));
-            });
-          });
-        }
-      } on DioError catch (e) {
-        print(e.response);
-      }
+      String token = Provider.of<String>(context, listen: false);
+      List search = await Provider.of<UserController>(context, listen: false)
+          .searchUser(token, this._userName);
+      setState(() {
+        this._users = [];
+      });
+      search.forEach((user) {
+        setState(() {
+          _users.add(User.fromJson(user));
+        });
+      });
     }
+    return null;
   }
 
   @override
@@ -76,7 +62,9 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                 FlatButton(
                   color: Colori.viola,
                   child: Text('Cerca Utente'),
-                  onPressed: _submit,
+                  onPressed: () async {
+                    await _searchUser();
+                  },
                 ),
                 ListView.builder(
                   shrinkWrap: true,

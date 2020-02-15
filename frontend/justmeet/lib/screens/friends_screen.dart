@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:justmeet/components/colori.dart';
-import 'package:justmeet/screens/my_friends.dart';
 import 'package:justmeet/screens/request_friends.dart';
 
 class FriendsScreen extends StatefulWidget {
@@ -31,7 +30,6 @@ class _FriendsScreenState extends State<FriendsScreen> {
         ),
         body: TabBarView(
           children: [
-            //MyFriendsScreen(),
             RequestFriendsScreen(),
           ],
         ),

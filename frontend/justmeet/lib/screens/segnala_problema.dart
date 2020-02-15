@@ -1,9 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
+import 'package:justmeet/controller/ReportProblemController.dart';
 import 'package:provider/provider.dart';
 
 class ReportProblemScreen extends StatefulWidget {
@@ -16,38 +16,18 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
   final _formKey = GlobalKey<FormState>();
   String _body;
 
-  Future<bool> _submit() async {
-    print("Entrato");
+  Future<bool> _createProblem() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      try {
-        Dio dio = new Dio();
-        String token = Provider.of<String>(context, listen: false);
-        Response response = await dio.post(
-          "https://justmeetgjj.herokuapp.com/report",
-          queryParameters: {'body': this._body},
-          options: Options(
-            headers: {
-              "Authorization": token,
-            },
-            responseType: ResponseType.json,
-          ),
-        );
-        if (response.statusCode == 200) {
-          print(response.data);
-          print("Segnalato con successo");
-          return true;
-        }
-      } on DioError catch (e) {
-        print(e.response);
-      }
+      String token = Provider.of<String>(context, listen: false);
+      return await Provider.of<ReportProblemController>(context, listen: false)
+          .reportProblem(token, this._body);
     }
-    return false;
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = new TextEditingController();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colori.bluScuro,
@@ -106,7 +86,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          bool submit = await _submit();
+                          bool submit = await _createProblem();
                           if (submit) {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content:

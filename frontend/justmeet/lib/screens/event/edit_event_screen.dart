@@ -1,10 +1,13 @@
-import 'package:dio/dio.dart';
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
+import 'package:justmeet/components/models/creates/EventCreate.dart';
 import 'package:justmeet/components/models/event.dart';
+import 'package:justmeet/controller/EventController.dart';
 import 'package:provider/provider.dart';
 
 class EditEventScreen extends StatefulWidget {
@@ -22,56 +25,45 @@ class _EditEventScreenState extends State<EditEventScreen> {
   String _eventName, _location, _description, _date, _category = 'Cinema';
   bool _isFree = true;
   int _maxPersons;
+  TextEditingController controller1 = new TextEditingController();
+  TextEditingController controller2 = new TextEditingController();
+  TextEditingController controller3 = new TextEditingController();
+  TextEditingController controller4 = new TextEditingController();
 
-  _editEvent() async {
-    print("Entrato");
+  Future<LinkedHashMap<String, dynamic>> _editEventFromProvider() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      try {
-        Dio dio = new Dio();
-        String token = Provider.of<String>(context, listen: false);
-        print(_description);
-        Response response = await dio.put(
-          "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}",
-          data: {
-            "name": _eventName,
-            "location": _location,
-            "description": _description,
-            "isFree": _isFree,
-            "category": _category.toUpperCase(),
-            "maxPersons": _maxPersons,
-            'date': _date
-          },
-          options: Options(
-            headers: {
-              "Authorization": token,
-            },
-            responseType: ResponseType.json,
-          ),
-        );
-        if (response.statusCode == 200) {
-          print(response.data);
-          print("Evento modificato");
-          this.widget.func(true, response.data);
-        }
-      } on DioError catch (e) {
-        print(e.response);
-      }
+      String token = Provider.of<String>(context, listen: false);
+      EventCreate create = new EventCreate(
+          name: this._eventName,
+          location: this._location,
+          description: this._description,
+          isFree: this._isFree,
+          category: this._category.toUpperCase(),
+          maxPersons: this._maxPersons,
+          date: this._date);
+      LinkedHashMap<String, dynamic> edit =
+          await Provider.of<EventController>(context, listen: false)
+              .editEvent(token, this.widget.event.id, create);
+      this.widget.func(true, edit);
+      return edit;
     }
+    return null;
   }
 
   @override
-  Widget build(BuildContext context) {
-    TextEditingController controller1 = new TextEditingController();
-    TextEditingController controller2 = new TextEditingController();
-    TextEditingController controller3 = new TextEditingController();
-    TextEditingController controller4 = new TextEditingController();
+  void initState() {
+    // TODO: implement initState
+    super.initState();
 
     controller1.text = this.widget.event.name;
     controller2.text = this.widget.event.location;
     controller3.text = this.widget.event.description;
     controller4.text = this.widget.event.date;
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 1,
@@ -311,8 +303,10 @@ class _EditEventScreenState extends State<EditEventScreen> {
                     builder: (ctx) => FlatButton(
                       color: Colori.viola,
                       child: Text('Modifica Evento'),
-                      onPressed: () {
-                        if (_editEvent() != null) {
+                      onPressed: () async {
+                        LinkedHashMap<String, dynamic> edit =
+                            await _editEventFromProvider();
+                        if (edit != null) {
                           Scaffold.of(ctx).showSnackBar(SnackBar(
                             content: Text("Evento Modificato"),
                           ));

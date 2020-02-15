@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -36,7 +38,8 @@ public class User extends AbstractUser {
 	private String lastName;
 	@Column(name = "birthDate")
 	private Date birthDate;
-	@OneToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "events_partecipants", joinColumns = @JoinColumn(name = "uid"), inverseJoinColumns = @JoinColumn(name = "event_id"))
 	@OrderBy("date DESC")
 	private List<Event> partecipatedEvents = new ArrayList<Event>();
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)

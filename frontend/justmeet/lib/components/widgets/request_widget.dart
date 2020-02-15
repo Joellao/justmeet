@@ -4,15 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/user.dart';
+import 'package:justmeet/controller/UserController.dart';
 import 'package:justmeet/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 class RequestWidget extends StatefulWidget {
   final User user;
+  final int index;
+  final Function func;
 
   //final Widget profileWidget;
 
-  const RequestWidget({Key key, this.user}) : super(key: key);
+  const RequestWidget({Key key, this.user, this.index, this.func})
+      : super(key: key);
   @override
   _RequestWidgetState createState() => _RequestWidgetState();
 }
@@ -20,52 +24,50 @@ class RequestWidget extends StatefulWidget {
 class _RequestWidgetState extends State<RequestWidget> {
   Dio dio = new Dio();
 
-  _accept() async {
-    try {
-      String token = Provider.of<String>(context, listen: false);
-      Response response = await dio.patch(
-        "https://justmeetgjj.herokuapp.com/user/${this.widget.user.uid}/true",
-        options: Options(
-          headers: {
-            "Authorization": token,
-          },
-          responseType: ResponseType.json,
-        ),
-      );
-      if (response.statusCode == 200) {
-        if (response.data) {
-          print("Richiesta accettata");
-        } else {
-          print("errore");
-        }
-      }
-    } on DioError catch (e) {
-      print(e.response);
-    }
+  Future<bool> _acceptFromProvider() async {
+    String token = Provider.of<String>(context, listen: false);
+    bool accept = await Provider.of<UserController>(context, listen: false)
+        .acceptRequest(token, this.widget.user.uid);
+    User user = await Provider.of<UserController>(context, listen: false)
+        .getUser(context);
+    Provider.of<User>(context, listen: false).update(
+        user.uid,
+        user.firstName,
+        user.lastName,
+        user.birthDate,
+        user.email,
+        user.bio,
+        user.events,
+        user.profileImage,
+        user.username,
+        user.announcements,
+        user.friends,
+        user.friendRequests,
+        user.partecipatedEvents);
+    return accept;
   }
 
-  _refuse() async {
-    try {
-      String token = Provider.of<String>(context, listen: false);
-      Response response = await dio.patch(
-        "https://justmeetgjj.herokuapp.com/user/${this.widget.user.uid}/false",
-        options: Options(
-          headers: {
-            "Authorization": token,
-          },
-          responseType: ResponseType.json,
-        ),
-      );
-      if (response.statusCode == 200) {
-        if (response.data) {
-          print("Richiesta rifiutata");
-        } else {
-          print("errore");
-        }
-      }
-    } on DioError catch (e) {
-      print(e.response);
-    }
+  Future<bool> _refuseFromProvider() async {
+    String token = Provider.of<String>(context, listen: false);
+    bool accept = await Provider.of<UserController>(context, listen: false)
+        .refuseRequest(token, this.widget.user.uid);
+    User user = await Provider.of<UserController>(context, listen: false)
+        .getUser(context);
+    Provider.of<User>(context, listen: false).update(
+        user.uid,
+        user.firstName,
+        user.lastName,
+        user.birthDate,
+        user.email,
+        user.bio,
+        user.events,
+        user.profileImage,
+        user.username,
+        user.announcements,
+        user.friends,
+        user.friendRequests,
+        user.partecipatedEvents);
+    return accept;
   }
 
   @override
@@ -158,11 +160,15 @@ class _RequestWidgetState extends State<RequestWidget> {
                         ),
                       ),
                     ),
-                    onPressed: () {
-                      if (_accept() != null) {
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text("Hai stretto amicizia"),
-                        ));
+                    onPressed: () async {
+                      bool result = await _acceptFromProvider();
+                      if (result) {
+                        Scaffold.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Hai stretto amicizia"),
+                          ),
+                        );
+                        this.widget.func(true, this.widget.index);
                       }
                     },
                   ),
@@ -181,11 +187,15 @@ class _RequestWidgetState extends State<RequestWidget> {
                         ),
                       ),
                     ),
-                    onPressed: () {
-                      if (_refuse() != null) {
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text("Hai rifiutato la richiesta"),
-                        ));
+                    onPressed: () async {
+                      bool result = await _refuseFromProvider();
+                      if (result) {
+                        Scaffold.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Hai rifiutato la richiesta"),
+                          ),
+                        );
+                        this.widget.func(true, this.widget.index);
                       }
                     },
                   ),

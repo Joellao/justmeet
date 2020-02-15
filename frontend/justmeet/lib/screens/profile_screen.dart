@@ -43,9 +43,11 @@ class _ProfileScreenState extends State<ProfileScreen>
         return User.fromJson(response.data);
       }
       if (response.statusCode == 500) {
-        print("Ciao");
+        print("Errore");
       }
-    } on DioError catch (e) {}
+    } on DioError catch (e) {
+      print(e);
+    }
     return null;
   }
 
@@ -118,8 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       if (response.statusCode == 200) {
         if (response.data) {
           print("Profilo eliminato");
-          AuthController auth = new AuthController();
-          auth.signOut();
+          await Provider.of<AuthController>(context, listen: false).signOut();
         } else {
           print("errore");
         }

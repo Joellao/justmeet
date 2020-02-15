@@ -1,18 +1,16 @@
 import 'dart:collection';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
+import 'package:justmeet/components/models/creates/ReviewCreate.dart';
 import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/review.dart';
-import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/review_widget.dart';
 import 'package:justmeet/components/widgets/star_rating.dart';
+import 'package:justmeet/controller/EventController.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ReviewScreen extends StatefulWidget {
   final Event event;
@@ -24,51 +22,18 @@ class ReviewScreen extends StatefulWidget {
 }
 
 class _ReviewScreenState extends State<ReviewScreen> {
-  static Future<void> openMap(String location) async {
-    String result = location.replaceAll(RegExp(' '), '+');
-    String googleUrl =
-        'https://www.google.com/maps/search/?api=1&query=$result';
-    if (await canLaunch(googleUrl)) {
-      await launch(googleUrl);
-    } else {
-      throw 'Could not open the map.';
-    }
-  }
-
   final _formKey = GlobalKey<FormState>();
   String _body;
   int _stars;
-  //Future<LinkedHashMap<String, dynamic>> reviews;
 
-  Future<LinkedHashMap<String, dynamic>> _submit() async {
-    print("Entrato");
+  Future<LinkedHashMap<String, dynamic>> _createReview() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      print(_body);
-      try {
-        Dio dio = new Dio();
-        String token = Provider.of<String>(context, listen: false);
-        Response response = await dio.post(
-          "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}/review",
-          data: {
-            "body": _body,
-            "stars": _stars,
-          },
-          options: Options(
-            headers: {
-              "Authorization": token,
-            },
-            responseType: ResponseType.json,
-          ),
-        );
-        if (response.statusCode == 200) {
-          print(response.data);
-          print("Recensione aggiunta");
-          return response.data;
-        }
-      } on DioError catch (e) {
-        print(e.response);
-      }
+      String token = Provider.of<String>(context, listen: false);
+      ReviewCreate create =
+          new ReviewCreate(body: this._body, stars: this._stars);
+      return await Provider.of<EventController>(context, listen: false)
+          .reviewEvent(token, this.widget.event.id, create);
     }
     return null;
   }
@@ -93,7 +58,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<User>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(this.widget.event.name),
@@ -149,7 +113,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 ),
                 InkWell(
                   onTap: () async {
-                    LinkedHashMap rev = await _submit();
+                    LinkedHashMap<String, dynamic> rev = await _createReview();
                     add(true, rev);
                   },
                   child: Icon(

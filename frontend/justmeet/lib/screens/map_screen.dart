@@ -86,6 +86,7 @@ class MapScreenState extends State<MapScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: GoogleMap(
         myLocationEnabled: true,

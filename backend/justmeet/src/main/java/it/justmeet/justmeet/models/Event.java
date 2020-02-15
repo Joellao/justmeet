@@ -67,7 +67,8 @@ public class Event {
 	private List<Comment> comments = new ArrayList<Comment>();
 	@OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Review> reviews = new ArrayList<Review>();
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "partecipatedEvents")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private List<User> partecipants = new ArrayList<User>();
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)

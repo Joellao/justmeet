@@ -3,7 +3,6 @@ import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/event_widget.dart';
-import 'package:provider/provider.dart';
 
 class ProfileEventScreen extends StatelessWidget {
   final List<dynamic> events;

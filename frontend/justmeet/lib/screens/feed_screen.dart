@@ -33,13 +33,17 @@ class _FeedScreenState extends State<FeedScreen>
 
   Future<List<dynamic>> getDataEvent() async {
     String token = Provider.of<String>(context, listen: false);
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position position;
+    try {
+      position = await Geolocator()
+          .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    } catch (e) {}
+
     Response response = await dio.get(
       "https://justmeetgjj.herokuapp.com/feed/",
       queryParameters: {
-        "latitude": position.latitude,
-        "longitude": position.longitude,
+        "latitude": position != null ? position.latitude : 0,
+        "longitude": position != null ? position.longitude : 0,
         "raggio": 50
       },
       options: Options(
@@ -68,6 +72,7 @@ class _FeedScreenState extends State<FeedScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       color: Colori.bluScuro,
       child: RefreshIndicator(
@@ -172,6 +177,5 @@ class _FeedScreenState extends State<FeedScreen>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => false;
 }

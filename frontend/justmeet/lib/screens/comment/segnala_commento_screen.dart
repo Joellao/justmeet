@@ -1,9 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
+import 'package:justmeet/controller/CommentController.dart';
 import 'package:provider/provider.dart';
 
 class ReportCommentScreen extends StatefulWidget {
@@ -18,38 +17,18 @@ class _ReportCommentScreenState extends State<ReportCommentScreen> {
   final _formKey = GlobalKey<FormState>();
   String _body;
 
-  Future<bool> _submit() async {
-    print("Entrato");
+  Future<bool> _reportCommentFromProvider() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      try {
-        Dio dio = new Dio();
-        String token = Provider.of<String>(context, listen: false);
-        Response response = await dio.post(
-          "https://justmeetgjj.herokuapp.com/comment/${this.widget.commentId}",
-          queryParameters: {'body': this._body},
-          options: Options(
-            headers: {
-              "Authorization": token,
-            },
-            responseType: ResponseType.json,
-          ),
-        );
-        if (response.statusCode == 200) {
-          print(response.data);
-          print("Segnalato con successo");
-          return true;
-        }
-      } on DioError catch (e) {
-        print(e.response);
-      }
+      String token = Provider.of<String>(context, listen: false);
+      return await Provider.of<CommentController>(context, listen: false)
+          .reportComment(token, this.widget.commentId, this._body);
     }
     return false;
   }
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = new TextEditingController();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colori.bluScuro,
@@ -107,12 +86,14 @@ class _ReportCommentScreenState extends State<ReportCommentScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          bool submit = await _submit();
+                          bool submit = await _reportCommentFromProvider();
                           if (submit) {
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                              content:
-                                  Text("Segnalazione effettuata con successo"),
-                            ));
+                            Scaffold.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "Segnalazione effettuata con successo"),
+                              ),
+                            );
                           }
                         },
                       ),

@@ -1,18 +1,18 @@
 import 'dart:collection';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:justmeet/components/colori.dart';
 import 'package:justmeet/components/custom_field.dart';
 import 'package:justmeet/components/models/comment.dart';
+import 'package:justmeet/components/models/creates/CommentCreate.dart';
 import 'package:justmeet/components/models/event.dart';
 import 'package:justmeet/components/models/user.dart';
 import 'package:justmeet/components/widgets/comment_widget.dart';
+import 'package:justmeet/controller/EventController.dart';
 import 'package:justmeet/screens/event/edit_event_screen.dart';
 import 'package:justmeet/screens/event/partecipant_screen.dart';
 import 'package:justmeet/screens/photo_screen.dart';
-import 'package:justmeet/screens/profile_screen.dart';
 import 'package:justmeet/screens/review/review_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -73,107 +73,118 @@ class _EventScreenState extends State<EventScreen> {
 
   final _formKey = GlobalKey<FormState>();
   String _body;
-  _deleteEvent() async {
-    print("Entrato");
-    try {
-      Dio dio = new Dio();
-      String token = Provider.of<String>(context, listen: false);
-      Response response = await dio.delete(
-        "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}",
-        options: Options(
-          headers: {
-            "Authorization": token,
-          },
-          responseType: ResponseType.json,
-        ),
-      );
-      if (response.statusCode == 200) {
-        print(response.data);
-        print("Evento cancellato");
-        List events = [];
-        User user = Provider.of<User>(context, listen: false);
-        for (Map<String, dynamic> event in user.events) {
-          Event a = Event.fromJson(event);
-          if (a.id != this.widget.event.id) {
-            events.add(a);
-          }
+
+  Future<bool> _deleteEventFromProvider() async {
+    String token = Provider.of<String>(context, listen: false);
+    bool deleted = await Provider.of<EventController>(context, listen: false)
+        .deleteEvent(token, this.widget.event.id);
+    if (deleted) {
+      List events = [];
+      User user = Provider.of<User>(context, listen: false);
+      for (Map<String, dynamic> event in user.events) {
+        Event a = Event.fromJson(event);
+        if (a.id != this.widget.event.id) {
+          events.add(event);
         }
-        Provider.of<User>(context, listen: false).update(
-            user.uid,
-            user.firstName,
-            user.lastName,
-            user.birthDate,
-            user.email,
-            user.bio,
-            events,
-            user.profileImage,
-            user.username,
-            user.announcements,
-            user.friends,
-            user.friendRequests,
-            user.partecipatedEvents);
-        var count = 0;
-        Navigator.popUntil(context, (route) {
-          return count++ == 2;
-        });
       }
-    } on DioError catch (e) {
-      print(e.response);
+      Provider.of<User>(context, listen: false).update(
+          user.uid,
+          user.firstName,
+          user.lastName,
+          user.birthDate,
+          user.email,
+          user.bio,
+          events,
+          user.profileImage,
+          user.username,
+          user.announcements,
+          user.friends,
+          user.friendRequests,
+          user.partecipatedEvents);
+      var count = 0;
+      Navigator.popUntil(context, (route) {
+        return count++ == 2;
+      });
     }
+    return deleted;
   }
 
-  _cancelEvent() async {
-    print("Entrato");
-    try {
-      Dio dio = new Dio();
-      String token = Provider.of<String>(context, listen: false);
-      Response response = await dio.patch(
-        "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}",
-        options: Options(
-          headers: {
-            "Authorization": token,
-          },
-          responseType: ResponseType.json,
-        ),
-      );
-      if (response.statusCode == 200) {
-        print(response.data);
-        print("Evento annullato");
-      }
-    } on DioError catch (e) {
-      print(e.response);
-    }
+  // _cancelEvent() async {
+  //   print("Entrato");
+  //   try {
+  //     Dio dio = new Dio();
+  //     String token = Provider.of<String>(context, listen: false);
+  //     Response response = await dio.patch(
+  //       "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}",
+  //       options: Options(
+  //         headers: {
+  //           "Authorization": token,
+  //         },
+  //         responseType: ResponseType.json,
+  //       ),
+  //     );
+  //     if (response.statusCode == 200) {
+  //       print(response.data);
+  //       print("Evento annullato");
+  //     }
+  //   } on DioError catch (e) {
+  //     print(e.response);
+  //   }
+  // }
+
+  Future<bool> _cancelEventFromProvide() async {
+    String token = Provider.of<String>(context, listen: false);
+    bool cancelled = await Provider.of<EventController>(context, listen: false)
+        .cancelEvent(token, this.widget.event.id);
+    setState(() {
+      this.widget.event.cancelled = cancelled;
+      refresh = true;
+    });
+    return cancelled;
   }
 
-  Future<LinkedHashMap<String, dynamic>> _submit() async {
-    print("Entrato");
+  // Future<LinkedHashMap<String, dynamic>> _submit() async {
+  //   print("Entrato");
+  //   if (_formKey.currentState.validate()) {
+  //     _formKey.currentState.save();
+  //     print(_body);
+  //     try {
+  //       Dio dio = new Dio();
+  //       String token = Provider.of<String>(context, listen: false);
+  //       Response response = await dio.post(
+  //         "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}/comment",
+  //         data: {
+  //           "body": _body,
+  //         },
+  //         options: Options(
+  //           headers: {
+  //             "Authorization": token,
+  //           },
+  //           responseType: ResponseType.json,
+  //         ),
+  //       );
+  //       if (response.statusCode == 200) {
+  //         print(response.data);
+
+  //         print("Evento commentato");
+  //         return response.data;
+  //       }
+  //     } on DioError catch (e) {
+  //       print(e.response);
+  //     }
+  //   }
+  //   return null;
+  // }
+
+  Future<LinkedHashMap<String, dynamic>> _createCommentFromProvider() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      print(_body);
-      try {
-        Dio dio = new Dio();
-        String token = Provider.of<String>(context, listen: false);
-        Response response = await dio.post(
-          "https://justmeetgjj.herokuapp.com/event/${this.widget.event.id}/comment",
-          data: {
-            "body": _body,
-          },
-          options: Options(
-            headers: {
-              "Authorization": token,
-            },
-            responseType: ResponseType.json,
-          ),
-        );
-        if (response.statusCode == 200) {
-          print(response.data);
-
-          print("Evento commentato");
-          return response.data;
-        }
-      } on DioError catch (e) {
-        print(e.response);
-      }
+      String token = Provider.of<String>(context, listen: false);
+      CommentCreate create = new CommentCreate(body: this._body);
+      LinkedHashMap<String, dynamic> comment =
+          await Provider.of<EventController>(context, listen: false)
+              .commentEvent(token, this.widget.event.id, create);
+      return comment;
     }
     return null;
   }
@@ -184,6 +195,7 @@ class _EventScreenState extends State<EventScreen> {
     User user = Provider.of<User>(context);
     return Scaffold(
       appBar: AppBar(
+        elevation: 1,
         backgroundColor: Colori.bluScuro,
         actions: <Widget>[
           user.uid == this.widget.event.user.uid
@@ -199,11 +211,14 @@ class _EventScreenState extends State<EventScreen> {
                         child: Text("Modifica Evento"),
                         onTap: () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditEventScreen(
-                                      func: modifyEvent,
-                                      event: this.widget.event)));
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditEventScreen(
+                                func: modifyEvent,
+                                event: this.widget.event,
+                              ),
+                            ),
+                          );
                         },
                       ),
                     ),
@@ -211,11 +226,19 @@ class _EventScreenState extends State<EventScreen> {
                       value: 2,
                       child: InkWell(
                         child: Text("Cancella Evento"),
-                        onTap: () {
-                          if (_deleteEvent() != null) {
+                        onTap: () async {
+                          bool delete = await _deleteEventFromProvider();
+                          if (delete) {
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text("Evento cancellato"),
                             ));
+                          } else {
+                            Scaffold.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "C'è stato un errore, riprova più tardi"),
+                              ),
+                            );
                           }
                         },
                       ),
@@ -224,11 +247,21 @@ class _EventScreenState extends State<EventScreen> {
                       value: 3,
                       child: InkWell(
                         child: Text("Annulla Evento"),
-                        onTap: () {
-                          if (_cancelEvent() != null) {
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                              content: Text("Evento annullato"),
-                            ));
+                        onTap: () async {
+                          bool cancelled = await _cancelEventFromProvide();
+                          if (cancelled) {
+                            Scaffold.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("Evento annullato"),
+                              ),
+                            );
+                          } else {
+                            Scaffold.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "C'è stato un errore riprova più tardi"),
+                              ),
+                            );
                           }
                         },
                       ),
@@ -511,7 +544,7 @@ class _EventScreenState extends State<EventScreen> {
                 ),
                 InkWell(
                   onTap: () async {
-                    LinkedHashMap comment = await _submit();
+                    LinkedHashMap comment = await _createCommentFromProvider();
                     add(true, comment);
                   },
                   child: Icon(
@@ -537,108 +570,6 @@ class _EventScreenState extends State<EventScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget getProfileWidget(Event event) {
-    return Container(
-      padding: EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          InkWell(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ProfileScreen(user: event.user)),
-            ),
-            child: Row(
-              children: <Widget>[
-                CircleAvatar(
-                  backgroundImage: event.user.profileImage != ""
-                      ? NetworkImage(event.user.profileImage)
-                      : null,
-                  child: event.user.profileImage == ""
-                      ? Icon(Icons.person, size: 25)
-                      : null,
-                ),
-                SizedBox(
-                  width: 7.0,
-                ),
-                Text(
-                  event.user.firstName,
-                  textAlign: TextAlign.left,
-                  style: GoogleFonts.roboto(
-                    textStyle: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  event.user.lastName,
-                  textAlign: TextAlign.left,
-                  style: GoogleFonts.roboto(
-                    textStyle: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          PopupMenuButton<int>(
-            icon: Icon(
-              Icons.more_vert,
-              size: 30.0,
-            ),
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 1,
-                child: InkWell(
-                  child: Text("Modifica Commento"),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                EditEventScreen(event: this.widget.event)));
-                  },
-                ),
-              ),
-              PopupMenuItem(
-                value: 2,
-                child: InkWell(
-                  child: Text("Cancella commento"),
-                  onTap: () {
-                    if (_deleteEvent() != null) {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text("Evento cancellato"),
-                      ));
-                    }
-                  },
-                ),
-              ),
-              PopupMenuItem(
-                value: 3,
-                child: InkWell(
-                  child: Text("Segnala Commento"),
-                  onTap: () {
-                    if (_cancelEvent() != null) {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text("Commento segnalato con successo"),
-                      ));
-                    }
-                  },
-                ),
-              ),
-            ],
-          )
-        ],
       ),
     );
   }
