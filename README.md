@@ -38,10 +38,8 @@ Nei seguenti link troverete in dettaglio le tecnologie utlizzate per sviluppare 
 ## Date Consegna Iterazioni
 Le date di consegna possono essere consultate seguendo la seguente tabella:
 
-###Tables
-                    
 Numero itrazione  | Data | Settimana di consegna
-------------- | -------------
+------------- | ------------- | -------------
 1 | 5/12/2019| 2 settimana
 2 | 21/12/2019| 4 settimana
 3 | 11/01/2020| 7 settimana
