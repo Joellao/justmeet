@@ -2,7 +2,7 @@
 
 Il backend è stato scritto in java e per runnare il progetto abbiamo usato **Spring boot.**
 
-Il progetto è basato su un architettura** MVC**, dove tutta la parte di View viene implementata nel frontend con Flutter.
+Il progetto è basato su un architettura **MVC**, dove tutta la parte di View viene implementata nel frontend con Flutter.
 
 Per l&apos;autenticazione è stato usato **Firebase**, così come per l&apos;archiviazione delle foto caricate dagli utenti. La scelta di Firebase è stata dettata da vari fattori come:
 
@@ -20,4 +20,18 @@ In particolare abbiamo utilizzato Hibernate, un&apos;implementazione di JPA e un
 Per eseguire i test da riga di comando 
 ```shell
 ./mvnw test
+```
+
+Per creare il package di avvio
+```shell
+./mvnw package
+```
+
+Per avviare il server
+```shell
+cd target
+```
+
+```shell
+java -jar justmeet-0.0.1-SNAPSHOT.jar
 ```
