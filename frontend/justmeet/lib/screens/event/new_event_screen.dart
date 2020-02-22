@@ -267,20 +267,22 @@ class _NewEventScreenState extends State<NewEventScreen> {
                   onSaved: (name) => this._maxPersons = int.parse(name),
                   obscureText: false,
                 ),
-                FlatButton(
-                  color: Colori.viola,
-                  child: Text('Crea Evento'),
-                  onPressed: () async {
-                    LinkedHashMap<String, dynamic> created =
-                        await _createEventFromProvider();
-                    if (created != null) {
-                      Scaffold.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Evento creato"),
-                        ),
-                      );
-                    }
-                  },
+                Builder(
+                  builder: (context) => FlatButton(
+                    color: Colori.viola,
+                    child: Text('Crea Evento'),
+                    onPressed: () async {
+                      LinkedHashMap<String, dynamic> created =
+                          await _createEventFromProvider();
+                      if (created != null) {
+                        Scaffold.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Evento creato"),
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 )
               ],
             ),

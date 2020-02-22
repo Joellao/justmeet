@@ -160,7 +160,7 @@ public class AuthController {
 				signin.getLastName(), signin.getEmail(), date, 1));
 	}
 
-	public Object fireBaseSignIn(String email, String password) {
+	private Object fireBaseSignIn(String email, String password) {
 		LoginModel login = new LoginModel(email, password);
 		RestTemplate t = new RestTemplate();
 		Object result = t.postForObject(

@@ -49,13 +49,15 @@ public class AnnouncementController {
 	 * @param annuncio
 	 * @param token
 	 * @return l'annuncio creato
-	 * @throws FirebaseAuthException
+	 * @throws Exception
 	 */
 	@PostMapping("/announcement")
 	public Announcement createAnnouncement(@RequestBody AnnouncementCreate annuncio,
-			@RequestHeader("Authorization") String token) throws FirebaseAuthException {
+			@RequestHeader("Authorization") String token) throws Exception {
 		String userId = WoWoUtility.getInstance().getUid(token);
-
+		if (annuncio.getName() == null && annuncio.getCategory() == null && annuncio.getDescription() == null) {
+			throw new Exception("Devi compilare i cmapi mancanti");
+		}
 		Announcement announce = new Announcement(annuncio.getName(), annuncio.getDescription(),
 				userRepo.findByUid(userId), annuncio.getCategory(), new Date());
 		announcementRepo.save(announce);

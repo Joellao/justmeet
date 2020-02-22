@@ -223,13 +223,10 @@ public class EventControllerTest {
         public void findEvent() throws Exception {
                 Date date = new SimpleDateFormat("dd/MM/yyyy").parse("01/01/2025");
                 Event event = new Event("TestEvent", "Macerata", "Test Descrizione", date, true, Category.CINEMA, 8);
-                Event event2 = new Event("TestEvent2", "San Severino Marche", "Test Descrizione", date, true,
-                                Category.CINEMA, 8);
-                Event event3 = new Event("TestEvent", "Macerata", "Test Descrizione", date, true, Category.CINEMA, 8);
-                Event event4 = new Event("TestEvent4", "Pollenza", "Test Descrizione", date, true, Category.CINEMA, 8);
+                Event event2 = new Event("TestEvent", "Macerata", "Test Descrizione", date, true, Category.CINEMA, 8);
                 List<Event> events = new ArrayList<Event>();
                 events.add(event);
-                events.add(event3);
+                events.add(event2);
 
                 Mockito.when(eventRepo.findAll()).thenReturn(events);
                 mvc.perform(MockMvcRequestBuilders.get("/event/eventName/find").header("Authorization", idToken)

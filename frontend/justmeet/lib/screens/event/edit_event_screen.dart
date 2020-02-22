@@ -293,9 +293,10 @@ class _EditEventScreenState extends State<EditEventScreen> {
                     label: 'Massimo numero partecipanti',
                     hint:
                         "Inserisci il massimo numero dei partecipanti dell'evento",
-                    validator: (name) => name.length <= 0
-                        ? 'Il nome non può essere vuoto'
-                        : null,
+                    validator: (name) =>
+                        int.parse(name) <= this.widget.event.partecipants.length
+                            ? 'Deve essere maggiore del numero dei partecipanti'
+                            : null,
                     onSaved: (name) => this._maxPersons = int.parse(name),
                     obscureText: false,
                   ),

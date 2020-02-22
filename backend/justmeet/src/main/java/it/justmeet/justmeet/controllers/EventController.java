@@ -1,7 +1,6 @@
 package it.justmeet.justmeet.controllers;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,8 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.firebase.auth.FirebaseAuthException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,8 +47,6 @@ import it.justmeet.justmeet.models.Photo;
 import it.justmeet.justmeet.models.Review;
 import it.justmeet.justmeet.models.RispostaLocation;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.similarity.*;
 import org.springframework.web.bind.annotation.PutMapping;
 
 /**
@@ -87,28 +81,28 @@ public class EventController {
 	 * @param event
 	 * @param token
 	 * @return l'evento creato
-	 * @throws FirebaseAuthException
-	 * @throws ParseException
-	 * @throws UnsupportedEncodingException
-	 * @throws RestClientException
-	 * @throws JsonProcessingException
-	 * @throws JsonMappingException
-	 * @throws InvalidDataException
+	 * @throws Exception
 	 */
 	@PostMapping("/event")
 	public Event createEvent(@RequestBody EventCreate event, @RequestHeader("Authorization") String token)
-			throws FirebaseAuthException, ParseException, RestClientException, UnsupportedEncodingException,
-			JsonMappingException, JsonProcessingException, InvalidDataException {
+			throws Exception {
 		String userId = WoWoUtility.getInstance().getUid(token);
 		AbstractUser user = abstractRepo.findByUid(userId);
 		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(event.getDate());
 		WoWoUtility.getInstance().validateDateEvent(date);
+		if (event.getName() == null && event.getLocation() == null && event.getDescription() == null
+				&& event.getCategory() == null) {
+			throw new Exception("Devi compilare i campi che mancano");
+		}
 		Event evento = new Event(event.getName(), event.getLocation(), event.getDescription(), date, event.isFree(),
 				event.getCategory(), event.getMaxPersons());
 		if (user.getType() == 2) {
 			evento.setPublicEvent(true);
 		} else {
 			evento.setPublicEvent(false);
+			if (event.getMaxPersons() > 100) {
+				throw new Exception("Non puoi creare un evento con più di 100 persone");
+			}
 		}
 
 		RestTemplate r = new RestTemplate();

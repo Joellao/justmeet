@@ -1,7 +1,5 @@
 package it.justmeet.justmeet.models.auth;
 
-import java.util.Date;
-
 /**
  * Responsabilità: definisce il modello per il login dell'utente
  * 

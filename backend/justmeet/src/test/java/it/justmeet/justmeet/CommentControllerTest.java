@@ -1,10 +1,7 @@
 package it.justmeet.justmeet;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -22,11 +19,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.hasSize;
 
-import it.justmeet.justmeet.models.Category;
 import it.justmeet.justmeet.models.Comment;
-import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.User;
 import it.justmeet.justmeet.models.repositories.AbstractUserRepository;
 import it.justmeet.justmeet.models.repositories.AnnouncementRepository;

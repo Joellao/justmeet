@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.firebase.auth.FirebaseAuthException;
 
 import it.justmeet.justmeet.config.WoWoUtility;
+import it.justmeet.justmeet.models.AbstractUser;
 import it.justmeet.justmeet.models.Announcement;
 import it.justmeet.justmeet.models.Event;
 import it.justmeet.justmeet.models.User;
+import it.justmeet.justmeet.models.repositories.AbstractUserRepository;
 import it.justmeet.justmeet.models.repositories.EventRepository;
 import it.justmeet.justmeet.models.repositories.InstitutionRepository;
 import it.justmeet.justmeet.models.repositories.UserRepository;
@@ -28,6 +30,8 @@ public class FeedController {
 	InstitutionRepository instRepo;
 	@Autowired
 	EventRepository eventRepo;
+	@Autowired
+	AbstractUserRepository abstractRepo;
 
 	@GetMapping("/getAllEvents")
 	private List<Event> getEvents(@RequestHeader("Authorization") String token) throws FirebaseAuthException {
@@ -67,6 +71,11 @@ public class FeedController {
 	public List<Object> getFeed(@RequestHeader("Authorization") String token, @RequestParam("latitude") double latitude,
 			@RequestParam("longitude") double longitude, @RequestParam("raggio") int raggio)
 			throws FirebaseAuthException {
+		String userId = WoWoUtility.getInstance().getUid(token);
+		AbstractUser user = abstractRepo.findByUid(userId);
+		if (user.getType() == 2) {
+			return new ArrayList<>();
+		}
 		List<Object> lista = new ArrayList<Object>();
 		if (latitude != 0.0 && longitude != 0.0) {
 			lista.addAll(getInstitutionEventsRadius(token, latitude, longitude, raggio));
